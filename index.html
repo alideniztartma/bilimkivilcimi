@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>#BilimKıvılcımı</title>
+<meta name="description" content="Hatay'daki çocuklar için ücretsiz, oyun gibi kodlama dersleri ve 3 boyutlu bilim deneyleri. Bir Antioch Rising #10947 projesi.">
+<meta name="theme-color" content="#2F3A28">
+<meta property="og:title" content="#BilimKıvılcımı · Yazılımın Duolingosu">
+<meta property="og:description" content="Anka ile oyun gibi kodlama öğren, 3 boyutlu laboratuvarda deney yap. Ücretsiz ve Türkçe.">
+<meta property="og:image" content="img/logo.png">
+<link rel="icon" href="img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+  <aside class="side" aria-label="Menü">
+    <a class="brand" href="#ogren"><img src="img/logo.png" alt="Antioch Rising logosu"><span><b>#</b>BilimKıvılcımı</span></a>
+    <nav id="sideNav"></nav>
+    <div class="small">
+      <a href="#defter">Deney defterim</a>
+      <a href="#ogretmen">Öğretmenler için</a>
+      <a href="#hakkinda">Proje hakkında</a>
+    </div>
+  </aside>
+
+  <main class="center" id="main">
+    <header class="mtop">
+      <div class="stats"><a class="brand" href="#ogren"><img src="img/logo.png" alt="Antioch Rising logosu"><span><b>#</b>BilimKıvılcımı</span></a><span class="stats-slot"></span></div>
+    </header>
+    <section data-page="ogren"><div id="path"></div></section>
+    <section data-page="atolye" hidden><div class="page" id="pgHub"></div></section>
+    <section data-page="cizim" hidden><div class="page" id="pgDraw" style="max-width:920px"></div></section>
+    <section data-page="sozluk" hidden><div class="page" id="pgGloss"></div></section>
+    <section data-page="gorevler" hidden><div class="page" id="pgQuests"></div></section>
+    <section data-page="magaza" hidden><div class="page" id="pgShop"></div></section>
+    <section data-page="profil" hidden><div class="page" id="pgProfile"></div></section>
+    <section data-page="lab" hidden><div class="page wide" id="pgLab"></div></section>
+    <section data-page="exp" hidden><div class="page wide" id="pgExp"></div></section>
+    <section data-page="defter" hidden><div class="page wide" id="pgNote" style="max-width:960px"></div></section>
+    <section data-page="ogretmen" hidden><div class="page wide" id="pgTeach"></div></section>
+    <section data-page="hakkinda" hidden><div class="page wide" id="pgAbout" style="max-width:1000px"></div></section>
+  </main>
+
+  <aside class="right" aria-label="Durumum">
+    <div class="stats stats-slot"></div>
+    <div class="card rc" id="rcStreak"></div>
+    <div class="card rc" id="rcGoal"></div>
+    <div class="card rc" id="rcDaily"></div>
+    <div class="card rc" id="rcQuests"></div>
+    <p style="font-size:.85rem;color:var(--muted);padding:0 6px">#BilimKıvılcımı bir <b>Antioch Rising #10947</b> projesidir.</p>
+  </aside>
+
+  <nav class="mtab" id="tabNav" aria-label="Sekmeler"></nav>
+</div>
+
+<div class="lesson" id="lesson" hidden>
+  <div class="lhead">
+    <button class="xbtn" id="lclose" type="button" aria-label="Dersten çık"></button>
+    <div class="lbar" id="lbar" role="progressbar" aria-label="Ders ilerlemesi"></div>
+    <span class="lhearts" id="lhearts"></span>
+  </div>
+  <div class="lbody" id="lbody"></div>
+  <div class="lfoot" id="lfoot"><div class="lfin"><div class="fb" id="fb"></div><button class="b3" id="lbtn" type="button">Kontrol et</button></div></div>
+</div>
+
+<div class="modal" id="modal" hidden><div class="mbox" id="mbox" role="dialog" aria-modal="true"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+<noscript><p style="padding:20px;font:700 1.1rem sans-serif">#BilimKıvılcımı'nın çalışması için JavaScript'in açık olması gerekiyor.</p></noscript>
+
+<script src="js/three.min.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/anka.js"></script>
+<script src="js/data.js"></script>
+<script src="js/core.js"></script>
+<script src="js/learn.js"></script>
+<script src="js/lab.js"></script>
+<script src="js/teacher.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
