@@ -1,0 +1,72 @@
+# Bu dosyayı GitHub'da .github/workflows/apk.yml konumuna taşıyın.
+# Sonra her main gönderiminde APK kendiliğinden derlenir ve
+# "Releases" altındaki "apk-latest" sürümüne konur.
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apk
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Web dosyalarını uygulamaya kopyala
+        run: |
+          mkdir -p app/www app/assets
+          cp -r index.html css js img app/www/
+          cp assets/*.png app/assets/
+
+      - name: Capacitor ile Android projesi oluştur
+        working-directory: app
+        run: |
+          npm init -y
+          npm i @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/assets@3
+          npx cap init "BilimKıvılcımı" org.antiochrising.bilimkivilcimi --web-dir www
+          npx cap add android
+          npx capacitor-assets generate --android --iconBackgroundColor '#D9822B' --splashBackgroundColor '#F4EAD6' --splashBackgroundColorDark '#1C1A14'
+          npx cap sync android
+
+      - name: APK derle
+        working-directory: app/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: APK dosyasını adlandır
+        run: cp app/android/app/build/outputs/apk/debug/app-debug.apk BilimKivilcimi.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BilimKivilcimi-apk
+          path: BilimKivilcimi.apk
+
+      - name: İndirme sayfasına koy
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: BilimKıvılcımı Android uygulaması
+          body: En son sürüm. BilimKivilcimi.apk dosyasını telefona indirip açın. Telefon izin isterse "Bilinmeyen kaynaklardan yüklemeye izin ver" seçeneğini açın.
+          files: BilimKivilcimi.apk
+          make_latest: true
