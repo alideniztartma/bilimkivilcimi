@@ -39,10 +39,10 @@ function renderTeacher(){
       <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">${framed?'':`<button class="b3 sm" type="button" id="printBtn">${ic('printer',18)} Etkinlik kâğıdını yazdır</button>`}<span class="muted" style="font-size:.9rem">Kâğıt A4 boyutundadır ve siyah beyaz basılabilir.</span></div>
       <div class="paper" id="paper"></div></div></div>
   <div class="card" style="margin-top:22px"><p class="eyebrow">Sınıf takibi</p><h2 style="margin:8px 0 6px">Öğrencilerinizin ilerlemesi</h2>
-    <p class="muted" style="max-width:70ch">Her öğrenci <b>Profil › Öğretmenine göster</b> bölümündeki kodu size gönderir. Kodları aşağıya yapıştırın, her satıra bir kod. Tablo yalnızca bu cihazda saklanır, hiçbir yere gönderilmez.</p>
+    <p class="muted" style="max-width:70ch">Her öğrenci <b>Profil › Öğretmenine göster</b> bölümündeki kodu size gönderir. Kodları aşağıya yapıştırın, her satıra bir kod. Tablo yalnızca bu cihazda saklanır. <b>Sınıf dosyasını indir</b> ile tabloyu proje yöneticisine gönderebilirsiniz; yönetici paneli bu dosyayı okur.</p>
     <label for="clsIn" style="display:block;font-weight:800;margin:14px 0 6px">Öğrenci kodları</label>
     <textarea class="codes" id="clsIn" rows="4" placeholder="BK1.eyJuIjoiRWxhIiwieCI6..."></textarea>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="b3 sm" type="button" id="clsAdd">Kodları ekle</button><button class="b3 ghost sm" type="button" id="clsCsv">Tabloyu kopyala</button><button class="b3 ghost sm" type="button" id="clsClr">Tabloyu temizle</button><span class="muted" id="clsMsg" role="status" style="font-size:.9rem"></span></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="b3 sm" type="button" id="clsAdd">Kodları ekle</button><button class="b3 ghost sm" type="button" id="clsCsv">Tabloyu kopyala</button><button class="b3 ghost sm" type="button" id="clsFile">${ic('save',16)} Sınıf dosyasını indir</button><button class="b3 ghost sm" type="button" id="clsClr">Tabloyu temizle</button><span class="muted" id="clsMsg" role="status" style="font-size:.9rem"></span></div>
     <div class="sumtiles" id="clsSum"></div><div class="tscroll" style="margin-top:14px;max-height:none"><table class="dtable" id="clsTbl"></table></div></div>
   <div class="card" style="margin-top:22px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start">
     <div class="medal" style="width:64px;height:64px">${ic('offline',30)}</div>
@@ -69,19 +69,31 @@ function planRender(){
 /* Sınıf takibi */
 const SNFKEY='bk-sinif-v1';let SNF={};try{SNF=JSON.parse(localStorage.getItem(SNFKEY))||{}}catch(e){}
 const clsSave=()=>{try{localStorage.setItem(SNFKEY,JSON.stringify(SNF))}catch(e){}};
-function decodeCode(c){try{let s=c.trim().replace(/^BK1\./,'').replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return JSON.parse(decodeURIComponent(escape(atob(s))))}catch(e){return null}}
+/* İlerleme kodu: BK1 (eski, yalnızca sayılar) ve BK2 (anonim kimlik, ders listeleri, etkinlik günleri) */
+function decodeCode(c){try{c=c.trim();const m=/^BK([12])\./.exec(c);if(!m)return null;let s=c.slice(4).replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';
+  const o=JSON.parse(decodeURIComponent(escape(atob(s))));return o&&typeof o.x==='number'?normCode(o):null}catch(e){return null}}
+function normCode(o){
+  if(o.v===2){const e=o.e||{};return{v:2,i:String(o.i||''),n:String(o.n||''),x:+o.x||0,L:Array.isArray(o.l)?o.l:[],C:Array.isArray(o.c)?o.c:[],E:e,
+    l:Array.isArray(o.l)?o.l.length:0,c:Array.isArray(o.c)?o.c.length:0,e:Object.values(e).reduce((a,b)=>a+(+b||0),0),w:+o.w||0,k:Array.isArray(o.k)?o.k:[],
+    b:+o.b||0,s:+o.s||0,d:Array.isArray(o.h)?o.h.length:0,h:Array.isArray(o.h)?o.h:[],a:String(o.a||''),j:String(o.j||''),t:String(o.t||'')}}
+  return{v:1,i:'',n:String(o.n||''),x:+o.x||0,L:null,C:null,E:null,l:+o.l||0,c:0,e:+o.e||0,w:0,k:Array.isArray(o.k)?o.k:[],b:+o.b||0,s:+o.s||0,d:+o.d||0,h:null,a:'',j:'',t:String(o.t||'')}
+}
+const codeKey=o=>o.i?'id:'+o.i:'ad:'+(o.n||'adsız').toLocaleLowerCase('tr');
 function clsRender(){
   const rows=Object.values(SNF).sort((a,b)=>b.x-a.x),n=rows.length;
   const tot=rows.reduce((s,r)=>s+r.l,0),avg=n?Math.round(rows.reduce((s,r)=>s+r.x,0)/n):0,act=rows.filter(r=>r.l>0||r.e>0).length,ex=rows.reduce((s,r)=>s+(r.e||0),0);
   const tile=(v,l)=>`<div><b>${v}</b><span>${l}</span></div>`;
   $('#clsSum').innerHTML=tile(n,'Öğrenci')+tile(act,'Aktif öğrenci')+tile(tot,'Bitirilen ders')+tile(ex,'Deney görevi')+tile(avg,'Ortalama XP');
-  $('#clsTbl').innerHTML=n?`<thead><tr>${['Ad','XP','Ders','Deney','Kupa','En uzun seri','Aktif gün','Kod tarihi'].map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(r.n||'(adsız)')}</b></td><td>${r.x}</td><td>${r.l} / ${ALL_LESSONS.length}</td><td>${r.e||0} / ${labTotal()}</td><td>${(r.k||[]).length} / ${U.length}</td><td>${r.b}</td><td>${r.d}</td><td>${String(r.t).split('-').reverse().join('.')}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="muted">Henüz kod eklenmedi.</td></tr></tbody>';
+  $('#clsTbl').innerHTML=n?`<thead><tr>${['Ad','XP','Ders','Alan dersi','Deney','Kupa','En uzun seri','Aktif gün','Kod tarihi'].map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(r.n||'(adsız)')}</b></td><td>${r.x}</td><td>${r.l} / ${ALL_LESSONS.length}</td><td>${r.c||0} / ${TRACK_LESSONS.length}</td><td>${r.e||0} / ${labTotal()}</td><td>${(r.k||[]).length} / ${U.length}</td><td>${r.b}</td><td>${r.d}</td><td>${String(r.t).split('-').reverse().join('.')}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="muted">Henüz kod eklenmedi.</td></tr></tbody>';
 }
 function clsWire(){
-  $('#clsAdd').onclick=()=>{let ok=0,bad=0;$('#clsIn').value.split(/\s+/).filter(Boolean).forEach(c=>{const o=decodeCode(c);if(o&&typeof o.x==='number'){const k=(o.n||'adsız').toLocaleLowerCase('tr')+'|'+(o.n?'':c.slice(-6));const old=SNF[k];if(!old||String(old.t)<=String(o.t))SNF[k]=o;ok++}else bad++});
+  $('#clsAdd').onclick=()=>{let ok=0,bad=0;$('#clsIn').value.split(/\s+/).filter(Boolean).forEach(c=>{const o=decodeCode(c);if(o){const k=codeKey(o);const old=SNF[k];if(!old||String(old.t)<=String(o.t))SNF[k]=o;ok++}else bad++});
     clsSave();clsRender();$('#clsIn').value='';$('#clsMsg').textContent=ok+' kod eklendi'+(bad?', '+bad+' kod okunamadı':'')+'.'};
   $('#clsClr').onclick=e=>{const b=e.currentTarget;if(b.dataset.arm){SNF={};clsSave();clsRender();delete b.dataset.arm;b.textContent='Tabloyu temizle';$('#clsMsg').textContent='Tablo temizlendi.';return}
     b.dataset.arm='1';b.textContent='Emin misiniz? Tekrar basın';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.textContent='Tabloyu temizle'}},4000)};
+  $('#clsFile').onclick=()=>{const n=Object.keys(SNF).length;if(!n){$('#clsMsg').textContent='Önce öğrenci kodlarını ekleyin.';return}
+    downloadFile('bilimkivilcimi-sinif-'+dkey()+'.json',JSON.stringify({tur:'bk-sinif',tarih:dkey(),ogrenciler:Object.values(SNF)}),'application/json');
+    $('#clsMsg').textContent=n+' öğrencilik sınıf dosyası indirildi. Bu dosyayı yöneticiye gönderebilirsiniz.'};
   $('#clsCsv').onclick=async()=>{const rows=Object.values(SNF);const csv=['Ad;XP;Ders;Deney görevi;Kupa;En uzun seri;Aktif gün;Tarih'].concat(rows.map(r=>[r.n,r.x,r.l,r.e||0,(r.k||[]).length,r.b,r.d,r.t].join(';'))).join('\n');
     try{await navigator.clipboard.writeText(csv);$('#clsMsg').textContent='Tablo kopyalandı. Excel ya da E-Tablolar\'a yapıştırabilirsiniz.'}catch(e){$('#clsMsg').textContent='Kopyalanamadı. Tabloyu seçip elle kopyalayın.'}};
 }
@@ -113,3 +125,5 @@ function renderAbout(){
     <p>Antioch Rising, Hatay'dan FIRST Robotics Competition'a katılan 10947 numaralı robot takımıdır. Robot yaparken öğrendiklerimizi Hatay'ın çocuklarıyla paylaşmak için #BilimKıvılcımı'nı kurduk.</p>
     <p class="muted" style="margin-top:8px">Kaynak kodu GitHub'da açık: <a href="https://github.com/alideniztartma/bilimkivilcimi" target="_blank" rel="noopener">github.com/alideniztartma/bilimkivilcimi</a></p></div></div>`;
 }
+
+function downloadFile(name,text,type){try{const u=URL.createObjectURL(new Blob([text],{type:type||'text/plain'}));const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}catch(e){toast('Dosya indirilemedi.')}}

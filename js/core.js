@@ -5,11 +5,12 @@ const KEY='bk-duo-v1',OLDLAB='bilimkivilcimi-v1';
 const dkey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const dayNum=k=>{const [y,m,d]=k.split('-').map(Number);return Math.round(new Date(y,m-1,d).getTime()/864e5)};
 const newDay=()=>({k:dkey(),xp:0,lessons:0,combo:0,perfect:0,robot:0,lab:0,claimed:{}});
+const newUid=()=>{try{const a=new Uint8Array(6);crypto.getRandomValues(a);return [...a].map(x=>x.toString(36).padStart(2,'0')).join('').slice(0,10)}catch(e){return Math.random().toString(36).slice(2,12)}};
 const DEF=()=>({v:1,name:'',goal:20,xp:0,gems:50,hearts:5,heartAt:null,streak:0,best:0,lastDay:null,days:[],freeze:0,done:{},chests:{},trophies:{},badges:{},owned:{},equip:null,
   sound:true,tts:false,theme:'auto',onb:false,joined:dkey(),lessons:0,wrong:{},speedBest:0,draw:{},dailyDone:{},msgHide:null,
-  lab:{tasks:{},notes:{},found:{},seen:{}},day:newDay()});
+  lab:{tasks:{},notes:{},found:{},seen:{}},cat:{},uid:newUid(),day:newDay()});
 let S=DEF();
-try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===1){S=Object.assign(DEF(),r);S.lab=Object.assign({tasks:{},notes:{},found:{},seen:{}},r.lab||{})}}catch(e){}
+try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===1){S=Object.assign(DEF(),r);if(!r.uid){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(_){}}S.lab=Object.assign({tasks:{},notes:{},found:{},seen:{}},r.lab||{})}}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
 /* Eski laboratuvar kayıtlarını yeni sisteme taşı */

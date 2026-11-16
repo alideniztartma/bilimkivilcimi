@@ -45,6 +45,22 @@ Her deneyde:
 
 **Deney defterim** sayfası bütün ölçümleri tablo ve grafik olarak toplar, yazdırılabilir.
 
+### Temel eğitim: Yazılım, Mekanik, Elektronik
+Robot takımlarındaki üç ana alanın temel dersleri. Her alanda şimdilik 2 ders var:
+
+| Alan | Dersler |
+|---|---|
+| Yazılım | Program nasıl çalışır? · Robot yazılımı: algıla, karar ver, hareket et |
+| Mekanik | Basit makineler · Dişliler: hız ve güç |
+| Elektronik | Devrenin parçaları · Gerilim, akım ve direnç |
+
+Yeni ders eklemek için `js/egitim.js` dosyasındaki ilgili alanın `lessons` listesine bir ders ekleyin. Alıştırma türleri kodlama yolundakilerle aynıdır.
+
+### Yönetici istatistik paneli
+`#yonetici` adresinde (menüde **Yönetici paneli**). Toplam kayıtlı kullanıcı, son 7 ve 30 günde aktif kullanıcı, yeni kayıtlar, ders bazında tamamlama sayıları, kategori ve deney bazında kullanım, son 14 günün günlük aktif öğrenci grafiği ve öğrenci listesi.
+
+Site sunucusuz çalıştığı için veriler öğrencilerin ilerleme kodlarından toplanır: öğrenci kodunu öğretmene gönderir, öğretmen **Sınıf dosyasını indir** ile dosyayı yöneticiye iletir, yönetici dosyaları panele yükler. Her öğrencinin cihazında rastgele, anonim bir kimlik oluşur; aynı öğrenci iki kez sayılmaz. İlk şifre takım numarasıdır (10947); panelden değiştirin. Şifre gerçek bir güvenlik sağlamaz, veriler yalnızca o cihazda tutulur.
+
 ### Öğretmenler için
 - 9 hazır ders planı (8 deney + robot kodlama), her biri 40 dakikalık akışla
 - Siyah beyaz basılabilen A4 etkinlik kâğıtları
@@ -70,7 +86,9 @@ js/data.js        Dersler, bulmacalar, sözlük, mağaza, görevler
 js/core.js        Durum, ses, bildirim, ödüller
 js/learn.js       Kodlama yolu, alıştırmalar, atölye, profil
 js/lab.js         3 boyutlu deneyler, görevler, deney defteri
+js/egitim.js      Temel eğitim alanları ve dersleri
 js/teacher.js     Öğretmen sayfası ve proje hakkında
+js/admin.js       Yönetici istatistik paneli
 js/main.js        Sayfa yönetimi ve başlatma
 js/three.min.js   three.js r149 (MIT lisansı)
 ```
