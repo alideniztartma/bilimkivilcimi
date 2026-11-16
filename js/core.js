@@ -46,7 +46,7 @@ function tone(seq,type='sine',vol=.12){if(!S.sound)return;
   try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();let t=AC.currentTime;
     seq.forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d);t+=d*.8})}catch(e){}}
 const sfx={ok:()=>tone([[660,.09],[990,.16]]),bad:()=>tone([[196,.14],[147,.22]],'triangle',.16),tap:()=>tone([[520,.04]],'sine',.05),
-  win:()=>tone([[523,.12],[659,.12],[784,.12],[1047,.3]],'triangle',.12),coin:()=>tone([[1200,.06],[1600,.12]],'square',.05),tick:()=>tone([[880,.03]],'square',.03),
+  win:()=>tone([[523,.12],[659,.12],[784,.12],[1047,.3]],'triangle',.12),coin:()=>tone([[1200,.06],[1600,.12]],'square',.05),tick:()=>tone([[880,.03]],'square',.03),chirp:()=>tone([[1180,.05],[1560,.06],[1320,.07]],'sine',.06),
   whoosh:()=>tone([[300,.08],[500,.08],[800,.12]],'sawtooth',.04),splash:()=>tone([[180,.06],[120,.18]],'triangle',.1),thud:()=>tone([[90,.15]],'square',.12)};
 
 /* Sesli okuma */
@@ -81,5 +81,5 @@ function smallReward(xp,gems,why){
   const q=questCheck();const nb=[...badgeSet()].filter(b=>!before.has(b));nb.forEach(b=>S.badges[b]=dkey());save();renderStats();
   toast(`${fi('bolt',20)} ${why?esc(why)+' · ':''}+${xp} XP${gems?`, +${gems} taş`:''}`);
   if(q.length)setTimeout(()=>toast(`${ic('chest',20)} Görev tamam: ${esc(q[0].name)} · +${q[0].gems} taş`),2900);
-  if(nb.length){const b=BADGES.find(x=>x.id===nb[0]);setTimeout(()=>{sfx.win();openModal(`<div class="medal" style="width:110px;height:110px">${ic(b.icon,54)}</div><h2>Yeni rozet: ${b.name}</h2><p>${b.desc}</p>${anka('cheer',90)}<button class="b3" type="button" id="mok">Harika!</button>`);$('#mok').onclick=closeModal},q.length?5800:2900)}
+  if(nb.length){const b=BADGES.find(x=>x.id===nb[0]);setTimeout(()=>{sfx.win();openModal(`<div class="medal" style="width:110px;height:110px">${ic(b.icon,54)}</div><h2>Yeni rozet: ${b.name}</h2><p>${b.desc}</p>${anka('cheer',90,undefined,'act-dance')}<button class="b3" type="button" id="mok">Harika!</button>`);$('#mok').onclick=closeModal},q.length?5800:2900)}
 }

@@ -637,7 +637,7 @@ function renderExp(id){
     </div>
   </div>`;
   LX={x,task:first<0?0:first,slow:false,raf:0,res:{}};
-  const say=(mood,txt)=>{$('#xAnka').innerHTML=`${anka(mood,64)}<p>${esc(txt)}</p>`};
+  const say=(mood,txt)=>{$('#xAnka').innerHTML=`${anka(mood,64,undefined,mood==='cheer'?'act-jump':'act-nod')}<p>${esc(txt)}</p>`};
   if(!window.THREE){$('#st3').insertAdjacentHTML('beforeend','<div class="s3err"><p>3 boyutlu sahne açılamadı. <b>js/three.min.js</b> dosyası eksik olabilir.</p></div>');return}
   try{
     const cv=$('#cv3');if(x.grabby)cv.style.touchAction='none';

@@ -5,7 +5,8 @@
 
 const ANKA_NAME='Anka';
 
-function anka(mood='happy',size=100,acc){
+/* cls: ek sınıflar. Örn. 'act-jump' ilk gösterimde bir kez zıplatır. */
+function anka(mood='happy',size=100,acc,cls){
   if(acc===undefined)acc=(typeof S!=='undefined'&&S&&S.equip)||null;
   const ink='#2F2E24',body='#E58A2C',dark='#A3461F',deep='#7A2E16',belly='#F7DDA6',tile='#EBC27A',beak='#8E2B22';
   const cheer=mood==='cheer',sad=mood==='sad',wow=mood==='wow',wave=mood==='wave',sleep=mood==='sleep',think=mood==='think';
@@ -40,7 +41,7 @@ function anka(mood='happy',size=100,acc){
     eyes=`<path d="${d}" stroke="${ink}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
   }else{
     const pr=wow?6:8,py=sad?72:think?62:68,px=think?3:2;
-    eyes=[54,86].map(cx=>`<ellipse cx="${cx}" cy="66" rx="16" ry="17.5" fill="#fff"/><circle cx="${cx+px}" cy="${py}" r="${pr}" fill="${ink}"/><circle cx="${cx+px+3}" cy="${py-3}" r="2.6" fill="#fff"/><ellipse class="lid" cx="${cx}" cy="66" rx="17" ry="18.5" fill="${body}"/>`).join('');
+    eyes=[54,86].map(cx=>`<ellipse cx="${cx}" cy="66" rx="16" ry="17.5" fill="#fff"/><g class="pup"><circle cx="${cx+px}" cy="${py}" r="${pr}" fill="${ink}"/><circle cx="${cx+px+3}" cy="${py-3}" r="2.6" fill="#fff"/></g><ellipse class="lid" cx="${cx}" cy="66" rx="17" ry="18.5" fill="${body}"/>`).join('');
     if(sad)eyes+=`<path d="M37 56 C 44 50 56 47 66 49 L66 54 C 56 52 45 55 37 60 Z" fill="${body}"/><path d="M103 56 C 96 50 84 47 74 49 L74 54 C 84 52 95 55 103 60 Z" fill="${body}"/>`;
   }
   let brows='';
@@ -55,15 +56,17 @@ function anka(mood='happy',size=100,acc){
   const cheeks=`<ellipse cx="34" cy="88" rx="7" ry="4.5" fill="#E8776A" opacity=".5"/><ellipse cx="106" cy="88" rx="7" ry="4.5" fill="#E8776A" opacity=".5"/>`;
   const feet=`<path d="M57 139 l-6 7 M57 139 v8 M57 139 l6 7 M83 139 l-6 7 M83 139 v8 M83 139 l6 7" stroke="${deep}" stroke-width="3.6" stroke-linecap="round"/>`;
   let extra='';
-  if(sleep)extra=`<text x="104" y="30" font-family="JetBrains Mono,monospace" font-weight="700" font-size="16" fill="${deep}">z</text><text x="116" y="18" font-family="JetBrains Mono,monospace" font-weight="700" font-size="12" fill="${deep}">z</text>`;
-  if(think)extra=`<circle cx="112" cy="30" r="4" fill="${dark}" opacity=".5"/><circle cx="122" cy="18" r="6" fill="${dark}" opacity=".5"/>`;
+  if(sad)extra=`<path class="tear" d="M38 80 C 35 86 34 90 38 92 C 42 90 41 86 38 80 Z" fill="#8FC1D9"/>`;
+  if(sleep)extra=`<g class="zz"><text x="104" y="30" font-family="JetBrains Mono,monospace" font-weight="700" font-size="16" fill="${deep}">z</text><text x="116" y="18" font-family="JetBrains Mono,monospace" font-weight="700" font-size="12" fill="${deep}">z</text></g>`;
+  if(think)extra=`<circle class="thd" cx="112" cy="30" r="4" fill="${dark}" opacity=".5"/><circle class="thd thd2" cx="122" cy="18" r="6" fill="${dark}" opacity=".5"/>`;
   /* aksesuarlar (mağaza) */
   let a='';
   if(acc==='gozluk')a=`<g fill="rgba(255,255,255,.18)" stroke="${ink}" stroke-width="3.5"><circle cx="54" cy="66" r="19"/><circle cx="86" cy="66" r="19"/></g><path d="M66 64 Q70 60 74 64" stroke="${ink}" stroke-width="3.5" fill="none"/>`;
   if(acc==='baret')a=`<path d="M32 40 Q70 -8 108 40 Z" fill="#D9822B" stroke="${ink}" stroke-width="3"/><path d="M70 9 V40" stroke="#A3461F" stroke-width="5"/><rect x="26" y="36" width="88" height="10" rx="3" fill="#A3461F" stroke="${ink}" stroke-width="3"/>`;
   if(acc==='tac')a=`<path d="M44 34 L50 10 L60 24 L70 4 L80 24 L90 10 L96 34 Z" fill="#E8C35A" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/><rect x="66" y="21" width="8" height="8" transform="rotate(45 70 25)" fill="#8E2B22"/>`;
   if(acc==='zeytin')a=`<g fill="#4B5A3A" stroke="${ink}" stroke-width="1.4"><ellipse cx="34" cy="44" rx="12" ry="5" transform="rotate(-40 34 44)"/><ellipse cx="46" cy="32" rx="12" ry="5" transform="rotate(-20 46 32)"/><ellipse cx="94" cy="32" rx="12" ry="5" transform="rotate(20 94 32)"/><ellipse cx="106" cy="44" rx="12" ry="5" transform="rotate(40 106 44)"/></g><circle cx="40" cy="38" r="3" fill="#2F3A28"/><circle cx="100" cy="38" r="3" fill="#2F3A28"/>`;
-  return `<svg class="anka ${mood}" width="${size}" height="${Math.round(size*(H+10)/(W+20))}" viewBox="-10 -6 ${W+20} ${H+10}" aria-hidden="true">${tail}${wingsBack}${crest}${bodyP}${bellyP}${wingsFront}${cheeks}${eyes}${brows}${beakP}${feet}${extra}${a}</svg>`;
+  const d=-(Math.random()*7).toFixed(2);
+  return `<svg class="anka ${mood}${cls?' '+cls:''}" style="--ad:${d}s" width="${size}" height="${Math.round(size*(H+10)/(W+20))}" viewBox="-10 -6 ${W+20} ${H+10}" aria-hidden="true"><g class="ak-all"><g class="ak-tail">${tail}</g><g class="ak-bd">${wingsBack}${crest}${bodyP}${bellyP}${wingsFront}${cheeks}<g class="ak-face">${eyes}${brows}${beakP}</g>${a}</g>${feet}${extra}</g></svg>`;
 }
 
 /* Anka'nın sözleri */
@@ -77,3 +80,19 @@ const ANKA={
   quit:'Gitme! Kıvılcımımız sönmesin.'
 };
 const pickL=a=>a[Math.random()*a.length|0];
+
+/* ================= HAREKETLER =================
+   Anka'ya dokununca ya da bir şey olunca kısa bir hareket yapar (Duolingo'daki Duo gibi). */
+const ANKA_ACTS=['jump','spin','wiggle','dance','nod','shake','enter','flip'];
+function ankaAct(el,name){
+  if(!el||(typeof reduce!=='undefined'&&reduce))return;
+  ANKA_ACTS.forEach(a=>el.classList.remove('act-'+a));void el.getBoundingClientRect();
+  el.classList.add('act-'+name);clearTimeout(el._akT);el._akT=setTimeout(()=>el.classList.remove('act-'+name),2600);
+}
+const ANKA_TAP=['Hey, gıdıklanıyorum!','Uçmaya hazırım!','Bir ders daha yapalım mı?','Kanatlarım ısındı!','Kıvılcım gibiyim!','Beni seçtiğin için teşekkürler!','Hadi öğrenelim!'];
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('svg.anka');if(!a)return;
+  const n=pick(['jump','spin','wiggle','dance','nod','flip']);ankaAct(a,n);
+  if(typeof sfx!=='undefined'&&sfx.chirp)sfx.chirp();
+  const bb=a.parentElement&&a.parentElement.querySelector('.bb');if(bb)bb.textContent=pickL(ANKA_TAP);
+});

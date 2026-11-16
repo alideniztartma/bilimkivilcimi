@@ -12,6 +12,8 @@ Anka, Antioch Rising'in yavru anka kuşudur. Anka kuşu küllerinden yeniden do�
 
 Anka sitenin her yerindedir: dersleri anlatır, doğru cevapta sevinir, yanlış cevapta cesaret verir, ders yolunda sıradaki dersi gösterir, laboratuvarda ipucu verir. Mağazadan ona zeytin dalı, bilge gözlüğü, mühendis bareti ve taç alınabilir.
 
+Duolingo'daki Duo gibi canlıdır: nefes alır, göz kırpar, etrafına bakar, kuyruğunu sallar. Doğru cevapta zıplar, üst üste doğrularda takla atar ve döner, yanlışta başını sallayıp üzülür, ders bitince dans eder. Dokununca da rastgele bir hareket yapıp konuşur.
+
 ## Neler var?
 
 ### Kodlama yolu ("Yazılımın Duolingosu")
@@ -46,7 +48,7 @@ Her deneyde:
 **Deney defterim** sayfası bütün ölçümleri tablo ve grafik olarak toplar, yazdırılabilir.
 
 ### Alanlar: Yazılım, Mekanik, Elektronik
-Öğren sayfasının üstündeki sekmelerle üç alan arasında geçilir. Her alan, kodlama yolundaki gibi ünitelerden, derslerden, sandıklardan ve kupa sınavından oluşan bir yol haritasıdır. Yolun sonunda sıradaki üniteler "Yakında" olarak görünür.
+Öğrenci ilk açılışta hangi alanı öğrenmek istediğini seçer. Sonra üst çubuktaki küçük alan düğmesiyle (Duolingo'daki dil bayrağı gibi) istediği zaman geçebilir. Her alan, kodlama yolundaki gibi ünitelerden, derslerden, sandıklardan ve kupa sınavından oluşan bir yol haritasıdır. Yolun sonunda sıradaki üniteler "Yakında" olarak görünür.
 
 | Alan | Üniteler |
 |---|---|

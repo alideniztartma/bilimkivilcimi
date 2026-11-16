@@ -13,7 +13,7 @@ function ankaMsg(){
   else if(S.day.xp<S.goal){mood='happy';txt=`Bugünkü hedefine <b>${S.goal-S.day.xp} XP</b> kaldı. Hadi devam!`;cta=cur?['Devam et','lesson']:['Atölye','#atolye']}
   else if(!S.dailyDone[t]){mood='think';txt='Günün bulmacasını çözdün mü? <b>15 mozaik taşı</b> seni bekliyor.';cta=['Bulmaca','daily']}
   else{mood='cheer';txt='Bugünkü hedefini tamamladın! Laboratuvarda deney yapmaya ne dersin?';cta=['Laboratuvar','#lab']}
-  return `<div class="card amsg">${anka(mood,84)}<div class="bub">${txt}</div>${cta?(cta[1][0]==='#'?`<a class="b3 sm" href="${cta[1]}">${cta[0]}</a>`:`<button class="b3 sm" type="button" data-amsg="${cta[1]}">${cta[0]}</button>`):''}<button class="x" type="button" data-amsg="hide" aria-label="Mesajı kapat">${ic('x',18)}</button></div>`;
+  return `<div class="card amsg">${anka(mood,84,undefined,'act-enter')}<div class="bub">${txt}</div>${cta?(cta[1][0]==='#'?`<a class="b3 sm" href="${cta[1]}">${cta[0]}</a>`:`<button class="b3 sm" type="button" data-amsg="${cta[1]}">${cta[0]}</button>`):''}<button class="x" type="button" data-amsg="hide" aria-label="Mesajı kapat">${ic('x',18)}</button></div>`;
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-amsg]');if(!b)return;const a=b.dataset.amsg;
   if(a==='hide'){S.msgHide=dkey();save();renderPath();return}
@@ -31,11 +31,22 @@ function nodeState(n){
   return S.trophies[n.ui]?'done':unitDone(n.ui)?'ready':'lock';
 }
 const OFF=[0,54,80,54,0,-54,-80,-54];
-function fieldTabs(){const cf=curField();
-  return `<div class="ftabs" role="tablist" aria-label="Alan seç">${FIELDS.map(f=>{const ls=ALL_LESSONS.filter(l=>l.field===f.id),d=ls.filter(l=>S.done[l.id]).length;
-    return `<button type="button" role="tab" aria-selected="${f.id===cf}" data-field="${f.id}"><span class="fti">${ic(f.icon,22)}</span><span><b>${f.title}</b><small>${d} / ${ls.length} ders</small></span></button>`}).join('')}</div>`}
+/* Alan seçici: üst çubukta küçük düğme (Duolingo'daki dil bayrağı gibi) */
+function fieldBtn(){const f=fieldOf(curField());
+  return `<button class="fbtn" type="button" data-fmenu aria-haspopup="true" aria-label="Alan: ${f.title}. Değiştirmek için dokun" title="Alan değiştir"><span class="fbi">${ic(f.icon,18)}</span><span class="fbt">${f.title}</span><svg class="fcar" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="square"/></svg></button>`}
+function fieldCards(cls){const cf=curField();return FIELDS.map(f=>{const ls=ALL_LESSONS.filter(l=>l.field===f.id),d=ls.filter(l=>S.done[l.id]).length;
+  return `<button type="button" class="${cls}" data-field="${f.id}" aria-pressed="${f.id===cf}"><span class="fci">${ic(f.icon,24)}</span><span class="fct"><b>${f.title}</b><small>${esc(f.desc)}</small><span class="bar"><i style="width:${ls.length?d/ls.length*100:0}%"></i><span>${d} / ${ls.length} ders</span></span></span>${f.id===cf?`<span class="fck">${ic('check',18)}</span>`:''}</button>`}).join('')}
+function closeFmenu(){const m=$('.fmenu');if(m)m.remove();$$('[data-fmenu]').forEach(b=>b.setAttribute('aria-expanded','false'))}
+function openFmenu(btn){closeFmenu();const r=btn.getBoundingClientRect(),m=document.createElement('div');m.className='fmenu';m.setAttribute('role','dialog');m.setAttribute('aria-label','Alan seç');
+  m.innerHTML=`<p class="fmh">Hangi alanı öğrenmek istersin?</p>${fieldCards('fopt')}<p class="fmf">İlerlemen her alanda ayrı saklanır. İstediğin zaman geçebilirsin.</p>`;
+  document.body.appendChild(m);const w=m.offsetWidth;m.style.top=(r.bottom+8)+'px';m.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2))+'px';
+  btn.setAttribute('aria-expanded','true');const f=m.querySelector('[aria-pressed="true"]')||m.querySelector('button');if(f)f.focus()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-fmenu]');if(b){e.stopPropagation();if($('.fmenu'))closeFmenu();else{sfx.tap();openFmenu(b)}return}
+  if($('.fmenu')&&!e.target.closest('.fmenu'))closeFmenu()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('.fmenu'))closeFmenu()});
+addEventListener('resize',closeFmenu);
 function renderPath(){
-  const ns=allNodes(),cf=curField(),F=fieldOf(cf);let h=fieldTabs()+ankaMsg()+mobileQuests();
+  const ns=allNodes(),cf=curField(),F=fieldOf(cf);let h=ankaMsg()+mobileQuests();
   fieldUnits(cf).forEach(({u,ui},fi_)=>{
     const un=ns.filter(n=>n.ui===ui),k=fi_+1;
     h+=`<section class="unit" style="--c:var(--u${ui+1});--cd:var(--u${ui+1}d)">
@@ -62,8 +73,9 @@ function renderPath(){
 }
 function mobileQuests(){const n=Object.keys(S.day.claimed).length;
   return `<a class="card mquest" href="#gorevler"><span class="mq-i">${ic('target',22)}</span><span><b>Günlük görevler</b><small>${n} / 3 tamamlandı</small></span><span class="mq-go">${ic('arrowU',18)}</span></a>`}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-field]');if(!b)return;S.field=b.dataset.field;save();sfx.tap();renderPath();BUDDY_LINE=pickL(ANKA.path);
-  if(page!=='ogren')location.hash='#ogren';else{const t=$('.ftabs');if(t&&t.getBoundingClientRect().top<0)t.scrollIntoView({block:'start'})}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-field]');if(!b||b.closest('#mbox'))return;const changed=S.field!==b.dataset.field;S.field=b.dataset.field;save();closeFmenu();sfx.tap();BUDDY_LINE=pickL(ANKA.path);renderStats();renderPath();
+  if(page!=='ogren')location.hash='#ogren';else{window.scrollTo(0,0);scrollCur()}
+  if(changed)toast(ic(fieldOf(S.field).icon,20)+' '+fieldOf(S.field).title+' yoluna geçtin')});
 function closePops(){$$('.pop').forEach(p=>p.remove());$$('.nw.open').forEach(n=>n.classList.remove('open'))}
 function popIn(w,html,cls,color){const p=document.createElement('div');p.className='pop'+(cls?' '+cls:'');if(color)p.style.setProperty('--c',color);p.innerHTML=html;w.appendChild(p);w.classList.add('open');return p}
 $('#path').addEventListener('click',e=>{
@@ -98,7 +110,7 @@ async function openChest(n){
 
 /* ================= ALIŞTIRMALAR ================= */
 const norm=s=>String(s).toLocaleLowerCase('tr').replace(/["'“”]/g,'').replace(/\s+/g,' ').trim();
-const mini=(m='happy')=>`<span class="mini">${anka(m,64)}</span>`;
+const mini=(m='happy')=>`<span class="mini">${anka(m,64,undefined,'act-enter')}</span>`;
 const qHead=(ex,extra='')=>`${extra}<div class="qh">${mini()}<h2>${esc(ex.q)}</h2>${spkBtn(ex.q)}</div>${ex.code?`<pre class="code">${hl(ex.code)}</pre>`:''}`;
 const DIRS=[[0,-1],[1,0],[0,1],[-1,0]];
 const CMD={f:['İleri git','arrowU'],l:['Sola dön','rotL'],r:['Sağa dön','rotR']};
@@ -107,7 +119,7 @@ function buildEx(ex,ch){
   const o={el,ready:()=>false,check:()=>({ok:false})};
   const top=L.mode==='exam'?`<span class="lbl eyebrow">KUPA SINAVI · ${L.done+1} / ${L.total}</span>`:L.mode==='speed'?`<span class="lbl eyebrow">HIZLI TUR · ${L.score} PUAN</span>`:L.combo>=3?`<span class="combo lbl">${fi('flame',18)} ${L.combo} doğru üst üste!</span>`:'';
   if(ex.t==='info'){
-    el.innerHTML=`<div class="say">${anka('wave',130)}<div class="bubble"><h3>${ex.h}${spkBtn(ex.h+'. '+ex.p)}</h3><p>${ex.p}</p></div></div>${ex.code?`<pre class="code">${hl(ex.code)}</pre>`:''}`;
+    el.innerHTML=`<div class="say">${anka('wave',130,undefined,'act-enter')}<div class="bubble"><h3>${ex.h}${spkBtn(ex.h+'. '+ex.p)}</h3><p>${ex.p}</p></div></div>${ex.code?`<pre class="code">${hl(ex.code)}</pre>`:''}`;
     o.speech=ex.h+'. '+ex.p;o.ready=()=>true;o.check=()=>({ok:true,silent:true});return o}
   o.speech=ex.q;
   if(ex.t==='mc'){
@@ -256,7 +268,7 @@ async function mainBtn(){
     if(L.mode==='speed'){advance(ok);return}
     const foot=$('#lfoot');foot.className='lfoot '+(ok?'ok':'bad');
     const okLine=L.combo>=8?ANKA.combo8:L.combo===5?ANKA.combo5:L.combo===3?ANKA.combo3:pickL(ANKA.ok);
-    $('#fb').innerHTML=`<div class="fa">${anka(ok?'cheer':'sad',80)}</div><div><h3>${ok?okLine:r.robot?pickL(ANKA.bad):'Doğru cevap:'}</h3>${!ok&&r.ans?(r.mono?`<pre>${esc(r.ans)}</pre>`:`<p>${esc(r.ans)}</p>`):''}${r.tip&&(!ok||ex.t==='mc')?`<p class="tp">${esc(r.tip)}</p>`:''}</div>`;
+    $('#fb').innerHTML=`<div class="fa">${anka(ok?'cheer':'sad',80,undefined,ok?(L.combo>=5?'act-spin':L.combo>=3?'act-flip':'act-jump'):'act-shake')}</div><div><h3>${ok?okLine:r.robot?pickL(ANKA.bad):'Doğru cevap:'}</h3>${!ok&&r.ans?(r.mono?`<pre>${esc(r.ans)}</pre>`:`<p>${esc(r.ans)}</p>`):''}${r.tip&&(!ok||ex.t==='mc')?`<p class="tp">${esc(r.tip)}</p>`:''}</div>`;
     btn.textContent=ok?'Devam':'Anladım';btn.className='b3 '+(ok?'olive':'garnet');btn.disabled=false;L.state='fb';btn.focus();
     if(!ok&&MODES[L.mode].hearts&&S.hearts<=0)L.state='dead';
   }else if(L.state==='fb')advance(L.lastOk);
@@ -282,7 +294,7 @@ document.addEventListener('keydown',e=>{
 $('#lclose').addEventListener('click',askQuit);
 function askQuit(){
   if(!L||L.state==='end'){closeLesson();return}
-  openModal(`${anka('sad',100)}<h2>${ANKA.quit}</h2><p>Şimdi çıkarsan bu turdaki ilerlemen kaybolur.</p><button class="b3" type="button" id="mstay">Devam et</button><button class="b3 ghost" type="button" id="mquit" style="--oc:var(--garnet)">Çık</button>`);
+  openModal(`${anka('sad',100,undefined,'act-shake')}<h2>${ANKA.quit}</h2><p>Şimdi çıkarsan bu turdaki ilerlemen kaybolur.</p><button class="b3" type="button" id="mstay">Devam et</button><button class="b3 ghost" type="button" id="mquit" style="--oc:var(--garnet)">Çık</button>`);
   $('#mstay').onclick=closeModal;$('#mquit').onclick=()=>{closeModal();closeLesson()}}
 function closeLesson(){clearInterval(timerI);if(canSpeak)try{speechSynthesis.cancel()}catch(e){}$('#lesson').hidden=true;document.body.style.overflow='';L=null;renderAll();scrollCur()}
 function heartsOut(inLesson){
@@ -327,11 +339,11 @@ function finish(){
   const btn=$('#lbtn');btn.className='b3';btn.textContent='Devam';btn.disabled=false;
   const mm=Math.floor(secs/60)+':'+String(secs%60).padStart(2,'0');
   const third=m==='speed'?`<div style="--c:var(--terra)"><small>SKOR</small><b>${ic('timer',22)}${L.score}</b></div>`:`<div style="--c:var(--olive)"><small>SÜRE</small><b>${ic('clock',22)}${mm}</b></div>`;
-  const steps=[()=>`<div class="done-screen">${anka(mood,150)}<h1>${title}</h1><p>${sub}</p>
+  const steps=[()=>`<div class="done-screen">${anka(mood,150,undefined,mood==='sad'?'act-shake':'act-dance')}<h1>${title}</h1><p>${sub}</p>
     <div class="trio"><div style="--c:var(--ember)"><small>XP</small><b>${fi('bolt',22)}${xp}</b></div>
     <div style="--c:var(--terra)"><small>DOĞRULUK</small><b>${ic('target2',22)}%${acc}</b></div>${third}</div>${gems?`<div class="stat gm" style="font-size:1.4rem">${fi('gem',28)} +${gems} taş</div>`:''}${extra}</div>`];
   if(firstToday)steps.push(()=>`<div class="done-screen"><div class="bigflame">${fi('flame',190)}<b>${S.streak}</b></div><h1 style="color:var(--ember)">${S.streak} günlük seri!</h1><p>${S.streak===1?'Serin başladı! Yarın da gel, ateşi canlı tut.':'Bugün de geldin. Yarın görüşürüz!'}</p></div>`);
-  if(goalHit)steps.push(()=>`<div class="done-screen">${anka('wow',130)}<h1>Günlük hedefe ulaştın!</h1><p>Bugün ${S.day.xp} XP topladın. Hedefin ${S.goal} XP idi.</p></div>`);
+  if(goalHit)steps.push(()=>`<div class="done-screen">${anka('wow',130,undefined,'act-jump')}<h1>Günlük hedefe ulaştın!</h1><p>Bugün ${S.day.xp} XP topladın. Hedefin ${S.goal} XP idi.</p></div>`);
   qDone.forEach(q=>steps.push(()=>`<div class="done-screen"><div style="color:var(--ember)">${ic('chest',120)}</div><h1>Görev tamam!</h1><p>${esc(q.name)}</p><div class="stat gm" style="font-size:1.6rem">${fi('gem',32)} +${q.gems}</div></div>`));
   newB.forEach(id=>{const b=BADGES.find(x=>x.id===id);steps.push(()=>`<div class="done-screen"><div class="medal" style="width:120px;height:120px">${ic(b.icon,60)}</div><h1>Yeni rozet!</h1><h2>${b.name}</h2><p>${b.desc}</p></div>`)});
   let k=0;
@@ -587,7 +599,7 @@ function renderProfile(){
 /* ================= DURUM ÇUBUĞU, YAN KARTLAR ================= */
 function renderStats(){
   const today=S.lastDay===dkey();
-  const h=`<span class="stat fl ${today?'':'off'}" title="Günlük seri">${fi('flame',24)}${S.streak}</span><span class="stat gm" title="Mozaik taşı">${fi('gem',22)}${S.gems}</span><span class="stat ht" title="Kalp">${fi('heart',24)}${S.hearts}</span>`;
+  const h=fieldBtn()+`<span class="stat fl ${today?'':'off'}" title="Günlük seri">${fi('flame',24)}${S.streak}</span><span class="stat gm" title="Mozaik taşı">${fi('gem',22)}${S.gems}</span><span class="stat ht" title="Kalp">${fi('heart',24)}${S.hearts}</span>`;
   $$('.stats-slot').forEach(s=>{if(s.classList.contains('stats'))s.innerHTML=h;else{s.style.display='flex';s.innerHTML=h}});
   const t=dkey(),days=['Pt','Sa','Ça','Pe','Cu','Ct','Pz'],now=new Date(),wd=(now.getDay()+6)%7;
   $('#rcStreak').innerHTML=`<div class="streakbig"><span style="color:${today?'var(--ember)':'var(--off)'}">${fi('flame',40)}</span><div><b>${S.streak}</b><div style="color:var(--muted);font-size:.88rem">günlük seri</div></div></div>
@@ -605,15 +617,22 @@ function renderStats(){
 function onboard(){
   let goal=20;
   const lock=()=>{$('#mbox').dataset.lockbg='1'};
-  const s1=()=>{openModal(`${anka('wave',130)}<h2>Merhaba! Ben Anka.</h2><p>Antioch Rising'in yavru anka kuşuyum. Sana oyun oynar gibi kodlamayı ve bilimi öğreteceğim. Anka kuşları küllerinden yeniden doğar. Ben de her hatadan sonra yeniden kalkarım, sen de öyle yap!</p><button class="b3" type="button" id="o1">Hadi başlayalım</button>`);lock();$('#o1').onclick=s2};
-  const s2=()=>{openModal(`${anka('happy',90)}<h2>Adın ne?</h2><p>Sertifikalarında bu ad yazacak. İstersen boş bırakabilirsin.</p><input id="oname" maxlength="24" placeholder="Adın" value="${esc(S.name)}"><button class="b3" type="button" id="o2">Devam</button>`);lock();
-    const go=()=>{S.name=$('#oname').value.trim();s3()};$('#o2').onclick=go;$('#oname').addEventListener('keydown',e=>{if(e.key==='Enter')go()})};
-  const s3=()=>{openModal(`${anka('wow',90)}<h2>${S.name?esc(S.name)+', g':'G'}ünde ne kadar çalışmak istersin?</h2>
+  const s1=()=>{openModal(`${anka('wave',130,undefined,'act-enter')}<h2>Merhaba! Ben Anka.</h2><p>Antioch Rising'in yavru anka kuşuyum. Sana oyun oynar gibi yazılımı, mekaniği ve elektroniği öğreteceğim. Anka kuşları küllerinden yeniden doğar. Ben de her hatadan sonra yeniden kalkarım, sen de öyle yap!</p><button class="b3" type="button" id="o1">Hadi başlayalım</button>`);lock();$('#o1').onclick=s2};
+  const s2=()=>{openModal(`<div id="oAnka">${anka('think',90,undefined,'act-enter')}</div><h2>Ne öğrenmek istersin?</h2><p>Bir robot takımında üç ana alan vardır. Birini seç, sonra istediğin zaman üstteki düğmeden değiştirebilirsin.</p>
+    <div class="fpick">${fieldCards('fopt')}</div><button class="b3" type="button" id="o2f">Devam</button>`);lock();
+    $('.fpick').onclick=e=>{const b=e.target.closest('[data-field]');if(!b)return;S.field=b.dataset.field;sfx.chirp();
+      $$('.fpick [data-field]').forEach(x=>{x.setAttribute('aria-pressed',x===b);const c=x.querySelector('.fck');if(c)c.remove()});
+      b.insertAdjacentHTML('beforeend',`<span class="fck">${ic('check',18)}</span>`);
+      $('#oAnka').innerHTML=anka('cheer',90,undefined,'act-jump')};
+    $('#o2f').onclick=s3};
+  const s3=()=>{openModal(`${anka('happy',90,undefined,'act-enter')}<h2>Adın ne?</h2><p>Sertifikalarında bu ad yazacak. İstersen boş bırakabilirsin.</p><input id="oname" maxlength="24" placeholder="Adın" value="${esc(S.name)}"><button class="b3" type="button" id="o2">Devam</button>`);lock();
+    const go=()=>{S.name=$('#oname').value.trim();s4()};$('#o2').onclick=go;$('#oname').addEventListener('keydown',e=>{if(e.key==='Enter')go()})};
+  const s4=()=>{openModal(`${anka('wow',90,undefined,'act-enter')}<h2>${S.name?esc(S.name)+', g':'G'}ünde ne kadar çalışmak istersin?</h2>
     <div class="goals">${[[10,'Rahat','5 dakika'],[20,'Normal','10 dakika'],[30,'Ciddi','15 dakika'],[50,'Çılgın','20 dakika']].map(g=>`<button type="button" data-g="${g[0]}" aria-pressed="${g[0]===goal}"><span>${g[1]} · ${g[2]}</span><span class="num">${g[0]} XP</span></button>`).join('')}</div>
     ${canSpeak?`<label style="display:flex;gap:10px;align-items:center;justify-content:center;font-weight:700"><input type="checkbox" id="otts" style="width:22px;height:22px"> Soruları bana sesli oku</label>`:''}
     <button class="b3" type="button" id="o3">İlk dersime başla</button>`);lock();
     $('.goals').onclick=e=>{const b=e.target.closest('[data-g]');if(!b)return;goal=+b.dataset.g;$$('.goals button').forEach(x=>x.setAttribute('aria-pressed',x===b))};
-    $('#o3').onclick=()=>{S.goal=goal;const t=$('#otts');if(t)S.tts=t.checked;S.onb=true;save();closeModal();renderAll();startMode('lesson',{lesson:ALL_LESSONS[0]})}};
+    $('#o3').onclick=()=>{S.goal=goal;const t=$('#otts');if(t)S.tts=t.checked;S.onb=true;save();closeModal();renderAll();const l=curLesson();if(l)startMode('lesson',{lesson:l})}};
   s1();
 }
 
