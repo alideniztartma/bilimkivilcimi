@@ -9,7 +9,7 @@ const U=[
         {h:'Hata (bug)',p:'Programdaki yanlışa hata denir. İngilizcede bug, yani böcek derler. Hatayı bulup düzeltmeye hata ayıklama denir.'}],
  lessons:[
  {id:'u1l1',title:'Algoritma nedir?',ex:[
-  {t:'info',h:'Merhaba! Ben Anka.',p:'Bir işi yapmak için sırayla izlediğimiz adımlara <b>algoritma</b> denir. Sabah okula hazırlanman bile bir algoritma!'},
+  {t:'info',h:'Algoritma nedir?',p:'Bir işi yapmak için sırayla izlediğimiz adımlara <b>algoritma</b> denir. Sabah okula hazırlanman bile bir algoritma!'},
   {t:'mc',q:'Hangisi bir algoritmadır?',opts:['Bir kek tarifi','Bir elma','Mavi renk','Bir kedi'],a:0,tip:'Tarif, keki yapmak için sırayla izlenen adımları anlatır.'},
   {t:'order',q:'Dişlerini fırçalamak için adımları sırala.',lines:true,items:['Diş fırçasını al','Üstüne diş macunu sür','Dişlerini fırçala','Ağzını çalkala'],plain:true},
   {t:'mc',q:'Adımların sırası karışırsa ne olur?',opts:['İş yanlış yapılır','Hiçbir şey değişmez','İş daha hızlı biter'],a:0},

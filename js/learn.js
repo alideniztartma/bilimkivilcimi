@@ -653,9 +653,11 @@ function onboard(){
   el.addEventListener('click',e=>{
     if(e.target.closest('[data-oback]')){if(steps[st.i]==='name')S.name=($('#oname').value||'').trim();st.i=Math.max(0,st.i-1);st.dir=-1;view();return}
     if(e.target.closest('[data-onext]')){next();return}
-    const f=e.target.closest('[data-of]');if(f){st.field=f.dataset.of;S.field=st.field;sfx.chirp();view();return}
-    const g=e.target.closest('[data-og]');if(g){st.goal=+g.dataset.og;sfx.chirp();view();return}
-    const t=e.target.closest('[data-ot]');if(t){S.tts=t.dataset.ot==='1';st.ttsSet=true;sfx.chirp();if(S.tts)speak('Tamam, soruları sesli okuyacağım.');view()}});
+    const pickOpt=b=>{el.querySelectorAll('.oopt').forEach(x=>x.setAttribute('aria-pressed',x===b));const n=el.querySelector('[data-onext]');if(n)n.disabled=false;sfx.chirp();
+      const a=el.querySelector('.ohead .anka');if(a&&typeof ankaAct==='function')ankaAct(a,'jump')};
+    const f=e.target.closest('[data-of]');if(f){st.field=f.dataset.of;S.field=st.field;pickOpt(f);return}
+    const g=e.target.closest('[data-og]');if(g){st.goal=+g.dataset.og;pickOpt(g);return}
+    const t=e.target.closest('[data-ot]');if(t){S.tts=t.dataset.ot==='1';st.ttsSet=true;pickOpt(t);if(S.tts)speak('Tamam, soruları sesli okuyacağım.')}});
   view();
 }
 
