@@ -7,7 +7,7 @@ const dayNum=k=>{const [y,m,d]=k.split('-').map(Number);return Math.round(new Da
 const newDay=()=>({k:dkey(),xp:0,lessons:0,combo:0,perfect:0,robot:0,lab:0,claimed:{}});
 const newUid=()=>{try{const a=new Uint8Array(6);crypto.getRandomValues(a);return [...a].map(x=>x.toString(36).padStart(2,'0')).join('').slice(0,10)}catch(e){return Math.random().toString(36).slice(2,12)}};
 const DEF=()=>({v:1,name:'',goal:20,xp:0,gems:50,hearts:5,heartAt:null,streak:0,best:0,lastDay:null,days:[],freeze:0,done:{},chests:{},trophies:{},badges:{},owned:{},equip:null,
-  sound:true,tts:false,theme:'auto',onb:false,joined:dkey(),lessons:0,wrong:{},speedBest:0,draw:{},dailyDone:{},msgHide:null,
+  sound:true,vib:true,tts:false,theme:'auto',onb:false,joined:dkey(),lessons:0,wrong:{},speedBest:0,draw:{},dailyDone:{},msgHide:null,
   lab:{tasks:{},notes:{},found:{},seen:{},st:{},ask:{}},cat:{},field:'yazilim',wear:{head:null,face:null,neck:null},pet:{food:70,joy:70,t:Date.now(),inv:{misir:3},fed:0,pets:0},uid:newUid(),tok:newUid()+newUid()+newUid(),share:true,syncH:'',day:newDay()});
 let S=DEF();
 try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===1){S=Object.assign(DEF(),r);if(!r.uid||!r.tok){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(_){}}S.lab=Object.assign({tasks:{},notes:{},found:{},seen:{},st:{},ask:{}},r.lab||{})}}catch(e){}
@@ -53,6 +53,12 @@ function tone(seq,type='sine',vol=.12){if(!S.sound)return;
 const sfx={ok:()=>tone([[660,.09],[990,.16]]),bad:()=>tone([[196,.14],[147,.22]],'triangle',.16),tap:()=>tone([[520,.04]],'sine',.05),
   win:()=>tone([[523,.12],[659,.12],[784,.12],[1047,.3]],'triangle',.12),coin:()=>tone([[1200,.06],[1600,.12]],'square',.05),tick:()=>tone([[880,.03]],'square',.03),chirp:()=>tone([[1180,.05],[1560,.06],[1320,.07]],'sine',.06),
   whoosh:()=>tone([[300,.08],[500,.08],[800,.12]],'sawtooth',.04),splash:()=>tone([[180,.06],[120,.18]],'triangle',.1),thud:()=>tone([[90,.15]],'square',.12)};
+/* Titreşim: uygulamada Capacitor Haptics, tarayıcıda navigator.vibrate */
+function haptic(k){if(!S||S.vib===false)return;try{const H=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.Haptics;
+  if(H){if(k==='ok')H.notification({type:'SUCCESS'});else if(k==='bad')H.notification({type:'ERROR'});else if(k==='win')H.notification({type:'SUCCESS'});else H.impact({style:k==='heavy'?'MEDIUM':'LIGHT'});return}
+  if(navigator.vibrate)navigator.vibrate(k==='bad'?[35,50,35]:k==='ok'||k==='win'?[15,40,20]:k==='heavy'?25:12)}catch(e){}}
+['ok','bad','win'].forEach(k=>{const f=sfx[k];sfx[k]=(...a)=>{haptic(k);return f(...a)}});
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('button,a[href],[role="button"],[data-node],.node,label,summary');if(t&&!t.disabled)haptic('tap')},true);
 
 /* Sesli okuma */
 const canSpeak='speechSynthesis' in window&&typeof SpeechSynthesisUtterance!=='undefined';

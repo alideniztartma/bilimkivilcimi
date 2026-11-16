@@ -587,6 +587,7 @@ function renderProfile(){
   <div class="codebox"><code id="pcode">${code}</code><button class="b3 sm" type="button" id="pcopy">${ic('copy',16)}Kopyala</button></div></div>
   <div class="sec-h">Ayarlar</div>
   <div class="card set">
+    <div><b>Titreşim</b><div class="seg" id="sVib"><button type="button" data-v="1" aria-pressed="${S.vib!==false}">Açık</button><button type="button" data-v="0" aria-pressed="${S.vib===false}">Kapalı</button></div></div>
     <div><b>Ses efektleri</b><div class="seg" id="sSound"><button type="button" data-v="1" aria-pressed="${S.sound}">Açık</button><button type="button" data-v="0" aria-pressed="${!S.sound}">Kapalı</button></div></div>
     ${canSpeak?`<div><b>Soruları sesli oku</b><div class="seg" id="sTts"><button type="button" data-v="1" aria-pressed="${S.tts}">Açık</button><button type="button" data-v="0" aria-pressed="${!S.tts}">Kapalı</button></div></div>`:''}
     <div><b>Görünüm</b><div class="seg" id="sTheme">${[['auto','Otomatik'],['light','Gündüz'],['dark','Gece']].map(t=>`<button type="button" data-v="${t[0]}" aria-pressed="${S.theme===t[0]}">${t[1]}</button>`).join('')}</div></div>
@@ -600,7 +601,7 @@ function renderProfile(){
   $('#pcopy').onclick=async()=>{try{await navigator.clipboard.writeText(code);toast(ic('check',20)+' Kod kopyalandı')}catch(e){const r=document.createRange();r.selectNodeContents($('#pcode'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Kodu seçtim, kopyalayabilirsin')}};
   $$('[data-cert]').forEach(b=>b.onclick=()=>openCert(+b.dataset.cert));
   const segH=(id,fn)=>{const el=$(id);if(el)el.onclick=e=>{const b=e.target.closest('button');if(!b)return;fn(b.dataset.v);save();renderAll()}};
-  segH('#sSound',v=>S.sound=v==='1');segH('#sTts',v=>{S.tts=v==='1';if(S.tts)speak('Sesli okuma açık.')});segH('#sTheme',v=>{S.theme=v;applyTheme()});segH('#sGoal',v=>S.goal=+v);segH('#sShare',v=>{S.share=v==='1'});
+  segH('#sSound',v=>S.sound=v==='1');segH('#sVib',v=>{S.vib=v==='1';if(S.vib)haptic('heavy')});segH('#sTts',v=>{S.tts=v==='1';if(S.tts)speak('Sesli okuma açık.')});segH('#sTheme',v=>{S.theme=v;applyTheme()});segH('#sGoal',v=>S.goal=+v);segH('#sShare',v=>{S.share=v==='1'});
   let armed=false;$('#sReset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Emin misin? Tekrar bas';setTimeout(()=>{armed=false;if(e.target.isConnected)e.target.textContent='Sıfırla'},4000);return}
     try{localStorage.removeItem(KEY)}catch(_){ }S=DEF();S.lab.migrated=1;save();applyTheme();location.hash='#ogren';renderAll();onboard()};
 }
@@ -625,24 +626,36 @@ function renderStats(){
 
 /* ================= TANIŞMA ================= */
 function onboard(){
-  let goal=20;
-  const lock=()=>{$('#mbox').dataset.lockbg='1'};
-  const s1=()=>{openModal(`${anka('wave',130,undefined,'act-enter')}<h2>Merhaba! Ben Anka.</h2><p>Antioch Rising'in yavru anka kuşuyum. Sana oyun oynar gibi yazılımı, mekaniği ve elektroniği öğreteceğim. Anka kuşları küllerinden yeniden doğar. Ben de her hatadan sonra yeniden kalkarım, sen de öyle yap!</p><button class="b3" type="button" id="o1">Hadi başlayalım</button>`);lock();$('#o1').onclick=s2};
-  const s2=()=>{openModal(`<div id="oAnka">${anka('think',90,undefined,'act-enter')}</div><h2>Ne öğrenmek istersin?</h2><p>Bir robot takımında üç ana alan vardır. Birini seç, sonra istediğin zaman üstteki düğmeden değiştirebilirsin.</p>
-    <div class="fpick">${fieldCards('fopt')}</div><button class="b3" type="button" id="o2f">Devam</button>`);lock();
-    $('.fpick').onclick=e=>{const b=e.target.closest('[data-field]');if(!b)return;S.field=b.dataset.field;sfx.chirp();
-      $$('.fpick [data-field]').forEach(x=>{x.setAttribute('aria-pressed',x===b);const c=x.querySelector('.fck');if(c)c.remove()});
-      b.insertAdjacentHTML('beforeend',`<span class="fck">${ic('check',18)}</span>`);
-      $('#oAnka').innerHTML=anka('cheer',90,undefined,'act-jump')};
-    $('#o2f').onclick=s3};
-  const s3=()=>{openModal(`${anka('happy',90,undefined,'act-enter')}<h2>Adın ne?</h2><p>Sertifikalarında bu ad yazacak. İstersen boş bırakabilirsin.</p><input id="oname" maxlength="24" placeholder="Adın" value="${esc(S.name)}"><button class="b3" type="button" id="o2">Devam</button>`);lock();
-    const go=()=>{S.name=$('#oname').value.trim();s4()};$('#o2').onclick=go;$('#oname').addEventListener('keydown',e=>{if(e.key==='Enter')go()})};
-  const s4=()=>{openModal(`${anka('wow',90,undefined,'act-enter')}<h2>${S.name?esc(S.name)+', g':'G'}ünde ne kadar çalışmak istersin?</h2>
-    <div class="goals">${[[10,'Rahat','5 dakika'],[20,'Normal','10 dakika'],[30,'Ciddi','15 dakika'],[50,'Çılgın','20 dakika']].map(g=>`<button type="button" data-g="${g[0]}" aria-pressed="${g[0]===goal}"><span>${g[1]} · ${g[2]}</span><span class="num">${g[0]} DP</span></button>`).join('')}</div>
-    ${canSpeak?`<label style="display:flex;gap:10px;align-items:center;justify-content:center;font-weight:700"><input type="checkbox" id="otts" style="width:22px;height:22px"> Soruları bana sesli oku</label>`:''}
-    <button class="b3" type="button" id="o3">İlk dersime başla</button>`);lock();
-    $('.goals').onclick=e=>{const b=e.target.closest('[data-g]');if(!b)return;goal=+b.dataset.g;$$('.goals button').forEach(x=>x.setAttribute('aria-pressed',x===b))};
-    $('#o3').onclick=()=>{S.goal=goal;const t=$('#otts');if(t)S.tts=t.checked;S.onb=true;save();closeModal();renderAll();const l=curLesson();if(l)startMode('lesson',{lesson:l})}};
-  s1();
+  if($('#onb'))return;
+  const st={i:0,goal:0,field:null,dir:1};
+  const qs=['field','name','goal'].concat(canSpeak?['tts']:[]);
+  const steps=['hi','intro',...qs,'end'];
+  const el=document.createElement('div');el.id='onb';el.className='onb';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Tanışma');document.body.appendChild(el);
+  const bubble=(t,cls)=>`<div class="obub ${cls||''}">${t}</div>`;
+  const opt=(k,v,on,a,b,icon)=>`<button type="button" class="oopt ${icon?'wide':''}" data-${k}="${v}" aria-pressed="${on}">${icon?`<span class="oic">${icon}</span><span class="otx"><b>${a}</b><small>${b}</small></span>`:`<b>${a}</b><span>${b}</span>`}</button>`;
+  function view(){const k=steps[st.i],qi=qs.indexOf(k);
+    const top=`<div class="otop"><button type="button" class="oback" data-oback aria-label="Geri" ${st.i===0?'hidden':''}><span style="display:inline-flex;transform:rotate(-90deg)">${ic('arrowU',28)}</span></button>${qi>=0?`<div class="obar" role="progressbar" aria-valuemin="0" aria-valuemax="${qs.length}" aria-valuenow="${qi+1}"><i style="width:${(qi+1)/qs.length*100}%"></i></div>`:''}</div>`;
+    let body='',btn='DEVAM ET',ok=true;
+    if(k==='hi')body=`<div class="ocenter">${bubble('Selam! Benim adım Anka!')}<div class="oank">${anka('wave',190,undefined,'act-enter')}</div></div>`;
+    else if(k==='intro')body=`<div class="ocenter">${bubble(`İlk dersine başlamadan önce sadece ${qs.length} kısacık sorumuz var!`)}<div class="oank">${anka('cheer',190,undefined,'act-jump')}</div></div>`;
+    else{const head=(t,m)=>`<div class="ohead"><div class="oank sm">${anka(m||'think',110,undefined,'act-enter')}</div>${bubble(t,'oside')}</div>`;
+      if(k==='field'){ok=!!st.field;body=head('Ne öğrenmek istersin?')+`<div class="oopts">${FIELDS.map(f=>opt('of',f.id,st.field===f.id,f.title,esc(f.desc),ic(f.icon,26))).join('')}</div>`}
+      if(k==='name'){body=head('Sana nasıl seslenelim?','happy')+`<label class="oname"><span class="sr">Adın</span><input id="oname" maxlength="24" placeholder="Adın" value="${esc(S.name)}" autocomplete="given-name"></label><p class="onote">Sertifikalarında bu ad yazacak. İstersen boş bırakabilirsin.</p>`}
+      if(k==='goal'){ok=!!st.goal;btn='KARARLIYIM';body=head('Günlük öğrenim hedefin ne?','wow')+`<div class="oopts">${[[10,5,'Rahat'],[20,10,'Orta'],[30,15,'Ciddi'],[50,20,'Yoğun']].map(([g,m,t])=>opt('og',g,st.goal===g,`Günde ${m} dakika`,t)).join('')}</div>`}
+      if(k==='tts'){ok=S.tts!=null&&st.ttsSet;body=head('Soruları sana sesli okuyayım mı?','happy')+`<div class="oopts">${opt('ot',1,st.ttsSet&&S.tts,'Evet, sesli oku','Okumayı yeni öğrenenler için')}${opt('ot',0,st.ttsSet&&!S.tts,'Hayır, gerek yok','Kendim okurum')}</div>`}
+      if(k==='end'){btn='İLK DERSİME BAŞLA';body=`<div class="ocenter">${bubble(`Harika${S.name?', '+esc(S.name):''}! Hadi ilk dersine başlayalım.`)}<div class="oank">${anka('cheer',190,undefined,'act-dance')}</div></div>`}}
+    el.innerHTML=`${top}<div class="obody ${st.dir<0?'back':''}">${body}</div><div class="ofoot"><button type="button" class="obtn" data-onext ${ok?'':'disabled'}>${btn}</button></div>`;
+    const n=$('#oname');if(n){n.addEventListener('keydown',e=>{if(e.key==='Enter')next()});setTimeout(()=>n.focus(),300)}
+    else setTimeout(()=>{const b=el.querySelector('.obtn:not([disabled])');if(b)b.focus({preventScroll:true})},60)}
+  function next(){const k=steps[st.i];if(k==='name')S.name=($('#oname').value||'').trim();
+    if(k==='end'){S.field=st.field||S.field;S.goal=st.goal||20;S.onb=true;save();el.classList.add('out');setTimeout(()=>el.remove(),300);renderAll();const l=curLesson();if(l)startMode('lesson',{lesson:l});return}
+    st.i++;st.dir=1;sfx.tap();view()}
+  el.addEventListener('click',e=>{
+    if(e.target.closest('[data-oback]')){if(steps[st.i]==='name')S.name=($('#oname').value||'').trim();st.i=Math.max(0,st.i-1);st.dir=-1;view();return}
+    if(e.target.closest('[data-onext]')){next();return}
+    const f=e.target.closest('[data-of]');if(f){st.field=f.dataset.of;S.field=st.field;sfx.chirp();view();return}
+    const g=e.target.closest('[data-og]');if(g){st.goal=+g.dataset.og;sfx.chirp();view();return}
+    const t=e.target.closest('[data-ot]');if(t){S.tts=t.dataset.ot==='1';st.ttsSet=true;sfx.chirp();if(S.tts)speak('Tamam, soruları sesli okuyacağım.');view()}});
+  view();
 }
 
