@@ -895,6 +895,9 @@ section.pg-in>*:nth-child(2){animation-delay:.03s}section.pg-in>*:nth-child(3){a
 @media (max-width:640px){.obub{font-size:1.15rem}.obub.oside{font-size:1.05rem}.oank.sm .anka{width:92px}.oopt{min-height:64px}}
 @media (prefers-reduced-motion:reduce){.onb,.obody,.onb.out{animation:none}}
 
+/* Uygulamada güvenli alan */
+.is-app .mtop{padding-top:max(env(safe-area-inset-top),0px)}
+.is-app .mtab{padding-bottom:max(env(safe-area-inset-bottom),0px)}
 @media print{
   body *{visibility:hidden}
   #certPrint,#certPrint *,#paper,#paper *,#notebookPrint,#notebookPrint *{visibility:visible}

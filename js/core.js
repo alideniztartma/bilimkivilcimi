@@ -25,7 +25,7 @@ if(!S.frc){if(S.trophies&&S.trophies[7]&&!S.trophies[9]){S.trophies[9]=S.trophie
   const map={sarkac:'sarkac-1',kaldirac:'kaldirac-0',devre:'devre-0',kesir:'kesir-0'};Object.keys(map).forEach(k=>{if(o.done[k])S.lab.tasks[map[k]]=dkey()})}}catch(e){}
   S.lab.migrated=1;save()})();
 
-function applyTheme(){if(S.theme==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',S.theme)}
+function applyTheme(){if(S.theme==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',S.theme);if(typeof appBars==='function')appBars()}
 applyTheme();
 
 function dayCheck(){
@@ -95,3 +95,9 @@ function smallReward(xp,gems,why){
   if(q.length)setTimeout(()=>toast(`${ic('chest',20)} Görev tamam: ${esc(q[0].name)} · +${q[0].gems} taş`),2900);
   if(nb.length){const b=BADGES.find(x=>x.id===nb[0]);setTimeout(()=>{sfx.win();openModal(`<div class="medal" style="width:110px;height:110px">${ic(b.icon,54)}</div><h2>Yeni rozet: ${b.name}</h2><p>${b.desc}</p>${anka('cheer',90,undefined,'act-dance')}<button class="b3" type="button" id="mok">Harika!</button>`);$('#mok').onclick=closeModal},q.length?5800:2900)}
 }
+
+/* Uygulamada (APK) durum çubuğunu temaya uydur */
+function appBars(){try{const SB=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.StatusBar;if(!SB)return;document.documentElement.classList.add('is-app');
+  const dark=document.documentElement.dataset.theme==='dark'||(document.documentElement.dataset.theme!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);
+  SB.setOverlaysWebView({overlay:false});SB.setStyle({style:dark?'DARK':'LIGHT'});SB.setBackgroundColor({color:getComputedStyle(document.documentElement).getPropertyValue('--tessera').trim()||(dark?'#1C1A14':'#F4EAD6')})}catch(e){}}
+addEventListener('load',appBars);try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',appBars)}catch(e){}
