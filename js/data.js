@@ -152,10 +152,7 @@ const U=[
  ]}
 ]}
 ];
-const ALL_LESSONS=U.flatMap(u=>u.lessons);
-const EXBYID={};
-U.forEach((u,ui)=>u.lessons.forEach(l=>l.ex.forEach((e,i)=>{e.id=l.id+'-'+i;e.ui=ui;EXBYID[e.id]=e})));
-const UNIT_BADGE=['Algoritmacı','Döngü Ustası','Karar Verici','Kutu Bekçisi','Pythoncu'];
+/* ALL_LESSONS, EXBYID ve UNIT_BADGE, alan ünitelerinden sonra js/egitim.js dosyasında oluşturulur. */
 
 /* Günün bulmacaları (kısa çözüm uzunluğu + 3 blok sınırı) */
 const DAILY=[

@@ -7,7 +7,7 @@
   --ember:#D9822B; --rust:#6F3420; --olive:#4B5A3A; --on-olive:#FBF6EA; --olive-soft:#E2E6D2; --olive-ts:#3F4D30; --olive-deep:#2F3A28;
   --garnet:#8E2B22; --garnet-soft:#F3DAD6; --focus:#D9822B;
   --code:#2F3A28; --code-ink:#F4EAD6; --tile:#E6D3AE; --off:#B5A27D; --stage:#26301F;
-  --u1:#A3461F; --u1d:#6F3420; --u2:#4B5A3A; --u2d:#2F3A28; --u3:#6F3420; --u3d:#45200F; --u4:#8E2B22; --u4d:#5C1A14; --u5:#2F3A28; --u5d:#141A11;
+  --u1:#A3461F; --u1d:#6F3420; --u2:#4B5A3A; --u2d:#2F3A28; --u3:#6F3420; --u3d:#45200F; --u4:#8E2B22; --u4d:#5C1A14; --u5:#2F3A28; --u5d:#141A11; --u6:#7A3B1E; --u6d:#4A220F; --u7:#4B5A3A; --u7d:#2F3A28; --u8:#8F5314; --u8d:#5A3209;
   --display:"Zilla Slab","Roboto Slab",Georgia,serif;
   --body:Manrope,"Segoe UI",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -20,7 +20,7 @@
     --terra:#E58552; --on-terra:#1C1A14; --terra-soft:#3A2016; --terra-ts:#EFB08A;
     --ember:#F0A04B; --rust:#9A4A28; --olive:#A9B98F; --on-olive:#1C1A14; --olive-soft:#232B1D; --olive-ts:#B9C79F; --olive-deep:#141A11;
     --garnet:#E8776A; --garnet-soft:#3A1A17; --code:#141A11; --code-ink:#F2E9D6; --tile:#3A3428; --off:#6B604A; --stage:#141A11;
-    --u1:#C4602F; --u1d:#7A3518; --u2:#5E7148; --u2d:#36432A; --u3:#9A4A28; --u3d:#5A2A15; --u4:#B03F33; --u4d:#6E231C; --u5:#3E4D33; --u5d:#1F281A;
+    --u1:#C4602F; --u1d:#7A3518; --u2:#5E7148; --u2d:#36432A; --u3:#9A4A28; --u3d:#5A2A15; --u4:#B03F33; --u4d:#6E231C; --u5:#3E4D33; --u5d:#1F281A; --u6:#9A4A28; --u6d:#5A2A15; --u7:#5E7148; --u7d:#36432A; --u8:#A86418; --u8d:#5E370B;
     --shadow:0 1px 0 #3D382B,0 2px 8px rgba(0,0,0,.4); color-scheme:dark;
   }
 }
@@ -29,7 +29,7 @@
   --terra:#E58552; --on-terra:#1C1A14; --terra-soft:#3A2016; --terra-ts:#EFB08A;
   --ember:#F0A04B; --rust:#9A4A28; --olive:#A9B98F; --on-olive:#1C1A14; --olive-soft:#232B1D; --olive-ts:#B9C79F; --olive-deep:#141A11;
   --garnet:#E8776A; --garnet-soft:#3A1A17; --code:#141A11; --code-ink:#F2E9D6; --tile:#3A3428; --off:#6B604A; --stage:#141A11;
-  --u1:#C4602F; --u1d:#7A3518; --u2:#5E7148; --u2d:#36432A; --u3:#9A4A28; --u3d:#5A2A15; --u4:#B03F33; --u4d:#6E231C; --u5:#3E4D33; --u5d:#1F281A;
+  --u1:#C4602F; --u1d:#7A3518; --u2:#5E7148; --u2d:#36432A; --u3:#9A4A28; --u3d:#5A2A15; --u4:#B03F33; --u4d:#6E231C; --u5:#3E4D33; --u5d:#1F281A; --u6:#9A4A28; --u6d:#5A2A15; --u7:#5E7148; --u7d:#36432A; --u8:#A86418; --u8d:#5E370B;
   --shadow:0 1px 0 #3D382B,0 2px 8px rgba(0,0,0,.4); color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -563,7 +563,7 @@ textarea.codes{width:100%;font:500 .9rem/1.4 var(--mono);padding:12px;border:1px
   .side{display:none}
   .mtop .brand{display:flex}
   .center{padding:0 14px 110px}
-  .mtab{display:grid;grid-template-columns:repeat(6,1fr);position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--raised);border-top:1px solid var(--line);padding:4px 4px calc(6px + env(safe-area-inset-bottom))}
+  .mtab{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--raised);border-top:1px solid var(--line);padding:4px 4px calc(6px + env(safe-area-inset-bottom))}
   .mtab .nav{flex-direction:column;gap:2px;padding:6px 0;justify-content:center;font-size:.62rem;letter-spacing:.06em;text-align:center;border:0;background:none}
   .mtab .nav[aria-current="page"]{background:none;box-shadow:inset 0 3px 0 var(--terra)}
   .mtab .nav .lg{display:none}
@@ -611,48 +611,34 @@ textarea.codes{width:100%;font:500 .9rem/1.4 var(--mono);padding:12px;border:1px
   .modal{background:none}
 }
 
-/* ===== Mağaza ve görev kısayolları ===== */
-.stat.qs{color:var(--terra)}
-.gml{display:none}
-.right .stat.qs{display:none}
-.nav .ni{position:relative}
-.shopgem{display:none}
+/* ===== Alan sekmeleri (Yazılım / Mekanik / Elektronik) ===== */
+.ftabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:18px 0 14px}
+.ftabs button{display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px solid var(--line);border-radius:4px;background:var(--raised);color:var(--ink);cursor:pointer;text-align:left;font:inherit;min-width:0}
+.ftabs button:hover{border-color:var(--sand)}
+.ftabs button[aria-selected="true"]{border-color:var(--terra);background:var(--terra-soft);box-shadow:inset 0 -3px 0 var(--terra)}
+.fti{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:4px;background:var(--sand);color:var(--ink)}
+.ftabs button[aria-selected="true"] .fti{background:var(--terra);color:var(--on-terra)}
+.ftabs b{display:block;font-family:var(--display);font-size:1.1rem;line-height:1.1}
+.ftabs small{display:block;color:var(--muted);font:600 .74rem/1.2 var(--mono);margin-top:2px;white-space:nowrap}
+.unit.soonunit{opacity:.7;--c:#6B604A;--cd:#4A4234}
+.unit.soonunit .uhead{filter:grayscale(.55)}
+.mquest{display:none}
 @media (max-width:1200px){
-  .mtop .stat.gm{background:var(--olive);color:var(--on-olive);padding:6px 10px}
-  .mtop .gml{display:inline-flex;align-items:center;gap:4px;font:800 .72rem/1 var(--body);letter-spacing:.06em;text-transform:uppercase;margin-left:4px;padding-left:8px;border-left:1px solid currentColor}
+  .mquest{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;text-decoration:none;color:var(--ink);padding:12px 14px;margin-bottom:14px}
+  .mq-i{color:var(--terra)}
+  .mquest b{display:block;font-family:var(--display);font-size:1.05rem}
+  .mquest small{color:var(--muted);font-size:.85rem}
+  .mq-go{color:var(--muted);transform:rotate(90deg)}
 }
-@media (max-width:780px){
-  .mtab .nav-magaza{color:var(--olive)}
-  .mtab .nav-magaza .ni{background:var(--olive);color:var(--on-olive);border-radius:4px;padding:3px 10px}
-  .mtab .shopgem{display:inline-flex;align-items:center;gap:1px;position:absolute;top:-8px;right:-14px;background:var(--ember);color:#2F2E24;font:800 .58rem/1 var(--mono);padding:2px 4px;border-radius:3px;font-style:normal}
-  .mtab .nav{font-size:.58rem;letter-spacing:.03em}
+@media (max-width:560px){
+  .ftabs{gap:6px}
+  .ftabs button{flex-direction:column;gap:4px;padding:8px 4px;text-align:center}
+  .fti{width:32px;height:32px}
+  .ftabs b{font-size:.98rem}
+  .ftabs small{font-size:.66rem}
 }
-@media (max-width:480px){.mtop{padding:8px 8px}.mtop .brand span{display:none}.mtop .brand img{width:30px;height:30px}.mtop .stats{gap:2px}.mtop .stats-slot{gap:2px}.stat{font-size:.88rem;padding:4px 4px;gap:3px}.stat svg{width:20px;height:20px}.mtop .stat.gm{padding:5px 8px}.mtop .gml{padding-left:6px;margin-left:2px}}
-@media (max-width:374px){.mtop .gml{font-size:0;gap:0}}
-@media (max-width:340px){.mtop .brand{display:none}}
-
-/* ===== Temel eğitim ===== */
-.trgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.trcard{display:grid;gap:10px;align-content:start;text-decoration:none;color:var(--ink);transition:transform .12s}
-.trcard:hover{transform:translateY(-3px)}
-.trcard h3{font-size:1.45rem}
-.trcard p{color:var(--muted);font-size:.95rem}
-.tri{width:56px;height:56px;border-radius:4px;display:grid;place-items:center;color:#FBF6EA}
-.tri.big{width:76px;height:76px;flex:none}
-.trhead{display:flex;gap:18px;align-items:center;margin:8px 0 20px}
-.trlist{display:grid;gap:12px}
-.trl{display:grid;grid-template-columns:44px 1fr auto;gap:16px;align-items:center}
-.trl small{font:800 .68rem/1 var(--body);letter-spacing:.12em;color:var(--terra)}
-.trl h3{font-size:1.2rem;margin:4px 0 2px}
-.trl p{color:var(--muted);font-size:.92rem}
-.trn{width:34px;height:34px;margin:5px;transform:rotate(45deg);display:grid;place-items:center;background:var(--sand);border-radius:3px;font:700 .9rem/1 var(--mono);color:var(--ink)}
-.trn>*{transform:rotate(-45deg);display:grid;place-items:center}
-.trl.open .trn{background:var(--terra);color:#FBF6EA}
-.trl.done .trn{background:var(--olive);color:#FBF6EA}
-.trl.lock,.trl.soon{opacity:.72}
-.trl.soon{border-style:dashed;grid-template-columns:44px 1fr}
-@media (max-width:900px){.trgrid{grid-template-columns:1fr}}
-@media (max-width:560px){.trl{grid-template-columns:44px 1fr}.trl>.b3,.trl>.muted{grid-column:2}}
+@media (max-width:480px){.mtop{padding:8px 10px}.mtop .brand img{width:30px;height:30px}.mtop .brand span{font-size:1rem}.stat{font-size:.9rem;padding:4px 5px;gap:4px}.stat svg{width:20px;height:20px}}
+@media (max-width:340px){.mtop{padding:8px 6px}.mtop .brand img{width:26px;height:26px}.mtop .brand span{font-size:.88rem}.stat{padding:3px;gap:3px}}
 
 /* ===== Yönetici paneli ===== */
 .admgate{max-width:440px;margin:30px auto;display:grid;gap:12px;justify-items:start}

@@ -45,16 +45,16 @@ Her deneyde:
 
 **Deney defterim** sayfası bütün ölçümleri tablo ve grafik olarak toplar, yazdırılabilir.
 
-### Temel eğitim: Yazılım, Mekanik, Elektronik
-Robot takımlarındaki üç ana alanın temel dersleri. Her alanda şimdilik 2 ders var:
+### Alanlar: Yazılım, Mekanik, Elektronik
+Öğren sayfasının üstündeki sekmelerle üç alan arasında geçilir. Her alan, kodlama yolundaki gibi ünitelerden, derslerden, sandıklardan ve kupa sınavından oluşan bir yol haritasıdır. Yolun sonunda sıradaki üniteler "Yakında" olarak görünür.
 
-| Alan | Dersler |
+| Alan | Üniteler |
 |---|---|
-| Yazılım | Program nasıl çalışır? · Robot yazılımı: algıla, karar ver, hareket et |
-| Mekanik | Basit makineler · Dişliler: hız ve güç |
-| Elektronik | Devrenin parçaları · Gerilim, akım ve direnç |
+| Yazılım | Algoritma · Döngüler · Koşullar · Değişkenler · İlk Python kodum · Robot yazılımı |
+| Mekanik | Basit makineler ve dişliler (2 ders) |
+| Elektronik | Elektrik devreleri (2 ders) |
 
-Yeni ders eklemek için `js/egitim.js` dosyasındaki ilgili alanın `lessons` listesine bir ders ekleyin. Alıştırma türleri kodlama yolundakilerle aynıdır.
+Yeni ünite eklemek için `js/egitim.js` dosyasında `U.push(...)` ile `field` alanı verilmiş bir ünite ekleyin; "Yakında" listesi aynı dosyadaki `FIELDS` içindedir.
 
 ### Yönetici istatistik paneli
 `#yonetici` adresinde (menüde **Yönetici paneli**). Toplam kayıtlı kullanıcı, son 7 ve 30 günde aktif kullanıcı, yeni kayıtlar, ders bazında tamamlama sayıları, kategori ve deney bazında kullanım, son 14 günün günlük aktif öğrenci grafiği ve öğrenci listesi.
@@ -86,7 +86,7 @@ js/data.js        Dersler, bulmacalar, sözlük, mağaza, görevler
 js/core.js        Durum, ses, bildirim, ödüller
 js/learn.js       Kodlama yolu, alıştırmalar, atölye, profil
 js/lab.js         3 boyutlu deneyler, görevler, deney defteri
-js/egitim.js      Temel eğitim alanları ve dersleri
+js/egitim.js      Alanlar (Yazılım, Mekanik, Elektronik) ve yeni üniteler
 js/teacher.js     Öğretmen sayfası ve proje hakkında
 js/admin.js       Yönetici istatistik paneli
 js/main.js        Sayfa yönetimi ve başlatma

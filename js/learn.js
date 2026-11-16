@@ -1,7 +1,7 @@
 /* #BilimKıvılcımı · Kodlama yolu: ders yolu, alıştırmalar, atölye, çizim, mağaza, profil, tanışma */
 'use strict';
 
-const UDECO=['split','loop','traffic','box','snake'];
+const UDECO=['split','loop','traffic','box','snake','robot','tools','bulb'];
 let BUDDY_LINE=pickL(ANKA.path);
 function ankaMsg(){
   const t=dkey();if(S.msgHide===t||!S.onb)return '';
@@ -22,23 +22,27 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-amsg]');if
 
 /* ================= DERS YOLU ================= */
 function allNodes(){const out=[];U.forEach((u,ui)=>{u.lessons.forEach((l,li)=>{out.push({k:'lesson',ui,li,id:l.id,l});if(li===1)out.push({k:'chest',ui,id:u.id+'c',after:l.id})});out.push({k:'trophy',ui,id:u.id+'t'})});return out}
-const curLesson=()=>ALL_LESSONS.find(l=>!S.done[l.id]);
+const curField=()=>FIELDS.some(f=>f.id===S.field)?S.field:'yazilim';
+const curLesson=(fid=curField())=>ALL_LESSONS.find(l=>l.field===fid&&!S.done[l.id]);
 const unitDone=ui=>U[ui].lessons.every(l=>S.done[l.id]);
 function nodeState(n){
-  if(n.k==='lesson'){if(S.done[n.id])return'done';const c=curLesson();return c&&c.id===n.id?'cur':'lock'}
+  if(n.k==='lesson'){if(S.done[n.id])return'done';const c=curLesson(U[n.ui].field);return c&&c.id===n.id?'cur':'lock'}
   if(n.k==='chest')return S.chests[n.id]?'open':S.done[n.after]?'ready':'lock';
   return S.trophies[n.ui]?'done':unitDone(n.ui)?'ready':'lock';
 }
 const OFF=[0,54,80,54,0,-54,-80,-54];
+function fieldTabs(){const cf=curField();
+  return `<div class="ftabs" role="tablist" aria-label="Alan seç">${FIELDS.map(f=>{const ls=ALL_LESSONS.filter(l=>l.field===f.id),d=ls.filter(l=>S.done[l.id]).length;
+    return `<button type="button" role="tab" aria-selected="${f.id===cf}" data-field="${f.id}"><span class="fti">${ic(f.icon,22)}</span><span><b>${f.title}</b><small>${d} / ${ls.length} ders</small></span></button>`}).join('')}</div>`}
 function renderPath(){
-  const ns=allNodes();let h=ankaMsg();
-  U.forEach((u,ui)=>{
-    const un=ns.filter(n=>n.ui===ui),k=ui+1;
-    h+=`<section class="unit" style="--c:var(--u${k});--cd:var(--u${k}d)">
-      <div class="uhead frame"><div class="uin"><div><span class="lbl">${k}. ÜNİTE</span><h2>${u.title}</h2><p>${u.desc}</p></div>
+  const ns=allNodes(),cf=curField(),F=fieldOf(cf);let h=fieldTabs()+ankaMsg()+mobileQuests();
+  fieldUnits(cf).forEach(({u,ui},fi_)=>{
+    const un=ns.filter(n=>n.ui===ui),k=fi_+1;
+    h+=`<section class="unit" style="--c:var(--u${ui+1});--cd:var(--u${ui+1}d)">
+      <div class="uhead frame"><div class="uin"><div><span class="lbl">${F.title.toLocaleUpperCase('tr')} · ${k}. ÜNİTE</span><h2>${u.title}</h2><p>${u.desc}</p></div>
       <button class="guide" type="button" data-guide="${ui}">${ic('book',22)}<span>Rehber</span></button></div></div><div class="nodes">`;
     un.forEach((n,i)=>{
-      const st=nodeState(n),dx=OFF[i%8]*(ui%2?-1:1);
+      const st=nodeState(n),dx=OFF[i%8]*(k%2?1:-1);
       let inner,lbl;
       if(n.k==='lesson'){inner=st==='done'?ic('check',30):st==='cur'?(n.l.ex.some(e=>e.t==='robot')?ic('robot',30):fi('star',30)):ic('lock',24);lbl=n.l.title}
       else if(n.k==='chest'){inner=ic('chest',54);lbl='Hazine sandığı'}
@@ -46,14 +50,20 @@ function renderPath(){
       h+=`<div class="nw" style="--dx:${dx}px" data-node="${n.id}">
         ${st==='cur'?'<span class="tipstart">BAŞLA</span>':''}${n.k==='trophy'&&st==='ready'?'<span class="tipstart">KUPA SINAVI</span>':''}
         <button class="node k-${n.k} ${st}" type="button" aria-label="${esc(lbl)}"><span>${inner}</span></button>
-        ${st==='cur'&&n.k==='lesson'?`<div class="buddy" style="--side:${dx>=0?-1:1}">${anka(S.lessons?'happy':'wave',100)}<span class="bb">${esc(BUDDY_LINE)}</span></div>`:i===2&&!un.some(m=>nodeState(m)==='cur'&&m.k==='lesson')?`<div class="udeco" style="--side:${dx>=0?-1:1}">${ic(UDECO[ui],96)}</div>`:''}
+        ${st==='cur'&&n.k==='lesson'?`<div class="buddy" style="--side:${dx>=0?-1:1}">${anka(S.lessons?'happy':'wave',100)}<span class="bb">${esc(BUDDY_LINE)}</span></div>`:i===2&&!un.some(m=>nodeState(m)==='cur'&&m.k==='lesson')?`<div class="udeco" style="--side:${dx>=0?-1:1}">${ic(UDECO[ui]||'star',96)}</div>`:''}
       </div>`;
     });
     h+='</div>'+band(30,ui+2)+'</section>';
   });
-  h+=`<div class="pathend">${anka('wow',90)}<h3>Yeni üniteler yolda!</h3><p>Yolu bitirdiysen atölyede çizim yap, laboratuvarda deney dene.</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="b3 ghost" href="#atolye">Atölyeye git</a><a class="b3 ghost" href="#lab">Laboratuvar</a></div></div>`;
+  const nU=fieldUnits(cf).length;
+  h+=F.soon.map((t,i)=>`<section class="unit soonunit"><div class="uhead frame"><div class="uin"><div><span class="lbl">${F.title.toLocaleUpperCase('tr')} · ${nU+i+1}. ÜNİTE · YAKINDA</span><h2>${esc(t)}</h2><p>Bu ünite hazırlanıyor.</p></div><span class="guide" aria-hidden="true">${ic('lock',22)}</span></div></div></section>`).join('');
+  h+=`<div class="pathend">${anka('wow',90)}<h3>Yeni üniteler yolda!</h3><p>Diğer alanlara da göz at, atölyede çizim yap, laboratuvarda deney dene.</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">${FIELDS.filter(f=>f.id!==cf).map(f=>`<button class="b3 ghost" type="button" data-field="${f.id}">${ic(f.icon,18)} ${f.title}</button>`).join('')}<a class="b3 ghost" href="#lab">Laboratuvar</a></div></div>`;
   $('#path').innerHTML=h;
 }
+function mobileQuests(){const n=Object.keys(S.day.claimed).length;
+  return `<a class="card mquest" href="#gorevler"><span class="mq-i">${ic('target',22)}</span><span><b>Günlük görevler</b><small>${n} / 3 tamamlandı</small></span><span class="mq-go">${ic('arrowU',18)}</span></a>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-field]');if(!b)return;S.field=b.dataset.field;save();sfx.tap();renderPath();BUDDY_LINE=pickL(ANKA.path);
+  if(page!=='ogren')location.hash='#ogren';else{const t=$('.ftabs');if(t&&t.getBoundingClientRect().top<0)t.scrollIntoView({block:'start'})}});
 function closePops(){$$('.pop').forEach(p=>p.remove());$$('.nw.open').forEach(n=>n.classList.remove('open'))}
 function popIn(w,html,cls,color){const p=document.createElement('div');p.className='pop'+(cls?' '+cls:'');if(color)p.style.setProperty('--c',color);p.innerHTML=html;w.appendChild(p);w.classList.add('open');return p}
 $('#path').addEventListener('click',e=>{
@@ -66,7 +76,7 @@ $('#path').addEventListener('click',e=>{
   if(n.k==='trophy'){
     if(st==='done'){const p=popIn(w,`<h3>${UNIT_BADGE[n.ui]}!</h3><p>Kupa sınavını geçtin. Sertifikan hazır.</p><button class="b3" type="button">Sertifikayı aç</button>`,'','var(--olive)');p.querySelector('button').onclick=ev=>{ev.stopPropagation();closePops();openCert(n.ui)};return}
     if(st==='ready'){const p=popIn(w,`<h3>Kupa sınavı</h3><p>${U[n.ui].title} ünitesinden 8 soru. En fazla 2 hata yaparsan kupayı ve sertifikayı kazanırsın.</p><button class="b3" type="button">Sınava başla +20 XP</button>`,'','var(--ember)');p.querySelector('button').onclick=ev=>{ev.stopPropagation();closePops();startMode('exam',{ui:n.ui})};return}
-    popIn(w,`<h3>${n.ui+1}. ünite kupası</h3><p>Bu ünitenin bütün derslerini bitirince kupa sınavı açılır.</p>`,'lock');return}
+    popIn(w,`<h3>${unitNo(n.ui)}. ünite kupası</h3><p>Bu ünitenin bütün derslerini bitirince kupa sınavı açılır.</p>`,'lock');return}
   const u=U[n.ui];const xp=st==='done'?5:10;
   const p=popIn(w,`<h3>${esc(n.l.title)}</h3><p>${st==='lock'?'Önce önceki dersleri bitir.':`${n.li+1}. ders / ${u.lessons.length}`+(st==='done'?' · Bitirdin':'')}</p>
     <button class="b3" type="button" data-start="${n.id}">${st==='done'?'Tekrar et':'Başla'} +${xp} XP</button>`,st==='lock'?'lock':'');
@@ -74,7 +84,7 @@ $('#path').addEventListener('click',e=>{
 });
 document.addEventListener('click',e=>{if(!e.target.closest('.nw'))closePops()});
 function openGuide(ui){const u=U[ui];
-  openModal(`${anka('happy',80)}<h2>${ui+1}. Ünite: ${u.title}</h2><p>Derse başlamadan önce bunları oku.</p>
+  openModal(`${anka('happy',80)}<h2>${fieldOf(u.field).title} · ${unitNo(ui)}. Ünite: ${u.title}</h2><p>Derse başlamadan önce bunları oku.</p>
   ${u.guide.map(g=>`<div class="gitem"><h3>${g.h}</h3><p>${g.p}</p>${g.code?`<pre class="code">${hl(g.code)}</pre>`:''}</div>`).join('')}
   <button class="b3" type="button" id="mok">Anladım</button>`);$('#mok').onclick=closeModal}
 async function openChest(n){
@@ -295,7 +305,7 @@ function finish(){
   const perfect=L.gradable>0&&L.first.size===0;
   const before=new Set(Object.keys(S.badges)),today=dkey();
   let xp=0,gems=0,title='Ders tamamlandı!',sub='',mood='cheer',extra='';
-  if(m==='lesson'){const lid=L.lesson.id,store=L.lesson.cat?S.cat:S.done,first=!store[lid];xp=(first?10:5)+(perfect?5:0);store[lid]=(store[lid]||0)+1;S.lessons++;S.day.lessons++;
+  if(m==='lesson'){const lid=L.lesson.id,store=S.done,first=!store[lid];xp=(first?10:5)+(perfect?5:0);store[lid]=(store[lid]||0)+1;S.lessons++;S.day.lessons++;
     title=perfect?'Kusursuz ders!':'Ders tamamlandı!';sub=first?esc(L.lesson.title)+' dersini bitirdin.':'Tekrar yapmak bilgiyi güçlendirir.'}
   else if(m==='practice'){xp=5;S.hearts=Math.min(5,S.hearts+1);if(S.hearts>=5)S.heartAt=null;S.day.lessons++;title='Alıştırma bitti!';sub='+1 kalp kazandın.'}
   else if(m==='mistakes'){xp=5;S.day.lessons++;const left=Object.keys(S.wrong).length;title='Hatalarını düzelttin!';sub=left?`Defterinde ${left} soru kaldı.`:'Hata defterin tertemiz!'}
@@ -356,7 +366,6 @@ function renderHub(){
    <button class="card hubc" type="button" id="hWrong" ${nWrong?'':'disabled'}><div class="hi" style="background:var(--garnet)">${ic('bug',26)}</div><span class="tag">${nWrong} soru</span><h3>Hata defterim</h3><p>${nWrong?'Yanlış yaptığın soruları yeniden çöz. Doğru yaptıkça defterden silinir.':'Henüz yanlış yaptığın soru yok.'}</p></button>
    <button class="card hubc" type="button" id="hPract" ${anyDone?'':'disabled'}><div class="hi" style="background:var(--rust)">${ic('loop',26)}</div><span class="tag">+1 kalp</span><h3>Karışık tekrar</h3><p>Bitirdiğin derslerden 6 soru. Kalp gitmez.</p></button>
    <a class="card hubc" href="#sozluk"><div class="hi" style="background:var(--olive-deep)">${ic('book',26)}</div><span class="tag">${GLOSS.filter(g=>glossOpen(g)).length} / ${GLOSS.length} kelime</span><h3>Kodlama sözlüğü</h3><p>Öğrendiğin kelimeler burada. Her ünitede yenileri açılır.</p></a>
-   <a class="card hubc" href="#egitim"><div class="hi" style="background:var(--olive-deep)">${ic('school',26)}</div><span class="tag">${TRACK_LESSONS.filter(l=>S.cat[l.id]).length} / ${TRACK_LESSONS.length} ders</span><h3>Temel eğitim</h3><p>Yazılım, mekanik ve elektronik alanlarının temel dersleri.</p></a>
    <a class="card hubc" href="#lab"><div class="hi" style="background:var(--terra)">${ic('flask',26)}</div><span class="tag">${labDoneCount()} / ${labTotal()} görev</span><h3>Laboratuvar</h3><p>8 tane 3 boyutlu deney: sarkaç, mancınık, ay'ın evreleri ve daha fazlası.</p></a>
    <a class="card hubc" href="#defter"><div class="hi" style="background:var(--olive)">${ic('notebook',26)}</div><span class="tag">${labNoteCount()} ölçüm</span><h3>Deney defterim</h3><p>Laboratuvarda kaydettiğin ölçümler ve grafiklerin.</p></a>
   </div>`;
@@ -509,7 +518,7 @@ const BADGES=[
  {id:'ressam',name:'Kod Ressamı',desc:'Çizim atölyesinde 3 şekil çiz.',icon:'pen',t:()=>CHAL.filter(c=>!c.free&&S.draw[c.id]).length>=3},
  {id:'hizli',name:'Şimşek',desc:'Hızlı turda 10 doğru yap.',icon:'timer',t:()=>S.speedBest>=10},
  {id:'bulmaca',name:'Bulmaca Kurdu',desc:'Günün bulmacasını çöz.',icon:'puzzle',t:()=>Object.keys(S.dailyDone).length>0},
- {id:'brans',name:'Çok Yönlü Mühendis',desc:'Yazılım, Mekanik ve Elektronik alanlarının her birinden bir ders bitir.',icon:'tools',t:()=>TRACKS.every(t=>t.lessons.some(l=>S.cat[l.id]))},
+ {id:'brans',name:'Çok Yönlü Mühendis',desc:'Yazılım, Mekanik ve Elektronik alanlarının her birinden bir ders bitir.',icon:'tools',t:()=>FIELDS.every(f=>ALL_LESSONS.some(l=>l.field===f.id&&S.done[l.id]))},
  {id:'lab',name:'Laboratuvar Kâşifi',desc:'Laboratuvarda ilk deney görevini bitir.',icon:'flask',t:()=>labDoneCount()>=1},
  {id:'bilimci',name:'Genç Bilim İnsanı',desc:'8 deneyin hepsinde en az bir görev bitir.',icon:'eye',t:()=>EXPS.every(x=>labExpDone(x.id)>0)},
  {id:'labusta',name:'Laboratuvar Ustası',desc:'Laboratuvardaki bütün görevleri bitir.',icon:'trophy',t:()=>labDoneCount()>=labTotal()},
@@ -518,8 +527,8 @@ const BADGES=[
 const badgeSet=()=>new Set(BADGES.filter(b=>S.badges[b.id]||b.t()).map(b=>b.id));
 function openCert(ui){
   const d=(S.trophies[ui]||dkey()).split('-').reverse().join('.');
-  openModal(`<div class="certbox" id="certPrint"><img src="logo.png" alt="Antioch Rising logosu"><span class="lbl" style="color:#4B5A3A">#BİLİMKIVILCIMI · BAŞARI BELGESİ</span><h2>${UNIT_BADGE[ui]}</h2>
-    <p>Bu belge</p><div class="nm">${esc(S.name||'Genç Mühendis')}</div><p>adlı öğrencinin <b style="color:#2F2E24">${ui+1}. Ünite: ${U[ui].title}</b> kupa sınavını başarıyla geçtiğini gösterir.</p>
+  openModal(`<div class="certbox" id="certPrint"><img src="img/logo.png" alt="Antioch Rising logosu"><span class="lbl" style="color:#4B5A3A">#BİLİMKIVILCIMI · BAŞARI BELGESİ</span><h2>${UNIT_BADGE[ui]}</h2>
+    <p>Bu belge</p><div class="nm">${esc(S.name||'Genç Mühendis')}</div><p>adlı öğrencinin <b style="color:#2F2E24">${fieldOf(U[ui].field).title} · ${unitNo(ui)}. Ünite: ${U[ui].title}</b> kupa sınavını başarıyla geçtiğini gösterir.</p>
     <p style="font-family:'JetBrains Mono',monospace;font-size:.85rem">${d} · Antioch Rising #10947 · Hatay</p></div>
     ${S.name?'':'<p>Belgede adının yazması için profilinde adını yaz.</p>'}
     ${framed?'':`<button class="b3" type="button" id="cprint">${ic('printer',18)} Yazdır</button>`}<button class="b3 ghost" type="button" id="cclose">Kapat</button>`,true);
@@ -528,14 +537,14 @@ function openCert(ui){
 function progressCode(){
   /* BK2: anonim kimlik + ders, alan, deney ve etkinlik özetleri. Öğretmen tablosu ve yönetici paneli okur. */
   const t=dkey(),tn=dayNum(t),ex={};Object.keys(S.lab.tasks).forEach(k=>{const id=k.split('-')[0];ex[id]=(ex[id]||0)+1});
-  const o={v:2,i:S.uid,n:S.name||'',x:S.xp,l:Object.keys(S.done),c:Object.keys(S.cat),e:ex,w:Object.keys(S.draw).length,k:Object.keys(S.trophies).map(Number),
+  const o={v:2,i:S.uid,n:S.name||'',x:S.xp,l:Object.keys(S.done),c:[],e:ex,w:Object.keys(S.draw).length,k:Object.keys(S.trophies).map(Number),
     b:S.best,s:S.streak,g:Object.keys(S.badges).length,h:S.days.map(d=>tn-dayNum(d)).filter(n=>n>=0&&n<60),a:S.lastDay||'',j:S.joined,t};
   try{return 'BK2.'+btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}catch(e){return ''}
 }
 function renderProfile(){
   BADGES.forEach(b=>{if(!S.badges[b.id]&&b.t())S.badges[b.id]=dkey()});save();
   const have=BADGES.filter(b=>S.badges[b.id]).length,code=progressCode();
-  const certs=U.map((u,ui)=>S.trophies[ui]?`<div class="card cert-row"><span style="color:var(--olive)">${ic('cert',30)}</span><div><b style="font-family:var(--display);font-size:1.1rem">${UNIT_BADGE[ui]}</b><div style="color:var(--muted);font-size:.88rem">${ui+1}. Ünite · ${u.title}</div></div><button class="b3 sm ghost" type="button" data-cert="${ui}">Aç</button></div>`:'').join('');
+  const certs=U.map((u,ui)=>S.trophies[ui]?`<div class="card cert-row"><span style="color:var(--olive)">${ic('cert',30)}</span><div><b style="font-family:var(--display);font-size:1.1rem">${UNIT_BADGE[ui]}</b><div style="color:var(--muted);font-size:.88rem">${fieldOf(u.field).title} · ${unitNo(ui)}. Ünite · ${u.title}</div></div><button class="b3 sm ghost" type="button" data-cert="${ui}">Aç</button></div>`:'').join('');
   $('#pgProfile').innerHTML=`<div class="prof">${anka('happy',96)}<div><label for="pname">Adın</label><input id="pname" maxlength="24" placeholder="Adını yaz" value="${esc(S.name)}"><p style="color:var(--muted);margin-top:6px;font-size:.9rem">${dkey()===S.joined?'Bugün katıldın':'Katılma: '+S.joined.split('-').reverse().join('.')}</p></div></div>
   <div class="sec-h">İstatistikler</div>
   <div class="tiles">
@@ -543,7 +552,6 @@ function renderProfile(){
     <div class="card tile"><span style="color:var(--ember)">${fi('bolt',30)}</span><div><b>${S.xp}</b><span>Toplam XP</span></div></div>
     <div class="card tile"><span style="color:var(--olive)">${ic('book',30)}</span><div><b>${Object.keys(S.done).length}/${ALL_LESSONS.length}</b><span>Bitirilen ders</span></div></div>
     <div class="card tile"><span style="color:var(--terra)">${ic('trophy',30)}</span><div><b>${Object.keys(S.trophies).length}/${U.length}</b><span>Kupa</span></div></div>
-    <div class="card tile"><span style="color:var(--terra)">${ic('school',30)}</span><div><b>${TRACK_LESSONS.filter(l=>S.cat[l.id]).length}/${TRACK_LESSONS.length}</b><span>Alan dersi</span></div></div>
     <div class="card tile"><span style="color:var(--olive)">${ic('flask',30)}</span><div><b>${labDoneCount()}/${labTotal()}</b><span>Deney görevi</span></div></div>
     <div class="card tile"><span style="color:var(--ember)">${ic('pen',30)}</span><div><b>${CHAL.filter(c=>S.draw[c.id]).length}/${CHAL.length}</b><span>Çizim</span></div></div>
   </div>
@@ -576,7 +584,7 @@ function renderProfile(){
 /* ================= DURUM ÇUBUĞU, YAN KARTLAR ================= */
 function renderStats(){
   const today=S.lastDay===dkey();
-  const h=`<span class="stat fl ${today?'':'off'}" title="Günlük seri">${fi('flame',24)}${S.streak}</span><a class="stat gm" href="#magaza" title="Mozaik taşı · Mağaza">${fi('gem',22)}${S.gems}<span class="gml">${ic('bag',16)}Mağaza</span></a><span class="stat ht" title="Kalp">${fi('heart',24)}${S.hearts}</span><a class="stat qs" href="#gorevler" title="Günlük görevler">${ic('target',22)}${Object.keys(S.day.claimed).length}/3</a>`;
+  const h=`<span class="stat fl ${today?'':'off'}" title="Günlük seri">${fi('flame',24)}${S.streak}</span><span class="stat gm" title="Mozaik taşı">${fi('gem',22)}${S.gems}</span><span class="stat ht" title="Kalp">${fi('heart',24)}${S.hearts}</span>`;
   $$('.stats-slot').forEach(s=>{if(s.classList.contains('stats'))s.innerHTML=h;else{s.style.display='flex';s.innerHTML=h}});
   const t=dkey(),days=['Pt','Sa','Ça','Pe','Cu','Ct','Pz'],now=new Date(),wd=(now.getDay()+6)%7;
   $('#rcStreak').innerHTML=`<div class="streakbig"><span style="color:${today?'var(--ember)':'var(--off)'}">${fi('flame',40)}</span><div><b>${S.streak}</b><div style="color:var(--muted);font-size:.88rem">günlük seri</div></div></div>

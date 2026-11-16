@@ -1,13 +1,21 @@
-/* #BilimKıvılcımı · Temel eğitim: Yazılım, Mekanik ve Elektronik alanları */
+/* #BilimKıvılcımı · Alanlar: Yazılım, Mekanik, Elektronik
+   Her alan, kodlama yolundaki gibi ünitelerden oluşan bir yol haritasıdır.
+   Yeni ünite eklemek için U.push(...) ile field alanı verilmiş bir ünite ekleyin.
+   Ünitenin dersleri, rehberi (guide) ve kupa adı (badge) olmalı. "soon" listesi yolun sonunda "Yakında" diye görünür. */
 'use strict';
 
-/* Yeni ders eklemek için ilgili alanın lessons listesine bir ders nesnesi ekleyin.
-   Alıştırma türleri kodlama yolundakilerle aynıdır: info, mc, fill, order, match, line, type, robot.
-   "soon" listesi sayfada "Yakında" olarak görünür. */
-const TRACKS=[
-{id:'yazilim',title:'Yazılım',icon:'code',col:'var(--terra)',short:'YZ',
- desc:'Bir program nasıl düşünür? Robotlar sensörden gelen bilgiyle nasıl karar verir?',
- soon:['Değişkenler ve veri tipleri','Fonksiyonlarla düzenli kod','Robotu otonom sürmek'],
+const FIELDS=[
+ {id:'yazilim',title:'Yazılım',icon:'code',desc:'Algoritmadan Python\'a, robot yazılımına kadar.',soon:['Değişkenler ve veri tipleri','Robotu otonom sürmek']},
+ {id:'mekanik',title:'Mekanik',icon:'gear',desc:'Kuvvet, basit makineler ve dişliler.',soon:['Malzemeler ve bağlantı elemanları','Zincir ve kayış sistemleri','Robot şasisi tasarımı']},
+ {id:'elektronik',title:'Elektronik',icon:'chip',desc:'Devreler, gerilim, akım ve direnç.',soon:['Sensörler ve motor sürücüler','Lehim ve güvenli çalışma','Robotun elektrik panosu']}
+];
+U.forEach(u=>{if(!u.field)u.field='yazilim'});
+U.forEach((u,i)=>{if(!u.badge)u.badge=['Algoritmacı','Döngü Ustası','Karar Verici','Kutu Bekçisi','Pythoncu'][i]});
+
+U.push(
+{id:'u6',field:'yazilim',title:'Robot yazılımı',desc:'Girdi, çıktı ve sensörle karar veren robotlar.',badge:'Robot Yazılımcısı',
+ guide:[{h:'Girdi, işlem, çıktı',p:'Her program girdi alır, bir işlem yapar ve çıktı verir. Robotta girdi sensörlerden gelir, çıktı motorlara gider.'},
+        {h:'Algıla, karar ver, hareket et',p:'Robot programı bu üç işi sürekli tekrar eder. FRC robotları bu döngüyü saniyede 50 kez çalıştırır.'}],
  lessons:[
  {id:'yz1',title:'Program nasıl çalışır?',desc:'Girdi, işlem ve çıktı. Kodu okuyup sonucunu bulma.',ex:[
   {t:'info',h:'Girdi, işlem, çıktı',p:'Her program üç adımda çalışır: <b>girdi</b> alır, bir <b>işlem</b> yapar ve bir <b>çıktı</b> verir. Hesap makinesinde bastığın sayılar girdi, toplama işlem, ekranda gördüğün sonuç ise çıktıdır.'},
@@ -26,11 +34,11 @@ const TRACKS=[
   {t:'mc',q:'Mesafe sensörü 50 cm gösteriyor. Programda "Eğer mesafe < 20 ise dur" yazıyor. Robot ne yapar?',opts:['Gitmeye devam eder','Durur','Geri döner'],a:0,tip:'50, 20\'den küçük değil. Koşul doğru olmadığı için robot durmaz.'},
   {t:'order',q:'Çizgi izleyen robotun programını sırala.',lines:true,items:['Sürekli tekrarla:','    Işık sensörünü oku','    Eğer çizgi soldaysa:','        Sola dön','    Değilse:','        Sağa dön']},
   {t:'type',q:'Robotun döngüsü saniyede 50 kez çalışıyor. 2 saniyede kaç kez çalışır?',a:['100','yüz']}
- ]}
-]},
-{id:'mekanik',title:'Mekanik',icon:'gear',col:'var(--olive)',short:'MK',
- desc:'Kaldıraçlar, dişliler ve kuvvet. Bir robot kolu ağır bir yükü nasıl kaldırır?',
- soon:['Malzemeler ve bağlantı elemanları','Zincir ve kayış sistemleri','Robot şasisi tasarımı'],
+ ]}]},
+{id:'m1',field:'mekanik',title:'Basit makineler ve dişliler',desc:'Daha az kuvvetle daha çok iş yapmanın yolları.',badge:'Genç Makinist',
+ guide:[{h:'Basit makineler',p:'Kaldıraç, makara, eğik düzlem, tekerlek, vida ve kama işimizi kolaylaştırır. Kuvvetten kazandırır, yoldan kaybettirir.'},
+        {h:'Kaldıracın kuralı',p:'Yük × yükün uzaklığı = kuvvet × kuvvetin uzaklığı. Destek noktasından uzağa bastıkça daha az kuvvet yeter.'},
+        {h:'Dişli oranı',p:'Çevrilen dişlinin diş sayısı ÷ çeviren dişlinin diş sayısı. Oran büyüdükçe dişli yavaşlar ama güçlenir.'}],
  lessons:[
  {id:'mk1',title:'Basit makineler',desc:'Kaldıraç, makara, eğik düzlem. Kuvvetten kazanç.',ex:[
   {t:'info',h:'İşimizi kolaylaştıran makineler',p:'<b>Kaldıraç</b>, <b>makara</b>, <b>eğik düzlem</b>, <b>tekerlek ve dingil</b>, <b>vida</b> ve <b>kama</b> basit makinelerdir. Daha az kuvvetle iş yapmamızı sağlarlar, ama bunun için daha uzun yol gitmemiz gerekir.'},
@@ -48,11 +56,10 @@ const TRACKS=[
   {t:'mc',q:'Robot kolu ağır bir yükü kaldıracak. Hangi düzen daha uygun?',opts:['Küçük dişli büyük dişliyi çevirsin','Büyük dişli küçük dişliyi çevirsin','Dişli kullanmayalım'],a:0,tip:'Küçük dişli büyüğü çevirince tork artar.'},
   {t:'match',q:'Dişli kavramlarını anlamlarıyla eşleştir.',pairs:[['Dişli','Dönmeyi aktarır'],['Tork','Döndürme gücü'],['Mil','Dişlinin takıldığı çubuk'],['Zincir','Uzaktaki dişlileri bağlar']]},
   {t:'type',q:'Bir bisikletin ön dişlisi 1 tur dönünce arka dişli 3 tur dönüyor. Ön dişli 2 tur dönerse arka dişli kaç tur döner?',a:['6','altı']}
- ]}
-]},
-{id:'elektronik',title:'Elektronik',icon:'chip',col:'var(--ember)',short:'EL',
- desc:'Devreler, gerilim, akım ve direnç. Robotun içindeki elektrik nasıl dolaşır?',
- soon:['Sensörler ve motor sürücüler','Lehim ve güvenli çalışma','Robotun elektrik panosu'],
+ ]}]},
+{id:'e1',field:'elektronik',title:'Elektrik devreleri',desc:'Devrenin parçaları ve Ohm yasası.',badge:'Devre Ustası',
+ guide:[{h:'Devre',p:'Elektrik akımının dolaştığı kapalı yola devre denir. Pil enerji verir, kablo akımı taşır, anahtar devreyi açıp kapatır, lamba ışık verir.'},
+        {h:'Ohm yasası',p:'Akım = Gerilim ÷ Direnç. Gerilim artarsa akım artar, direnç artarsa akım azalır.'}],
  lessons:[
  {id:'el1',title:'Devrenin parçaları',desc:'Pil, kablo, anahtar ve lamba. Açık ve kapalı devre.',ex:[
   {t:'info',h:'Devre nedir?',p:'Elektrik akımının dolaştığı kapalı yola <b>devre</b> denir. Basit bir devrede <b>pil</b> (enerji kaynağı), <b>kablo</b> (yol), <b>anahtar</b> (aç-kapa) ve <b>lamba</b> (enerjiyi kullanan alıcı) bulunur.'},
@@ -70,31 +77,13 @@ const TRACKS=[
   {t:'mc',q:'Devredeki direnci artırırsak akıma ne olur?',opts:['Azalır','Artar','Değişmez'],a:0},
   {t:'mc',q:'LED\'i pile bağlarken yanına neden bir direnç koyarız?',opts:['Fazla akımı sınırlayıp LED\'i korumak için','LED\'i daha parlak yakmak için','Devreyi açıp kapatmak için'],a:0,tip:'Dirençsiz bağlanan LED\'den çok fazla akım geçer ve LED bozulur.'},
   {t:'type',q:'Gerilim 9 volt, direnç 3 ohm. Akım kaç amperdir?',a:['3','üç']}
- ]}
-]}
-];
-const TRACK_LESSONS=TRACKS.flatMap(t=>t.lessons.map(l=>Object.assign(l,{cat:t.id})));
-TRACKS.forEach(t=>t.lessons.forEach(l=>l.ex.forEach((e,i)=>{e.id=l.id+'-'+i;EXBYID[e.id]=e})));
-const trackDone=t=>t.lessons.filter(l=>S.cat[l.id]).length;
-const trackLessonOpen=(t,i)=>i===0||!!S.cat[t.lessons[i-1].id];
+ ]}]}
+);
 
-function renderEgitim(){
-  const tot=TRACK_LESSONS.length,done=TRACK_LESSONS.filter(l=>S.cat[l.id]).length;
-  $('#pgEgitim').innerHTML=`<div class="frame"><div class="hero-q ol"><div><span class="lbl">TEMEL EĞİTİM</span><h2>Bir robot takımı gibi öğren</h2><p>Robot yapan takımlarda üç ana alan vardır: yazılım, mekanik ve elektronik. Her alanın temel derslerini burada bulursun.</p>
-    <div class="bar" style="margin-top:14px;max-width:340px;background:rgba(244,234,214,.25)"><i style="width:${done/tot*100}%"></i><span style="color:#FBF6EA">${done} / ${tot} ders</span></div></div>${anka('happy',96,'baret')}</div></div>
-  <div class="sec-h">Alanlar <small>Bir alana dokun</small></div>
-  <div class="trgrid">${TRACKS.map(t=>{const n=trackDone(t);return `<a class="card trcard" href="#egitim-${t.id}"><div class="tri" style="background:${t.col}">${ic(t.icon,30)}</div>
-    <h3>${t.title}</h3><p>${t.desc}</p><div class="trmeta"><div class="bar"><i style="width:${n/t.lessons.length*100}%"></i><span>${n} / ${t.lessons.length} ders</span></div></div></a>`}).join('')}</div>
-  <p class="muted" style="margin-top:18px;font-size:.92rem">Bu bölüm yeni açıldı. Her alana yakında yeni dersler eklenecek.</p>`;
-}
-function renderTrack(id){
-  const t=TRACKS.find(x=>x.id===id);if(!t){location.hash='#egitim';return}
-  $('#pgTrack').innerHTML=`<a class="back" href="#egitim">${ic('rotL',18)} Temel eğitim</a>
-  <div class="trhead"><div class="tri big" style="background:${t.col}">${ic(t.icon,40)}</div><div><span class="eyebrow">ALAN</span><h1 class="ph1" style="margin:4px 0 4px">${t.title}</h1><p class="sub" style="margin:0">${t.desc}</p></div></div>
-  <div class="trlist">${t.lessons.map((l,i)=>{const done=!!S.cat[l.id],open=trackLessonOpen(t,i);
-    return `<div class="card trl ${done?'done':open?'open':'lock'}"><span class="trn"><span>${done?ic('check',18):open?i+1:ic('lock',16)}</span></span>
-      <div><small>${i+1}. DERS · ${l.ex.filter(e=>e.t!=='info').length} SORU</small><h3>${esc(l.title)}</h3><p>${esc(l.desc)}</p></div>
-      ${open?`<button class="b3 ${done?'ghost':''} sm" type="button" data-trl="${l.id}">${done?'Tekrar et':'Başla'}</button>`:`<span class="muted" style="font-size:.88rem">Önceki dersi bitir</span>`}</div>`}).join('')}
-    ${t.soon.map(s=>`<div class="card trl soon"><span class="trn"><span>${ic('clock',16)}</span></span><div><small>YAKINDA</small><h3>${esc(s)}</h3></div></div>`).join('')}</div>`;
-}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-trl]');if(!b)return;const l=TRACK_LESSONS.find(x=>x.id===b.dataset.trl);if(l)startMode('lesson',{lesson:l})});
+const ALL_LESSONS=U.flatMap(u=>u.lessons.map(l=>Object.assign(l,{field:u.field})));
+const EXBYID={};
+U.forEach((u,ui)=>u.lessons.forEach(l=>l.ex.forEach((e,i)=>{e.id=l.id+'-'+i;e.ui=ui;EXBYID[e.id]=e})));
+const UNIT_BADGE=U.map(u=>u.badge);
+const fieldOf=id=>FIELDS.find(f=>f.id===id)||FIELDS[0];
+const fieldUnits=fid=>U.map((u,ui)=>({u,ui})).filter(x=>x.u.field===fid);
+const unitNo=ui=>fieldUnits(U[ui].field).findIndex(x=>x.ui===ui)+1;

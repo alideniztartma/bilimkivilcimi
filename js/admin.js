@@ -36,23 +36,23 @@ function admStats(){
   const act=n=>us.filter(u=>{const s=since(u);return s!=null&&s<n}).length;
   const v2=us.filter(u=>u.v===2);
   const newJ=v2.filter(u=>u.j&&tn-dayNum(u.j)<30).length;
-  const lessonsTot=us.reduce((a,u)=>a+u.l+u.c,0);
+  const lessonsTot=us.reduce((a,u)=>a+u.l+(u.v===2?u.C.filter(id=>!u.L.includes(id)).length:0),0);
   /* Son 14 gün: o gün en az bir şey yapan öğrenci sayısı */
   const daily=[];for(let i=13;i>=0;i--){const day=tn-i;let n=0;
     v2.forEach(u=>{if(!u.t)return;const base=dayNum(u.t);if(u.h.some(off=>base-off===day))n++});
     const d=new Date();d.setDate(d.getDate()-i);daily.push({day,n,lbl:d.getDate()+'.'+(d.getMonth()+1)})}
   /* Kategoriler */
-  const trackUse=t=>{const ids=new Set(t.lessons.map(l=>l.id));let users=0,done=0;v2.forEach(u=>{const n=u.C.filter(id=>ids.has(id)).length;if(n){users++;done+=n}});return{users,done}};
+  /* Alan: BK2 kodlarında ders listesinden, eski BK1 kodlarında (yalnızca kodlama vardı) ders sayısından */
+  const fieldUse=f=>{const ids=new Set(ALL_LESSONS.filter(l=>l.field===f.id).map(l=>l.id));let users=0,done=0;
+    us.forEach(u=>{const n=u.v===2?u.L.concat(u.C).filter(id=>ids.has(id)).length:(f.id==='yazilim'?u.l:0);if(n){users++;done+=n}});return{users,done}};
   const cats=[
-    {name:'Kodlama yolu',icon:'robot',users:us.filter(u=>u.l>0).length,done:us.reduce((a,u)=>a+u.l,0),unit:'ders'},
+    ...FIELDS.map(f=>Object.assign({name:f.title,icon:f.icon,unit:'ders'},fieldUse(f))),
     {name:'Laboratuvar',icon:'flask',users:us.filter(u=>u.e>0).length,done:us.reduce((a,u)=>a+u.e,0),unit:'deney görevi'},
-    ...TRACKS.map(t=>Object.assign({name:t.title,icon:t.icon,unit:'ders',only2:true},trackUse(t))),
     {name:'Çizim atölyesi',icon:'pen',users:v2.filter(u=>u.w>0).length,done:v2.reduce((a,u)=>a+u.w,0),unit:'çizim',only2:true}
   ];
   /* Ders bazında tamamlama */
   const lessonRows=[];
-  U.forEach((u,ui)=>u.lessons.forEach(l=>lessonRows.push({grp:(ui+1)+'. Ünite · '+u.title,title:l.title,n:v2.filter(x=>x.L.includes(l.id)).length})));
-  TRACKS.forEach(t=>t.lessons.forEach(l=>lessonRows.push({grp:t.title,title:l.title,n:v2.filter(x=>x.C.includes(l.id)).length})));
+  FIELDS.forEach(f=>fieldUnits(f.id).forEach(({u,ui})=>u.lessons.forEach(l=>lessonRows.push({grp:f.title+' · '+unitNo(ui)+'. Ünite · '+u.title,title:l.title,n:v2.filter(x=>x.L.includes(l.id)||x.C.includes(l.id)).length}))));
   const expRows=EXPS.map(x=>({title:x.title,n:v2.filter(u=>(u.E[x.id]||0)>0).length}));
   return{us,v2,tot:us.length,a7:act(7),a30:act(30),newJ,lessonsTot,avgXP:us.length?Math.round(us.reduce((a,u)=>a+u.x,0)/us.length):0,daily,cats,lessonRows,expRows,since,old:us.length-v2.length};
 }
@@ -109,8 +109,8 @@ function renderAdmin(){
   </div>
   <div class="card apanel"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><h3>Öğrenciler <small>${fmt(rows.length)} kişi</small></h3>
     <input id="admQ" type="search" placeholder="Ada göre ara" value="${esc(admQuery)}" style="max-width:240px"></div>
-    <div class="tscroll" style="max-height:420px;margin-top:10px"><table class="dtable"><thead><tr><th>Ad</th><th>XP</th><th>Ders</th><th>Alan dersi</th><th>Deney görevi</th><th>Son etkinlik</th><th>Durum</th></tr></thead><tbody>
-    ${rows.slice(0,300).map(u=>{const s=st.since(u);return `<tr><td><b>${esc(u.n||'(adsız)')}</b></td><td>${fmt(u.x)}</td><td>${u.l}</td><td>${u.v===2?u.c:'–'}</td><td>${u.e}</td><td>${u.a?u.a.split('-').reverse().join('.'):'–'}</td><td>${s==null?'Bilinmiyor':s<7?'<span class="pill-ok">Aktif</span>':s<30?'Son 30 gün':'Pasif'}</td></tr>`}).join('')||'<tr><td colspan="7" class="muted">Öğrenci yok.</td></tr>'}
+    <div class="tscroll" style="max-height:420px;margin-top:10px"><table class="dtable"><thead><tr><th>Ad</th><th>XP</th><th>Ders</th><th>Deney görevi</th><th>Son etkinlik</th><th>Durum</th></tr></thead><tbody>
+    ${rows.slice(0,300).map(u=>{const s=st.since(u);return `<tr><td><b>${esc(u.n||'(adsız)')}</b></td><td>${fmt(u.x)}</td><td>${u.l+(u.v===2?u.C.filter(id=>!u.L.includes(id)).length:0)}</td><td>${u.e}</td><td>${u.a?u.a.split('-').reverse().join('.'):'–'}</td><td>${s==null?'Bilinmiyor':s<7?'<span class="pill-ok">Aktif</span>':s<30?'Son 30 gün':'Pasif'}</td></tr>`}).join('')||'<tr><td colspan="6" class="muted">Öğrenci yok.</td></tr>'}
     </tbody></table></div></div>
   <div class="agrid">
     <div class="card apanel"><h3>Veri ekle</h3>
@@ -135,8 +135,8 @@ function renderAdmin(){
   $('#admFile').onchange=async e=>{let all=[],bad=0;for(const f of e.target.files){try{const r=admParseText(await f.text());all=all.concat(r.out);bad+=r.bad}catch(_){bad++}}after(admAdd(all),bad)};
   $('#admSelf').onclick=()=>{const o=decodeCode(progressCode());after(admAdd(o?[o]:[]),0)};
   $('#admSnf').onclick=()=>{after(admAdd(Object.values(SNF)),0)};
-  $('#admCsv').onclick=()=>{const head='Ad;XP;Ders;Alan dersi;Deney görevi;Çizim;En uzun seri;Son etkinlik;Katılma;Kod tarihi';
-    downloadFile('bilimkivilcimi-istatistik-'+dkey()+'.csv','﻿'+[head].concat(st.us.map(u=>[u.n,u.x,u.l,u.c,u.e,u.w,u.b,u.a,u.j,u.t].map(v=>String(v??'').replace(/;/g,',')).join(';'))).join('\n'),'text/csv')};
+  $('#admCsv').onclick=()=>{const head='Ad;XP;Ders;Deney görevi;Çizim;En uzun seri;Son etkinlik;Katılma;Kod tarihi';
+    downloadFile('bilimkivilcimi-istatistik-'+dkey()+'.csv','﻿'+[head].concat(st.us.map(u=>[u.n,u.x,u.l+u.c,u.e,u.w,u.b,u.a,u.j,u.t].map(v=>String(v??'').replace(/;/g,',')).join(';'))).join('\n'),'text/csv')};
   $('#admBak').onclick=()=>downloadFile('bilimkivilcimi-yonetici-yedek-'+dkey()+'.json',JSON.stringify({tur:'bk-yonetici',tarih:dkey(),kullanicilar:Object.values(ADM.users)}),'application/json');
   $('#admClr').onclick=e=>{const b=e.currentTarget;if(!b.dataset.arm){b.dataset.arm=1;b.textContent='Emin misiniz? Tekrar basın';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.innerHTML=ic('trash',16)+' Verileri sil'}},4000);return}
     ADM.users={};admSave();renderAdmin();msg('Bütün öğrenci verileri silindi.')};
