@@ -3,7 +3,7 @@
 
 /* [id, menü adı, simge, mobil sekme adı, mobilde gizli?] Mobilde Görevler üst çubuktaki görev düğmesinden açılır. */
 const PAGES=[['ogren','Öğren','home','Öğren'],['atolye','Atölye','tools','Atölye'],['lab','Laboratuvar','flask','Deney'],['gorevler','Görevler','target','Görev',1],['magaza','Mağaza','bag','Mağaza'],['profil','Profil','user','Profil']];
-const SUB={cizim:'atolye',sozluk:'atolye',defter:'lab',ogretmen:'',hakkinda:'',yonetici:''};
+const SUB={cizim:'atolye',sozluk:'atolye',defter:'lab',ogretmen:'',hakkinda:'',yonetici:'',yuva:''};
 const FULL=new Set(['lab','defter','ogretmen','hakkinda','yonetici']);
 /* Eski #egitim bağlantıları: ilgili alanın yol haritasını aç */
 const isTrack=h=>h==='egitim'||(/^egitim-[a-z]+$/.test(h)&&FIELDS.some(f=>'egitim-'+f.id===h));
@@ -16,7 +16,18 @@ function renderNav(){
   $$('.side .small a[aria-current]').forEach(a=>a.setAttribute('aria-current','page'));
 }
 const validPage=h=>PAGES.some(p=>p[0]===h)||SUB[h]!=null||isTrack(h)||(/^lab-[a-z]+$/.test(h)&&EXPS.some(x=>'lab-'+x.id===h));
+/* Sayfa geçişleri: sekmeler arasında yana kayma, alt sayfaya girerken ileri, çıkarken geri */
+const tabIdx=h=>{const i=PAGES.findIndex(p=>p[0]===h);return i};
+function navDir(from,to){const a=tabIdx(from),b=tabIdx(to),da=a<0?1:0,db=b<0?1:0;if(db>da)return'fwd';if(db<da)return'back';if(a>=0&&b>=0)return b>a?'fwd':'back';return'fade'}
+let firstRoute=true;
 function route(){
+  let h=location.hash.slice(1);if(!validPage(h))h='ogren';
+  if(firstRoute||h===page||reduce){firstRoute=false;doRoute();return}
+  const dir=navDir(page,h);document.documentElement.dataset.nav=dir;
+  if(document.startViewTransition&&$('#lesson').hidden){try{document.startViewTransition(doRoute);return}catch(e){}}
+  doRoute();const sec=$$('[data-page]').find(s=>!s.hidden);if(sec){sec.classList.remove('pg-in');void sec.offsetWidth;sec.classList.add('pg-in')}
+}
+function doRoute(){
   let h=location.hash.slice(1);if(!validPage(h))h='ogren';
   if(isTrack(h)){if(h.length>7){S.field=h.slice(7);save()}history.replaceState(null,'','#ogren');h='ogren';renderPath()}
   if(page.startsWith('lab-')&&h!==page)unmountExp();
@@ -27,8 +38,8 @@ function route(){
   renderNav();
   if(h==='atolye')renderHub();if(h==='cizim'){DR.prog=[];DR.sel=null;renderDraw()}if(h==='sozluk')renderGloss();if(h==='gorevler')renderQuests();if(h==='magaza')renderShop();if(h==='profil')renderProfile();
   if(h==='lab')renderLab();if(h==='defter')renderNotebook();if(h==='ogretmen')renderTeacher();if(h==='hakkinda')renderAbout();
-  if(h.startsWith('lab-'))renderExp(h.slice(4));if(h==='yonetici')renderAdmin();
-  document.title=(h==='ogren'?'':(h.startsWith('lab-')?EXPS.find(x=>'lab-'+x.id===h).title:(PAGES.find(p=>p[0]===h)||[0,{cizim:'Çizim atölyesi',sozluk:'Sözlük',defter:'Deney defterim',ogretmen:'Öğretmenler için',hakkinda:'Proje hakkında',yonetici:'Yönetici paneli'}[h]])[1])+' · ')+'#BilimKıvılcımı';
+  if(h.startsWith('lab-'))renderExp(h.slice(4));if(h==='yonetici')renderAdmin();if(h==='yuva')renderNest();
+  document.title=(h==='ogren'?'':(h.startsWith('lab-')?EXPS.find(x=>'lab-'+x.id===h).title:(PAGES.find(p=>p[0]===h)||[0,{cizim:'Çizim atölyesi',sozluk:'Sözlük',defter:'Deney defterim',ogretmen:'Öğretmenler için',hakkinda:'Proje hakkında',yonetici:'Yönetici paneli',yuva:'Anka\'nın yuvası'}[h]])[1])+' · ')+'#BilimKıvılcımı';
   window.scrollTo(0,0);if(h==='ogren')scrollCur();
   if(!S.onb&&h==='ogren'&&$('#modal').hidden)onboard();
 }

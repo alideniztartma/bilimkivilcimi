@@ -2,7 +2,7 @@
 
 **Hatay'daki çocuklar için ücretsiz bilim ve kodlama sitesi.** Bir [Antioch Rising #10947](https://github.com/alideniztartma) projesi.
 
-Öğrenciler maskotumuz **Anka** ile oyun oynar gibi kodlama öğrenir, 3 boyutlu laboratuvarda deney yapar, ölçümlerini deney defterine kaydeder. Öğretmenler hazır ders planlarını ve yazdırılabilir etkinlik kâğıtlarını kullanır, sınıflarının ilerlemesini takip eder.
+Öğrenciler maskotumuz **Anka** ile oyun oynar gibi kodlama öğrenir, laboratuvardaki deney oyunlarını oynar, sonuçları deney defterine kendiliğinden yazılır. Öğretmenler hazır ders planlarını ve yazdırılabilir etkinlik kâğıtlarını kullanır, sınıflarının ilerlemesini takip eder.
 
 ![Kodlama yolu](img/ekran-yol.jpg)
 
@@ -10,7 +10,13 @@
 
 Anka, Antioch Rising'in yavru anka kuşudur. Anka kuşu küllerinden yeniden doğar. Hatay da depremden sonra yeniden ayağa kalkıyor. Anka da çocuklara her hatadan sonra yeniden denemeyi öğretir. Göğsündeki mozaikler Antakya'nın ünlü mozaiklerinden gelir.
 
-Anka sitenin her yerindedir: dersleri anlatır, doğru cevapta sevinir, yanlış cevapta cesaret verir, ders yolunda sıradaki dersi gösterir, laboratuvarda ipucu verir. Mağazadan ona zeytin dalı, bilge gözlüğü, mühendis bareti ve taç alınabilir.
+Anka sitenin her yerindedir: dersleri anlatır, doğru cevapta sevinir, yanlış cevapta cesaret verir, ders yolunda sıradaki dersi gösterir, laboratuvarda ipucu verir. Anka'ya dokununca **Anka'nın yuvası** açılır:
+
+- **Besle:** Mağazadan alınan mısır, elma, Hatay narı ve künefe ile Anka'yı doyur. Tokluk ve mutluluk zamanla azalır.
+- **Giydir:** Baş, yüz ve boyun için birer aksesuar: zeytin tacı, baret, mezuniyet kepi, taç, bilge gözlüğü, güneş gözlüğü, papyon, takım atkısı.
+- **Sev:** Anka'yı okşa, gıdıkla, dans ettir, uyut. Her sevgi gösterisi dostluk seviyesini artırır.
+
+Sayfalar arasında kayarak geçiş yapılır (sekmeler yana, alt sayfalar ileri ve geri). Ders yolu açılırken düğümler sırayla belirir.
 
 Duolingo'daki Duo gibi canlıdır: nefes alır, göz kırpar, etrafına bakar, kuyruğunu sallar. Doğru cevapta zıplar, üst üste doğrularda takla atar ve döner, yanlışta başını sallayıp üzülür, ders bitince dans eder. Dokununca da rastgele bir hareket yapıp konuşur.
 
@@ -24,37 +30,38 @@ Duolingo'daki Duo gibi canlıdır: nefes alır, göz kırpar, etrafına bakar, k
 - Çizim atölyesi (kaplumbağa grafiği), kodlama sözlüğü, sesli okuma
 - Günlük görevler ve mağaza
 
-### 3 boyutlu laboratuvar
-![Mancınık deneyi](img/ekran-mancinik.jpg)
+### Laboratuvar: 8 deney oyunu
+Her deney bir oyundur. Ayarlar oyun alanının hemen altındadır, telefonda da oyunla birlikte görünür.
 
-| Deney | Sınıf | Konu |
-|---|---|---|
-| Sarkaç | 6–8 | Salınım süresi, yer çekimi (Dünya, Ay, Mars, Jüpiter) |
-| Kaldıraç | 8 | Basit makineler, kütle × uzaklık |
-| Elektrik devresi | 4–7 | Seri ve paralel bağlama, anahtar, sökülen lamba |
-| Kesirler | 3–6 | Denk kesirler, çubuk ve pasta modeli |
-| Mancınık (yeni) | 6–8 | Eğik atış, açı ve hız, sur duvarı |
-| Yüzer mi, batar mı? (yeni) | 6 | Yoğunluk, tatlı su, tuzlu su, zeytinyağı |
-| Ay'ın evreleri (yeni) | 5 | Güneş, Dünya ve Ay, Dünya'dan görünüş |
-| Işık ve aynalar (yeni) | 7 | Yansıma kanunu, 3 bölümlük bulmaca |
+| Oyun | Sınıf | Konu | Oynanış |
+|---|---|---|---|
+| Sarkaç saati | 6–8 | Salınım süresi, yer çekimi | İpi ayarla, ritmi yakala. Dünya, Ay, Mars, Jüpiter |
+| Denge ustası | 8 | Kaldıraç, kütle × uzaklık | Blokları deliklere koy, takozları çek |
+| Işıkları yak | 4–7 | Seri, paralel, anahtar, kısa devre | Kablo tak, anahtarla, lambaları yak |
+| Pizza dükkanı | 3–6 | Denk kesirler, karşılaştırma, toplama | Müşterilere istenen kesir kadar pizza ver |
+| Kale kuşatması | 6–8 | Eğik atış, açı ve hız | Mancınığı çekip bırak, kuleleri yık |
+| Yüzer mi, batar mı? | 6 | Yoğunluk | Tahmin et, sıvıyı seç, gemiyi yükle |
+| Ay fotoğrafçısı | 5 | Ay'ın evreleri | Ay'ı yörüngede gezdir, hedef evreyi fotoğrafla |
+| Lazer labirenti | 7 | Yansıma kanunu | Aynaları çevir ve yerleştir, kristalleri yak |
 
-Her deneyde:
-- 3 görev: önce **tahmin et**, sonra **dene ve kontrol et**
-- Canlı ölçüm göstergeleri, kamera kontrolü, yavaş çekim
-- **Ölçümü kaydet** ile tablo ve grafik (formül eğrisiyle karşılaştırma)
+Her oyunda:
+- 5 bölüm, her bölümde 1–3 yıldız. Bazı bölümler bir **tahmin sorusuyla** başlar
+- Her deneme **deney defterine kendiliğinden** yazılır (tablo ve grafik, formül eğrisiyle karşılaştırma)
 - "Bu nasıl çalışıyor?": formül, açıklama, gerçek hayattan örnek, ilginç bilgi
-- Görev başına +10 XP ve +5 mozaik taşı, laboratuvar rozetleri
+- İlk bitirilen bölüm başına +10 XP ve +5 mozaik taşı, üç yıldıza +3 taş
 
 **Deney defterim** sayfası bütün ölçümleri tablo ve grafik olarak toplar, yazdırılabilir.
 
 ### Alanlar: Yazılım, Mekanik, Elektronik
+Mekanik ve Elektronik alanları doğrudan FRC robotları üzerine kuruludur: şasi ve montaj, dişli oranı ve sürüş sistemleri, mekanizmalar ve pnömatik; güç dağıtımı, roboRIO ve CAN hattı, sensörler, kablolama ve arıza bulma.
+
 Öğrenci ilk açılışta hangi alanı öğrenmek istediğini seçer. Sonra üst çubuktaki küçük alan düğmesiyle (Duolingo'daki dil bayrağı gibi) istediği zaman geçebilir. Her alan, kodlama yolundaki gibi ünitelerden, derslerden, sandıklardan ve kupa sınavından oluşan bir yol haritasıdır. Yolun sonunda sıradaki üniteler "Yakında" olarak görünür.
 
 | Alan | Üniteler |
 |---|---|
 | Yazılım | Algoritma · Döngüler · Koşullar · Değişkenler · İlk Python kodum · Robot yazılımı |
-| Mekanik | Basit makineler ve dişliler (2 ders) |
-| Elektronik | Elektrik devreleri (2 ders) |
+| Mekanik (FRC) | Robotun iskeleti · Hareket ve güç aktarımı · Mekanizmalar (pnömatik dahil) |
+| Elektronik (FRC) | Robotun güç sistemi · Motorlar ve sensörler · Güvenli kablolama ve arıza bulma |
 
 Yeni ünite eklemek için `js/egitim.js` dosyasında `U.push(...)` ile `field` alanı verilmiş bir ünite ekleyin; "Yakında" listesi aynı dosyadaki `FIELDS` içindedir.
 
@@ -95,12 +102,12 @@ js/data.js        Dersler, bulmacalar, sözlük, mağaza, görevler
 js/core.js        Durum, ses, bildirim, ödüller
 js/sync.js        Otomatik, adsız istatistik gönderimi (Supabase)
 js/learn.js       Kodlama yolu, alıştırmalar, atölye, profil
-js/lab.js         3 boyutlu deneyler, görevler, deney defteri
+js/lab.js         8 deney oyunu (2B tuval), bölümler, deney defteri
+js/yuva.js        Anka'nın yuvası: besle, giydir, sev
 js/egitim.js      Alanlar (Yazılım, Mekanik, Elektronik) ve yeni üniteler
 js/teacher.js     Öğretmen sayfası ve proje hakkında
 js/admin.js       Yönetici istatistik paneli
 js/main.js        Sayfa yönetimi ve başlatma
-js/three.min.js   three.js r149 (MIT lisansı)
 ```
 
 Derleme adımı yoktur. Dosyaları düzenleyip tarayıcıyı yenilemek yeterlidir.
@@ -111,4 +118,4 @@ Derleme adımı yoktur. Dosyaları düzenleyip tarayıcıyı yenilemek yeterlidi
 
 ## Lisans
 
-MIT. Ayrıntılar için [LICENSE](LICENSE) dosyasına bakın. three.js kendi MIT lisansıyla dağıtılır.
+MIT. Ayrıntılar için [LICENSE](LICENSE) dosyasına bakın.

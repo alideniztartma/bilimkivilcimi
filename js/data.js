@@ -33,30 +33,30 @@ const U=[
  ]}
 ]},
 {id:'u2',title:'Döngüler',desc:'Aynı işi tekrar tekrar yaptır.',deco:'wow',
- guide:[{h:'Döngü nedir?',p:'Aynı adımları tekrar tekrar yapmaya döngü denir.',code:'Tekrarla 4 kez:\n    İleri git'},
+ guide:[{h:'Döngü nedir?',p:'Aynı adımları tekrar tekrar yapmaya döngü denir.',code:'4 kez tekrarla:\n    İleri git'},
         {h:'Kısa ve doğru',p:'Yukarıdaki program, dört kez "İleri git" yazmakla aynıdır. Döngü programı kısaltır ve hata yapmayı azaltır.'},
         {h:'İçerdeki satırlar',p:'Döngünün içindeki komutlar biraz içeriden başlar. Böylece hangi komutların tekrar edileceği anlaşılır.'}],
  lessons:[
  {id:'u2l1',title:'Tekrar eden adımlar',ex:[
-  {t:'info',h:'Döngülerle tanış',p:'Aynı şeyi tekrar tekrar yapmaya <b>döngü</b> denir. "Tekrarla 3 kez: Zıpla" demek, üç kez "Zıpla" yazmakla aynıdır.',code:'Tekrarla 3 kez:\n    Zıpla'},
-  {t:'mc',q:'Hangisi "İleri git, İleri git, İleri git" programının kısa hâlidir?',mono:true,opts:['Tekrarla 3 kez:\n    İleri git','Tekrarla 2 kez:\n    İleri git','İleri git'],a:0},
-  {t:'fill',q:'Kurbağa 5 kez zıplamalı. Boşluğu doldur.',code:'Tekrarla ___ kez:\n    Zıpla',opts:['5','3','1'],a:0},
+  {t:'info',h:'Döngülerle tanış',p:'Aynı şeyi tekrar tekrar yapmaya <b>döngü</b> denir. "3 kez tekrarla: Zıpla" demek, üç kez "Zıpla" yazmakla aynıdır.',code:'3 kez tekrarla:\n    Zıpla'},
+  {t:'mc',q:'Hangisi "İleri git, İleri git, İleri git" programının kısa hâlidir?',mono:true,opts:['3 kez tekrarla:\n    İleri git','2 kez tekrarla:\n    İleri git','İleri git'],a:0},
+  {t:'fill',q:'Kurbağa 5 kez zıplamalı. Boşluğu doldur.',code:'___ kez tekrarla:\n    Zıpla',opts:['5','3','1'],a:0},
   {t:'mc',q:'Hangisi günlük hayattan bir döngüdür?',opts:['Her sabah dişlerini fırçalamak','Doğum günü pastasını bir kez kesmek','Okula ilk gün gitmek'],a:0},
-  {t:'type',q:'Bu program kaç kez "Merhaba" der?',code:'Tekrarla 4 kez:\n    Merhaba de',a:['4','dört']},
-  {t:'match',q:'Eşleri bul',mono:true,pairs:[['Tekrarla 2 kez: Alkışla','2 alkış'],['Tekrarla 3 kez: Zıpla','3 zıplama'],['Tekrarla 1 kez: Dön','1 dönüş'],['Tekrarla 4 kez: Adım at','4 adım']]}
+  {t:'type',q:'Bu program kaç kez "Merhaba" der?',code:'4 kez tekrarla:\n    Merhaba de',a:['4','dört']},
+  {t:'match',q:'Eşleri bul',mono:true,pairs:[['2 kez tekrarla: Alkışla','2 alkış'],['3 kez tekrarla: Zıpla','3 zıplama'],['1 kez tekrarla: Dön','1 dönüş'],['4 kez tekrarla: Adım at','4 adım']]}
  ]},
  {id:'u2l2',title:'Döngülü robot',ex:[
   {t:'info',h:'Robota döngü öğretelim',p:'Turuncu çerçeve bir döngüdür. Kaç kez tekrar edileceğini <b>−</b> ve <b>+</b> ile seç. Komutları çerçevenin içine koy.'},
   {t:'robot',q:'Döngü kullanarak robotu yıldıza götür.',map:['.....','.....','R...*','.....','.....'],dir:1,max:1,loop:true},
-  {t:'type',q:'Bu program kaç kez alkışlar?',code:'Tekrarla 3 kez:\n    Alkışla\n    Zıpla',a:['3','üç']},
+  {t:'type',q:'Bu program kaç kez alkışlar?',code:'3 kez tekrarla:\n    Alkışla\n    Zıpla',a:['3','üç']},
   {t:'robot',q:'Merdiveni çık! Aynı dört komut tekrar ediyor.',map:['...#*','..#..','.#...','#....','R....'],dir:1,max:4,loop:true},
   {t:'robot',q:'Üç yıldızı da topla. Karenin her kenarı aynı.',map:['R..*.','.....','.....','*..*.','.....'],dir:1,max:4,loop:true}
  ]},
  {id:'u2l3',title:'Döngüyle düşün',ex:[
-  {t:'mc',q:'Toplam kaç alkış olur?',code:'Tekrarla 2 kez:\n    Tekrarla 3 kez:\n        Alkışla',opts:['6','5','3','2'],a:0,tip:'Her dış turda 3 alkış var. 2 tur × 3 alkış = 6 alkış.'},
-  {t:'mc',q:'Hangi program robota bir kare çizdirir?',mono:true,opts:['Tekrarla 4 kez:\n    İleri git\n    Sağa dön','Tekrarla 2 kez:\n    İleri git\n    Sağa dön','Tekrarla 4 kez:\n    İleri git'],a:0},
-  {t:'order',q:'Merdiven çıkan programı sırala.',lines:true,items:['Tekrarla 4 kez:','    İleri git','    Sola dön','    İleri git','    Sağa dön']},
-  {t:'type',q:'Robot toplam kaç adım ileri gider?',code:'Tekrarla 5 kez:\n    İleri git\n    İleri git',a:['10','on'],tip:'Her turda 2 adım var. 5 tur × 2 adım = 10 adım.'},
+  {t:'mc',q:'Toplam kaç alkış olur?',code:'2 kez tekrarla:\n    3 kez tekrarla:\n        Alkışla',opts:['6','5','3','2'],a:0,tip:'Her dış turda 3 alkış var. 2 tur × 3 alkış = 6 alkış.'},
+  {t:'mc',q:'Hangi program robota bir kare çizdirir?',mono:true,opts:['4 kez tekrarla:\n    İleri git\n    Sağa dön','2 kez tekrarla:\n    İleri git\n    Sağa dön','4 kez tekrarla:\n    İleri git'],a:0},
+  {t:'order',q:'Merdiven çıkan programı sırala.',lines:true,items:['4 kez tekrarla:','    İleri git','    Sola dön','    İleri git','    Sağa dön']},
+  {t:'type',q:'Robot toplam kaç adım ileri gider?',code:'5 kez tekrarla:\n    İleri git\n    İleri git',a:['10','on'],tip:'Her turda 2 adım var. 5 tur × 2 adım = 10 adım.'},
   {t:'match',q:'Eşleri bul',pairs:[['Döngü','Tekrar etmek'],['Tekrar sayısı','Kaç kez'],['Döngünün içi','Tekrar eden komutlar']]}
  ]}
 ]},
@@ -108,11 +108,11 @@ const U=[
   {t:'line',q:'Elif\'in 3 elması var ve 1 elma daha alıyor. Hangi satır yanlış?',lines:['elma = 3','elma = elma - 1','"elma" sayısını yaz'],a:[1],tip:'Elma aldıysa eklemeliyiz: elma = elma + 1'}
  ]},
  {id:'u4l3',title:'Sayaç',ex:[
-  {t:'info',h:'Döngü + değişken',p:'Döngü ile değişkeni birlikte kullanabiliriz. Her turda 1 artan değişkene <b>sayaç</b> denir.',code:'sayaç = 0\nTekrarla 3 kez:\n    sayaç = sayaç + 1\n# sayaç artık 3'},
-  {t:'type',q:'Sonunda sayaç kaç?',code:'sayaç = 0\nTekrarla 5 kez:\n    sayaç = sayaç + 1',a:['5','beş']},
-  {t:'type',q:'Sonunda toplam kaç?',code:'toplam = 0\nTekrarla 4 kez:\n    toplam = toplam + 2',a:['8','sekiz'],tip:'Her turda 2 eklenir: 2, 4, 6, 8.'},
-  {t:'mc',q:'Sonunda yıldız kaç?',code:'yıldız = 10\nTekrarla 3 kez:\n    yıldız = yıldız - 1',opts:['7','13','10','3'],a:0},
-  {t:'order',q:'Sayaç programını sırala.',lines:true,items:['sayaç = 0','Tekrarla 3 kez:','    sayaç = sayaç + 1']}
+  {t:'info',h:'Döngü + değişken',p:'Döngü ile değişkeni birlikte kullanabiliriz. Her turda 1 artan değişkene <b>sayaç</b> denir.',code:'sayaç = 0\n3 kez tekrarla:\n    sayaç = sayaç + 1\n# sayaç artık 3'},
+  {t:'type',q:'Sonunda sayaç kaç?',code:'sayaç = 0\n5 kez tekrarla:\n    sayaç = sayaç + 1',a:['5','beş']},
+  {t:'type',q:'Sonunda toplam kaç?',code:'toplam = 0\n4 kez tekrarla:\n    toplam = toplam + 2',a:['8','sekiz'],tip:'Her turda 2 eklenir: 2, 4, 6, 8.'},
+  {t:'mc',q:'Sonunda yıldız kaç?',code:'yıldız = 10\n3 kez tekrarla:\n    yıldız = yıldız - 1',opts:['7','13','10','3'],a:0},
+  {t:'order',q:'Sayaç programını sırala.',lines:true,items:['sayaç = 0','3 kez tekrarla:','    sayaç = sayaç + 1']}
  ]}
 ]},
 {id:'u5',title:'İlk Python kodum',desc:'Gerçek bir programlama dili yaz.',deco:'cheer',
@@ -172,7 +172,7 @@ const GLOSS=[
  {u:0,t:'Program',d:'Bilgisayarın anlayacağı şekilde yazılmış algoritma.'},
  {u:0,t:'Hata (bug)',d:'Programdaki yanlış. İngilizcede böcek anlamına gelen bug denir.'},
  {u:0,t:'Hata ayıklama',d:'Programdaki hatayı bulup düzeltmek.'},
- {u:1,t:'Döngü',d:'Aynı komutları tekrar tekrar çalıştırmak.',c:'Tekrarla 4 kez:\n    İleri git'},
+ {u:1,t:'Döngü',d:'Aynı komutları tekrar tekrar çalıştırmak.',c:'4 kez tekrarla:\n    İleri git'},
  {u:1,t:'Tekrar sayısı',d:'Döngünün kaç kez döneceği.'},
  {u:2,t:'Koşul',d:'Doğru mu yanlış mı diye bakılan bir soru. Doğruysa içindeki komut çalışır.',c:'Eğer ışık kırmızıysa:\n    Dur'},
  {u:2,t:'Değilse',d:'Koşul yanlış olduğunda çalışan kısım.'},
@@ -203,11 +203,22 @@ const CHAL=[
 const SHOP=[
  {id:'kalp',name:'Kalpleri doldur',desc:'Bütün kalplerin dolar.',price:50},
  {id:'koruyucu',name:'Seri koruyucu',desc:'Bir gün ders yapmazsan serin bozulmaz. En fazla 2 tane alabilirsin.',price:80},
- {id:'zeytin',name:'Zeytin tacı',desc:'Antakya\'nın zeytin dalları.',price:40,cos:1},
- {id:'gozluk',name:'Bilge gözlüğü',desc:'Anka daha bilge görünsün.',price:60,cos:1},
- {id:'baret',name:'Mühendis bareti',desc:'Robot takımına hazır!',price:100,cos:1},
- {id:'tac',name:'Kıvılcım tacı',desc:'Kodlamanın kralı.',price:150,cos:1}
+ /* Anka'nın mutfağı: yuvada Anka'yı besler. t: tokluk, j: mutluluk */
+ {id:'misir',name:'Mısır taneleri',desc:'Küçük ama doyurucu bir atıştırmalık.',price:5,food:{t:15,j:3}},
+ {id:'elma',name:'Elma dilimi',desc:'Taze ve çıtır.',price:8,food:{t:20,j:6}},
+ {id:'nar',name:'Hatay narı',desc:'Antakya\'nın kıpkırmızı narı. Anka bayılır!',price:12,food:{t:25,j:12}},
+ {id:'kunefe',name:'Künefe',desc:'Hatay\'ın meşhur tatlısı. Anka için en büyük ödül.',price:20,food:{t:35,j:25}},
+ /* Anka'nın dolabı: yuvada giydirilir */
+ {id:'zeytin',name:'Zeytin tacı',desc:'Antakya\'nın zeytin dalları.',price:40,cos:1,slot:'head'},
+ {id:'papyon',name:'Kırmızı papyon',desc:'Ödül töreni için şık bir papyon.',price:50,cos:1,slot:'neck'},
+ {id:'gozluk',name:'Bilge gözlüğü',desc:'Anka daha bilge görünsün.',price:60,cos:1,slot:'face'},
+ {id:'gunes',name:'Güneş gözlüğü',desc:'Hatay güneşine hazır.',price:70,cos:1,slot:'face'},
+ {id:'atki',name:'Takım atkısı',desc:'Antioch Rising renklerinde sıcacık bir atkı.',price:80,cos:1,slot:'neck'},
+ {id:'baret',name:'Mühendis bareti',desc:'Robot takımına hazır!',price:100,cos:1,slot:'head'},
+ {id:'kep',name:'Mezuniyet kepi',desc:'Bütün dersleri bitirenlere yakışır.',price:120,cos:1,slot:'head'},
+ {id:'tac',name:'Kıvılcım tacı',desc:'Kodlamanın kralı.',price:150,cos:1,slot:'head'}
 ];
+const SLOTS={head:'Baş',face:'Yüz',neck:'Boyun'};
 
 /* Günlük görev havuzu */
 const QPOOL=[

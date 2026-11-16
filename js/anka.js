@@ -1,15 +1,18 @@
 /* #BilimKıvılcımı · Anka
    Antioch Rising'in yavru anka kuşu. Logodaki anka gibi küllerinden doğar:
-   her hatadan sonra yeniden kalkar. Duygular: happy, cheer, wow, sad, wave, sleep, think. */
+   her hatadan sonra yeniden kalkar. Duygular: happy, cheer, wow, sad, wave, sleep, think, love, eat. */
 'use strict';
 
 const ANKA_NAME='Anka';
 
+/* Giyilen aksesuarlar: boyun, yüz, baş sırasıyla çizilir. */
+const ankaWorn=()=>{try{const w=(typeof S!=='undefined'&&S&&S.wear)||{};return ['neck','face','head'].map(k=>w[k]).filter(Boolean)}catch(e){return[]}};
+
 /* cls: ek sınıflar. Örn. 'act-jump' ilk gösterimde bir kez zıplatır. */
 function anka(mood='happy',size=100,acc,cls){
-  if(acc===undefined)acc=(typeof S!=='undefined'&&S&&S.equip)||null;
+  const A=new Set(acc===undefined?ankaWorn():acc==null?[]:Array.isArray(acc)?acc:[acc]);
   const ink='#2F2E24',body='#E58A2C',dark='#A3461F',deep='#7A2E16',belly='#F7DDA6',tile='#EBC27A',beak='#8E2B22';
-  const cheer=mood==='cheer',sad=mood==='sad',wow=mood==='wow',wave=mood==='wave',sleep=mood==='sleep',think=mood==='think';
+  const cheer=mood==='cheer',sad=mood==='sad',wow=mood==='wow',wave=mood==='wave',sleep=mood==='sleep',think=mood==='think',love=mood==='love',eat=mood==='eat';
   const W=140,H=150;
   /* kuyruk alevleri (arkada) */
   const tail=`<path d="M46 126 C 26 134 12 126 8 110 C 18 118 30 116 40 108 Z" fill="${dark}"/>
@@ -36,7 +39,9 @@ function anka(mood='happy',size=100,acc,cls){
   const wingsFront=`${cheer?`<g class="wg wgl">${upWL}</g>`:''}${(cheer||wave)?`<g class="wg wgr">${upWR}</g>`:''}`;
   /* gözler */
   let eyes;
-  if(cheer||sleep){
+  if(love){
+    eyes=[54,86].map(cx=>`<path class="hrt" d="M${cx} 80 C ${cx-20} 66 ${cx-17} 48 ${cx-7} 50 C ${cx-3} 51 ${cx} 55 ${cx} 58 C ${cx} 55 ${cx+3} 51 ${cx+7} 50 C ${cx+17} 48 ${cx+20} 66 ${cx} 80 Z" fill="#C2412D" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${cx-6}" cy="58" r="3" fill="#fff" opacity=".8"/>`).join('');
+  }else if(cheer||sleep||eat){
     const d=sleep?'M42 68 Q54 76 66 68 M74 68 Q86 76 98 68':'M41 70 Q54 55 67 70 M73 70 Q86 55 99 70';
     eyes=`<path d="${d}" stroke="${ink}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
   }else{
@@ -52,8 +57,9 @@ function anka(mood='happy',size=100,acc,cls){
   let beakP;
   if(cheer)beakP=`<path d="M60 82 L80 82 L70 90 Z" fill="${beak}"/><path d="M62 90 Q70 106 78 90 Z" fill="#5C1A14"/><path d="M65 96 Q70 100 75 96 Q70 103 65 96 Z" fill="#E8776A"/>`;
   else if(wow)beakP=`<path d="M61 82 L79 82 L70 89 Z" fill="${beak}"/><ellipse cx="70" cy="92" rx="6" ry="4" fill="#5C1A14"/><path d="M64 94 L76 94 L70 101 Z" fill="${beak}"/>`;
+  else if(eat)beakP=`<path d="M60 80 L80 80 L70 88 Z" fill="${beak}"/><g class="chew"><path d="M62 88 L78 88 L70 99 Z" fill="#5C1A14"/><path d="M63 88 L77 88 L70 92 Z" fill="${beak}"/></g>`;
   else beakP=`<path d="M61 83 L79 83 L70 96 Z" fill="${beak}"/><path d="M61 83 L79 83 L70 87 Z" fill="#B23A2A"/>`;
-  const cheeks=`<ellipse cx="34" cy="88" rx="7" ry="4.5" fill="#E8776A" opacity=".5"/><ellipse cx="106" cy="88" rx="7" ry="4.5" fill="#E8776A" opacity=".5"/>`;
+  const cheeks=`<ellipse cx="34" cy="88" rx="${love||eat?9:7}" ry="${love||eat?6:4.5}" fill="#E8776A" opacity="${love||eat?.8:.5}"/><ellipse cx="106" cy="88" rx="${love||eat?9:7}" ry="${love||eat?6:4.5}" fill="#E8776A" opacity="${love||eat?.8:.5}"/>`;
   const feet=`<path d="M57 139 l-6 7 M57 139 v8 M57 139 l6 7 M83 139 l-6 7 M83 139 v8 M83 139 l6 7" stroke="${deep}" stroke-width="3.6" stroke-linecap="round"/>`;
   let extra='';
   if(sad)extra=`<path class="tear" d="M38 80 C 35 86 34 90 38 92 C 42 90 41 86 38 80 Z" fill="#8FC1D9"/>`;
@@ -61,10 +67,17 @@ function anka(mood='happy',size=100,acc,cls){
   if(think)extra=`<circle class="thd" cx="112" cy="30" r="4" fill="${dark}" opacity=".5"/><circle class="thd thd2" cx="122" cy="18" r="6" fill="${dark}" opacity=".5"/>`;
   /* aksesuarlar (mağaza) */
   let a='';
-  if(acc==='gozluk')a=`<g fill="rgba(255,255,255,.18)" stroke="${ink}" stroke-width="3.5"><circle cx="54" cy="66" r="19"/><circle cx="86" cy="66" r="19"/></g><path d="M66 64 Q70 60 74 64" stroke="${ink}" stroke-width="3.5" fill="none"/>`;
-  if(acc==='baret')a=`<path d="M32 40 Q70 -8 108 40 Z" fill="#D9822B" stroke="${ink}" stroke-width="3"/><path d="M70 9 V40" stroke="#A3461F" stroke-width="5"/><rect x="26" y="36" width="88" height="10" rx="3" fill="#A3461F" stroke="${ink}" stroke-width="3"/>`;
-  if(acc==='tac')a=`<path d="M44 34 L50 10 L60 24 L70 4 L80 24 L90 10 L96 34 Z" fill="#E8C35A" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/><rect x="66" y="21" width="8" height="8" transform="rotate(45 70 25)" fill="#8E2B22"/>`;
-  if(acc==='zeytin')a=`<g fill="#4B5A3A" stroke="${ink}" stroke-width="1.4"><ellipse cx="34" cy="44" rx="12" ry="5" transform="rotate(-40 34 44)"/><ellipse cx="46" cy="32" rx="12" ry="5" transform="rotate(-20 46 32)"/><ellipse cx="94" cy="32" rx="12" ry="5" transform="rotate(20 94 32)"/><ellipse cx="106" cy="44" rx="12" ry="5" transform="rotate(40 106 44)"/></g><circle cx="40" cy="38" r="3" fill="#2F3A28"/><circle cx="100" cy="38" r="3" fill="#2F3A28"/>`;
+  /* boyun */
+  if(A.has('atki'))a+=`<path d="M24 100 Q70 120 116 100 L118 113 Q70 134 22 113 Z" fill="#A3461F" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"/><path d="M40 108 Q70 122 100 108" stroke="#4B5A3A" stroke-width="4" fill="none"/><path d="M90 112 L100 140 L86 143 L80 115 Z" fill="#A3461F" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"/><path d="M86 125 L96 123 M88 132 L98 130" stroke="#4B5A3A" stroke-width="3"/>`;
+  if(A.has('papyon'))a+=`<path d="M70 104 L52 94 L52 114 Z M70 104 L88 94 L88 114 Z" fill="#8E2B22" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"/><rect x="65" y="98" width="10" height="12" rx="3" fill="#B23A2A" stroke="${ink}" stroke-width="2.5"/><circle cx="58" cy="104" r="1.8" fill="#F7DDA6"/><circle cx="82" cy="104" r="1.8" fill="#F7DDA6"/>`;
+  /* yüz */
+  if(A.has('gozluk'))a+=`<g fill="rgba(255,255,255,.18)" stroke="${ink}" stroke-width="3.5"><circle cx="54" cy="66" r="19"/><circle cx="86" cy="66" r="19"/></g><path d="M66 64 Q70 60 74 64" stroke="${ink}" stroke-width="3.5" fill="none"/>`;
+  if(A.has('gunes'))a+=`<rect x="34" y="54" width="34" height="24" rx="10" fill="#2F2E24" stroke="${ink}" stroke-width="3"/><rect x="72" y="54" width="34" height="24" rx="10" fill="#2F2E24" stroke="${ink}" stroke-width="3"/><path d="M68 60 Q70 56 72 60" stroke="${ink}" stroke-width="3.5" fill="none"/><path d="M40 60 L48 58 M78 60 L86 58" stroke="#F7DDA6" stroke-width="3" stroke-linecap="round" opacity=".8"/><path d="M34 60 L22 56 M106 60 L118 56" stroke="${ink}" stroke-width="3.5" stroke-linecap="round"/>`;
+  /* baş */
+  if(A.has('baret'))a+=`<path d="M32 40 Q70 -8 108 40 Z" fill="#D9822B" stroke="${ink}" stroke-width="3"/><path d="M70 9 V40" stroke="#A3461F" stroke-width="5"/><rect x="26" y="36" width="88" height="10" rx="3" fill="#A3461F" stroke="${ink}" stroke-width="3"/>`;
+  if(A.has('tac'))a+=`<path d="M44 34 L50 10 L60 24 L70 4 L80 24 L90 10 L96 34 Z" fill="#E8C35A" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/><rect x="66" y="21" width="8" height="8" transform="rotate(45 70 25)" fill="#8E2B22"/>`;
+  if(A.has('zeytin'))a+=`<g fill="#4B5A3A" stroke="${ink}" stroke-width="1.4"><ellipse cx="34" cy="44" rx="12" ry="5" transform="rotate(-40 34 44)"/><ellipse cx="46" cy="32" rx="12" ry="5" transform="rotate(-20 46 32)"/><ellipse cx="94" cy="32" rx="12" ry="5" transform="rotate(20 94 32)"/><ellipse cx="106" cy="44" rx="12" ry="5" transform="rotate(40 106 44)"/></g><circle cx="40" cy="38" r="3" fill="#2F3A28"/><circle cx="100" cy="38" r="3" fill="#2F3A28"/>`;
+  if(A.has('kep'))a+=`<path d="M48 30 V42 Q70 52 92 42 V30 Z" fill="#3A382C" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/><path d="M26 26 L70 10 L114 26 L70 42 Z" fill="#2F2E24" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/><path d="M70 26 L104 32 L106 54" stroke="#D9822B" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M101 52 L106 64 L111 52 Z" fill="#D9822B"/><circle cx="70" cy="26" r="3.5" fill="#D9822B"/>`;
   const d=-(Math.random()*7).toFixed(2);
   return `<svg class="anka ${mood}${cls?' '+cls:''}" style="--ad:${d}s" width="${size}" height="${Math.round(size*(H+10)/(W+20))}" viewBox="-10 -6 ${W+20} ${H+10}" aria-hidden="true"><g class="ak-all"><g class="ak-tail">${tail}</g><g class="ak-bd">${wingsBack}${crest}${bodyP}${bellyP}${wingsFront}${cheeks}<g class="ak-face">${eyes}${brows}${beakP}</g>${a}</g>${feet}${extra}</g></svg>`;
 }
@@ -95,4 +108,5 @@ document.addEventListener('click',e=>{
   const n=pick(['jump','spin','wiggle','dance','nod','flip']);ankaAct(a,n);
   if(typeof sfx!=='undefined'&&sfx.chirp)sfx.chirp();
   const bb=a.parentElement&&a.parentElement.querySelector('.bb');if(bb)bb.textContent=pickL(ANKA_TAP);
+  if(typeof openNestFrom==='function')openNestFrom(a);
 });

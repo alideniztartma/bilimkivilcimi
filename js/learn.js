@@ -45,8 +45,9 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-fmenu]');i
   if($('.fmenu')&&!e.target.closest('.fmenu'))closeFmenu()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('.fmenu'))closeFmenu()});
 addEventListener('resize',closeFmenu);
-function renderPath(){
-  const ns=allNodes(),cf=curField(),F=fieldOf(cf);let h=ankaMsg()+mobileQuests();
+let PATH_ANIM=true;
+function renderPath(){if(typeof petTick==='function')petTick();
+  const ns=allNodes(),cf=curField(),F=fieldOf(cf);let h=ankaMsg()+mobileQuests(),gi=0;
   fieldUnits(cf).forEach(({u,ui},fi_)=>{
     const un=ns.filter(n=>n.ui===ui),k=fi_+1;
     h+=`<section class="unit" style="--c:var(--u${ui+1});--cd:var(--u${ui+1}d)">
@@ -58,10 +59,10 @@ function renderPath(){
       if(n.k==='lesson'){inner=st==='done'?ic('check',30):st==='cur'?(n.l.ex.some(e=>e.t==='robot')?ic('robot',30):fi('star',30)):ic('lock',24);lbl=n.l.title}
       else if(n.k==='chest'){inner=ic('chest',54);lbl='Hazine sandığı'}
       else{inner=ic('trophy',54);lbl=k+'. ünite kupası'}
-      h+=`<div class="nw" style="--dx:${dx}px" data-node="${n.id}">
+      h+=`<div class="nw" style="--dx:${dx}px;--i:${gi++}" data-node="${n.id}">
         ${st==='cur'?'<span class="tipstart">BAŞLA</span>':''}${n.k==='trophy'&&st==='ready'?'<span class="tipstart">KUPA SINAVI</span>':''}
         <button class="node k-${n.k} ${st}" type="button" aria-label="${esc(lbl)}"><span>${inner}</span></button>
-        ${st==='cur'&&n.k==='lesson'?`<div class="buddy" style="--side:${dx>=0?-1:1}">${anka(S.lessons?'happy':'wave',100)}<span class="bb">${esc(BUDDY_LINE)}</span></div>`:i===2&&!un.some(m=>nodeState(m)==='cur'&&m.k==='lesson')?`<div class="udeco" style="--side:${dx>=0?-1:1}">${ic(UDECO[ui]||'star',96)}</div>`:''}
+        ${st==='cur'&&n.k==='lesson'?`<div class="buddy" style="--side:${dx>=0?-1:1}">${anka(S.pet&&S.pet.food<25?'sad':S.lessons?'happy':'wave',100)}<span class="bb">${esc(S.pet&&S.pet.food<25?'Acıktım! Bana dokun, yuvama gidelim.':BUDDY_LINE)}</span></div>`:i===2&&!un.some(m=>nodeState(m)==='cur'&&m.k==='lesson')?`<div class="udeco" style="--side:${dx>=0?-1:1}">${ic(U[ui].icon||UDECO[ui]||'star',96)}</div>`:''}
       </div>`;
     });
     h+='</div>'+band(30,ui+2)+'</section>';
@@ -69,11 +70,11 @@ function renderPath(){
   const nU=fieldUnits(cf).length;
   h+=F.soon.map((t,i)=>`<section class="unit soonunit"><div class="uhead frame"><div class="uin"><div><span class="lbl">${F.title.toLocaleUpperCase('tr')} · ${nU+i+1}. ÜNİTE · YAKINDA</span><h2>${esc(t)}</h2><p>Bu ünite hazırlanıyor.</p></div><span class="guide" aria-hidden="true">${ic('lock',22)}</span></div></div></section>`).join('');
   h+=`<div class="pathend">${anka('wow',90)}<h3>Yeni üniteler yolda!</h3><p>Diğer alanlara da göz at, atölyede çizim yap, laboratuvarda deney dene.</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">${FIELDS.filter(f=>f.id!==cf).map(f=>`<button class="b3 ghost" type="button" data-field="${f.id}">${ic(f.icon,18)} ${f.title}</button>`).join('')}<a class="b3 ghost" href="#lab">Laboratuvar</a></div></div>`;
-  $('#path').innerHTML=h;
+  $('#path').innerHTML=h;if(PATH_ANIM&&!reduce){const P=$('#path');P.classList.remove('path-in');void P.offsetWidth;P.classList.add('path-in');clearTimeout(P._pa);P._pa=setTimeout(()=>P.classList.remove('path-in'),1800)}PATH_ANIM=false;
 }
 function mobileQuests(){const n=Object.keys(S.day.claimed).length;
   return `<a class="card mquest" href="#gorevler"><span class="mq-i">${ic('target',22)}</span><span><b>Günlük görevler</b><small>${n} / 3 tamamlandı</small></span><span class="mq-go">${ic('arrowU',18)}</span></a>`}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-field]');if(!b||b.closest('#mbox'))return;const changed=S.field!==b.dataset.field;S.field=b.dataset.field;save();closeFmenu();sfx.tap();BUDDY_LINE=pickL(ANKA.path);renderStats();renderPath();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-field]');if(!b||b.closest('#mbox'))return;const changed=S.field!==b.dataset.field;S.field=b.dataset.field;save();closeFmenu();sfx.tap();BUDDY_LINE=pickL(ANKA.path);PATH_ANIM=changed;renderStats();renderPath();
   if(page!=='ogren')location.hash='#ogren';else{window.scrollTo(0,0);scrollCur()}
   if(changed)toast(ic(fieldOf(S.field).icon,20)+' '+fieldOf(S.field).title+' yoluna geçtin')});
 function closePops(){$$('.pop').forEach(p=>p.remove());$$('.nw.open').forEach(n=>n.classList.remove('open'))}
@@ -180,7 +181,7 @@ function buildEx(ex,ch){
     const P=$('.prog',el),bot=$('.rbot',el);
     const blk=(k,i)=>`<button class="pz ${k}" type="button" data-del="${i}" aria-label="${CMD[k][0]} bloğunu sil">${ic(CMD[k][1],20)}${CMD[k][0]}<span class="x">${ic('x',16)}</span></button>`;
     const draw=()=>{const body=prog.map(blk).join('')||'<p class="ph">Yukarıdaki bloklara dokun.</p>';
-      P.innerHTML=loop?`<div class="loopf"><div class="lh">${ic('loop',20)} Tekrarla <button type="button" data-n="-1" aria-label="Azalt">−</button><b>${n}</b><button type="button" data-n="1" aria-label="Artır">+</button> kez</div><div class="body">${body}</div></div>`:body;
+      P.innerHTML=loop?`<div class="loopf"><div class="lh">${ic('loop',20)} <button type="button" data-n="-1" aria-label="Azalt">−</button><b>${n}</b><button type="button" data-n="1" aria-label="Artır">+</button> kez tekrarla</div><div class="body">${body}</div></div>`:body;
       $('.cnt',el).textContent=prog.length+' / '+ex.max+' blok'+(loop?' (döngünün içinde)':'');
       $$('[data-add]',el).forEach(b=>b.disabled=prog.length>=ex.max);ch()};
     el.addEventListener('click',e=>{if(o.busy)return;const a=e.target.closest('[data-add]'),d=e.target.closest('[data-del]'),m=e.target.closest('[data-n]');
@@ -378,19 +379,22 @@ function renderHub(){
    <button class="card hubc" type="button" id="hWrong" ${nWrong?'':'disabled'}><div class="hi" style="background:var(--garnet)">${ic('bug',26)}</div><span class="tag">${nWrong} soru</span><h3>Hata defterim</h3><p>${nWrong?'Yanlış yaptığın soruları yeniden çöz. Doğru yaptıkça defterden silinir.':'Henüz yanlış yaptığın soru yok.'}</p></button>
    <button class="card hubc" type="button" id="hPract" ${anyDone?'':'disabled'}><div class="hi" style="background:var(--rust)">${ic('loop',26)}</div><span class="tag">+1 kalp</span><h3>Karışık tekrar</h3><p>Bitirdiğin derslerden 6 soru. Kalp gitmez.</p></button>
    <a class="card hubc" href="#sozluk"><div class="hi" style="background:var(--olive-deep)">${ic('book',26)}</div><span class="tag">${GLOSS.filter(g=>glossOpen(g)).length} / ${GLOSS.length} kelime</span><h3>Kodlama sözlüğü</h3><p>Öğrendiğin kelimeler burada. Her ünitede yenileri açılır.</p></a>
-   <a class="card hubc" href="#lab"><div class="hi" style="background:var(--terra)">${ic('flask',26)}</div><span class="tag">${labDoneCount()} / ${labTotal()} görev</span><h3>Laboratuvar</h3><p>8 tane 3 boyutlu deney: sarkaç, mancınık, ay'ın evreleri ve daha fazlası.</p></a>
-   <a class="card hubc" href="#defter"><div class="hi" style="background:var(--olive)">${ic('notebook',26)}</div><span class="tag">${labNoteCount()} ölçüm</span><h3>Deney defterim</h3><p>Laboratuvarda kaydettiğin ölçümler ve grafiklerin.</p></a>
+   <a class="card hubc" href="#lab"><div class="hi" style="background:var(--terra)">${ic('flask',26)}</div><span class="tag">${labDoneCount()} / ${labTotal()} bölüm</span><h3>Laboratuvar</h3><p>8 deney oyunu: sarkaç saati, kale kuşatması, lazer labirenti ve daha fazlası.</p></a>
+   <a class="card hubc" href="#defter"><div class="hi" style="background:var(--olive)">${ic('notebook',26)}</div><span class="tag">${labNoteCount()} ölçüm</span><h3>Deney defterim</h3><p>Deney oyunlarındaki bütün denemelerin, tablo ve grafiklerle.</p></a>
   </div>`;
   $('#hDaily').onclick=()=>startMode('daily');
   $('#hSpeed').onclick=()=>startMode('speed');
   $('#hWrong').onclick=()=>startMode('mistakes');
   $('#hPract').onclick=()=>startMode('practice');
 }
-const glossOpen=g=>g.u===0||U[g.u].lessons.some(l=>S.done[l.id])||U[g.u-1].lessons.every(l=>S.done[l.id]);
+const glossOpen=g=>{const u=U[g.u],fu=fieldUnits(u.field),k=fu.findIndex(x=>x.ui===g.u);return k<=0||u.lessons.some(l=>S.done[l.id])||fu[k-1].u.lessons.every(l=>S.done[l.id])};
 function renderGloss(){
-  $('#pgGloss').innerHTML=`<p><a href="#atolye" style="text-decoration:none;font-weight:800">← Atölye</a></p><h1 style="font-size:2.2rem;margin:8px 0 6px">Kodlama sözlüğü</h1><p class="sub">Kilitli kelimeler, o üniteye gelince açılır.</p>
-  ${U.map((u,ui)=>`<div class="sec-h">${ui+1}. ${u.title}</div><div class="gloss">${GLOSS.filter(g=>g.u===ui).map(g=>{const op=glossOpen(g);
-    return `<div class="card term ${op?'':'locked'}"><h3>${op?esc(g.t):'???'}${op?spkBtn(g.t+'. '+g.d):`<span style="color:var(--muted)">${ic('lock',20)}</span>`}</h3><p>${op?esc(g.d):'Bu kelime '+(ui+1)+'. ünitede açılacak.'}</p>${op&&g.c?`<pre class="code">${hl(g.c)}</pre>`:''}</div>`}).join('')}</div>`).join('')}`;
+  const term=(g,ui)=>{const op=glossOpen(g);
+    return `<div class="card term ${op?'':'locked'}"><h3>${op?esc(g.t):'???'}${op?spkBtn(g.t+'. '+g.d):`<span style="color:var(--muted)">${ic('lock',20)}</span>`}</h3><p>${op?esc(g.d):'Bu kelime '+esc(U[ui].title)+' ünitesinde açılacak.'}</p>${op&&g.c?`<pre class="code">${hl(g.c)}</pre>`:''}</div>`};
+  const fs=[curField()].concat(FIELDS.map(f=>f.id).filter(f=>f!==curField()));
+  $('#pgGloss').innerHTML=`<p><a href="#atolye" style="text-decoration:none;font-weight:800">← Atölye</a></p><h1 style="font-size:2.2rem;margin:8px 0 6px">Sözlük</h1><p class="sub">Kilitli kelimeler, o üniteye gelince açılır.</p>
+  ${fs.map(fid=>{const f=fieldOf(fid);return `<h2 class="gl-f">${ic(f.icon,24)} ${esc(f.title)}</h2>`+fieldUnits(fid).map(({u,ui})=>{const gs=GLOSS.filter(g=>g.u===ui);if(!gs.length)return'';
+    return `<div class="sec-h">${unitNo(ui)}. ${esc(u.title)}</div><div class="gloss">${gs.map(g=>term(g,ui)).join('')}</div>`}).join('')}).join('')}`;
 }
 
 /* ---------- Çizim atölyesi (kalemli robot) ---------- */
@@ -431,7 +435,8 @@ function tbHTML(b,path){
   const label={f:'İleri',r:'Sağa dön',l:'Sola dön',c:'Renk',u:'Kalemi kaldır',d:'Kalemi indir',rep:'Tekrarla'}[b.t];
   const val=b.t==='f'?b.n:b.t==='r'||b.t==='l'?b.n+'°':b.t==='rep'?b.n+' kez':b.t==='c'?`<span class="swatch" style="background:${PENC[b.n]}"></span>`:'';
   const ctl=(b.t==='u'||b.t==='d')?'':`<button type="button" data-tv="-1" data-p="${path}" aria-label="Azalt">−</button><span class="v">${val}</span><button type="button" data-tv="1" data-p="${path}" aria-label="Artır">+</button>`;
-  const row=`<div class="tb ${b.t==='rep'?'':b.t}">${label}<span class="sp"></span>${ctl}<button type="button" data-tdel="${path}" aria-label="Sil">${ic('x',14)}</button></div>`;
+  const row=b.t==='rep'?`<div class="tb">${ctl.replace(val,b.n)}<span>kez tekrarla</span><span class="sp"></span><button type="button" data-tdel="${path}" aria-label="Sil">${ic('x',14)}</button></div>`
+    :`<div class="tb ${b.t}">${label}<span class="sp"></span>${ctl}<button type="button" data-tdel="${path}" aria-label="Sil">${ic('x',14)}</button></div>`;
   if(b.t!=='rep')return row;
   const i=+path;return `<div class="tloop ${DR.sel===i?'target':''}" data-tsel="${i}">${row}<div class="tbody">${b.kids.map((k,j)=>tbHTML(k,i+'.'+j)).join('')||'<p class="ph">Döngünün içi boş.</p>'}</div></div>`;
 }
@@ -495,22 +500,25 @@ document.addEventListener('click',e=>{
 /* ================= MAĞAZA ================= */
 function renderShop(){
   $('#pgShop').innerHTML=`<h1>Mağaza</h1><p class="sub">Elinde <b style="color:var(--olive)">${S.gems} mozaik taşı</b> var. Taşları görevlerden, sandıklardan, günün bulmacasından ve kupa sınavlarından kazanırsın.</p>
-  <div class="sec-h">Güçlendirmeler</div><div class="shop">${SHOP.filter(i=>!i.cos).map(item).join('')}</div>
-  <div class="sec-h">Anka'nın dolabı</div><div class="shop">${SHOP.filter(i=>i.cos).map(item).join('')}</div>`;
+  <a class="card nestlink" href="#yuva">${anka(petMood(),70)}<div><b>Anka'nın yuvası</b><p>Aldığın yiyecekler ve giysiler yuvada seni bekliyor. Anka'yı besle, giydir, sev!</p></div><span class="b3 sm olive">Yuvaya git</span></a>
+  <div class="sec-h">Güçlendirmeler</div><div class="shop">${SHOP.filter(i=>!i.cos&&!i.food).map(item).join('')}</div>
+  <div class="sec-h">Anka'nın mutfağı <small>Yuvada Anka'yı beslersin</small></div><div class="shop">${SHOP.filter(i=>i.food).map(item).join('')}</div>
+  <div class="sec-h">Anka'nın dolabı <small>Baş, yüz ve boyun için birer aksesuar</small></div><div class="shop">${SHOP.filter(i=>i.cos).map(item).join('')}</div>`;
   function item(i){let btn;
-    if(i.cos&&S.owned[i.id])btn=`<button class="b3 ${S.equip===i.id?'ghost':'olive'}" type="button" data-eq="${i.id}">${S.equip===i.id?'Çıkar':'Tak'}</button>`;
+    if(i.cos&&S.owned[i.id]){const on=S.wear[i.slot]===i.id;btn=`<button class="b3 ${on?'ghost':'olive'}" type="button" data-eq="${i.id}" aria-pressed="${on}">${on?'Çıkar':'Giydir'}</button>`}
     else{const dis=S.gems<i.price||(i.id==='kalp'&&S.hearts>=5)||(i.id==='koruyucu'&&S.freeze>=2);
       btn=`<button class="b3 ember" type="button" data-buy="${i.id}" ${dis?'disabled':''}><span class="price">${fi('gem',16)}${i.price}</span></button>`}
-    const extra=i.id==='koruyucu'?` Sende ${S.freeze} tane var.`:i.id==='kalp'?` Şu an ${S.hearts} / 5.`:'';
-    const pic=i.id==='kalp'?`<span style="color:var(--garnet)">${fi('heart',44)}</span>`:i.id==='koruyucu'?`<span style="color:var(--olive)">${ic('snow',40)}</span>`:anka('happy',58,i.id);
+    const extra=i.id==='koruyucu'?` Sende ${S.freeze} tane var.`:i.id==='kalp'?` Şu an ${S.hearts} / 5.`:i.food?` Yuvada ${S.pet.inv[i.id]||0} tane var. +${i.food.t} tokluk.`:i.cos?` ${SLOTS[i.slot]} aksesuarı.`:'';
+    const pic=i.id==='kalp'?`<span style="color:var(--garnet)">${fi('heart',44)}</span>`:i.id==='koruyucu'?`<span style="color:var(--olive)">${ic('snow',40)}</span>`:i.food?foodIcon(i.id,52):anka('happy',58,i.id);
     return `<div class="card item"><div class="pic">${pic}</div><div><b>${i.name}</b><p>${i.desc}${extra}</p></div>${btn}</div>`}
 }
 $('#pgShop').addEventListener('click',e=>{
   const b=e.target.closest('[data-buy]'),q=e.target.closest('[data-eq]');
-  if(b){const i=SHOP.find(x=>x.id===b.dataset.buy);if(S.gems<i.price)return;S.gems-=i.price;
-    if(i.id==='kalp'){S.hearts=5;S.heartAt=null}else if(i.id==='koruyucu')S.freeze++;else{S.owned[i.id]=1;S.equip=i.id}
-    save();sfx.coin();toast(fi('gem',20)+' '+i.name+' alındı!');renderAll()}
-  if(q){S.equip=S.equip===q.dataset.eq?null:q.dataset.eq;save();renderAll()}
+  if(b){const i=SHOP.find(x=>x.id===b.dataset.buy);if(S.gems<i.price)return;
+    if(i.id==='kalp'||i.id==='koruyucu'){S.gems-=i.price;if(i.id==='kalp'){S.hearts=5;S.heartAt=null}else S.freeze++;save();sfx.coin();toast(fi('gem',20)+' '+i.name+' alındı!')}
+    else buyItem(i.id);
+    renderAll()}
+  if(q){const i=SHOP.find(x=>x.id===q.dataset.eq);S.wear[i.slot]=S.wear[i.slot]===i.id?null:i.id;save();sfx.tap();renderAll()}
 });
 
 /* ================= ROZETLER, SERTİFİKA, PROFİL ================= */
@@ -531,10 +539,10 @@ const BADGES=[
  {id:'hizli',name:'Şimşek',desc:'Hızlı turda 10 doğru yap.',icon:'timer',t:()=>S.speedBest>=10},
  {id:'bulmaca',name:'Bulmaca Kurdu',desc:'Günün bulmacasını çöz.',icon:'puzzle',t:()=>Object.keys(S.dailyDone).length>0},
  {id:'brans',name:'Çok Yönlü Mühendis',desc:'Yazılım, Mekanik ve Elektronik alanlarının her birinden bir ders bitir.',icon:'tools',t:()=>FIELDS.every(f=>ALL_LESSONS.some(l=>l.field===f.id&&S.done[l.id]))},
- {id:'lab',name:'Laboratuvar Kâşifi',desc:'Laboratuvarda ilk deney görevini bitir.',icon:'flask',t:()=>labDoneCount()>=1},
- {id:'bilimci',name:'Genç Bilim İnsanı',desc:'8 deneyin hepsinde en az bir görev bitir.',icon:'eye',t:()=>EXPS.every(x=>labExpDone(x.id)>0)},
- {id:'labusta',name:'Laboratuvar Ustası',desc:'Laboratuvardaki bütün görevleri bitir.',icon:'trophy',t:()=>labDoneCount()>=labTotal()},
- {id:'defter',name:'Titiz Gözlemci',desc:'Deney defterine 5 ölçüm kaydet.',icon:'notebook',t:()=>labNoteCount()>=5}
+ {id:'lab',name:'Laboratuvar Kâşifi',desc:'Laboratuvarda bir deney oyununun ilk bölümünü bitir.',icon:'flask',t:()=>labDoneCount()>=1},
+ {id:'bilimci',name:'Genç Bilim İnsanı',desc:'8 deney oyununun hepsinde en az bir bölüm bitir.',icon:'eye',t:()=>EXPS.every(x=>labExpDone(x.id)>0)},
+ {id:'labusta',name:'Laboratuvar Ustası',desc:'Laboratuvardaki bütün bölümleri bitir.',icon:'trophy',t:()=>labDoneCount()>=labTotal()},
+ {id:'defter',name:'Titiz Gözlemci',desc:'Deney defterinde 5 ölçüm biriktir.',icon:'notebook',t:()=>labNoteCount()>=5}
 ];
 const badgeSet=()=>new Set(BADGES.filter(b=>S.badges[b.id]||b.t()).map(b=>b.id));
 function openCert(ui){
@@ -566,7 +574,7 @@ function renderProfile(){
     <div class="card tile"><span style="color:var(--ember)">${fi('bolt',30)}</span><div><b>${S.xp}</b><span>Toplam XP</span></div></div>
     <div class="card tile"><span style="color:var(--olive)">${ic('book',30)}</span><div><b>${Object.keys(S.done).length}/${ALL_LESSONS.length}</b><span>Bitirilen ders</span></div></div>
     <div class="card tile"><span style="color:var(--terra)">${ic('trophy',30)}</span><div><b>${Object.keys(S.trophies).length}/${U.length}</b><span>Kupa</span></div></div>
-    <div class="card tile"><span style="color:var(--olive)">${ic('flask',30)}</span><div><b>${labDoneCount()}/${labTotal()}</b><span>Deney görevi</span></div></div>
+    <div class="card tile"><span style="color:var(--olive)">${ic('flask',30)}</span><div><b>${labDoneCount()}/${labTotal()}</b><span>Deney bölümü</span></div></div>
     <div class="card tile"><span style="color:var(--ember)">${ic('pen',30)}</span><div><b>${CHAL.filter(c=>S.draw[c.id]).length}/${CHAL.length}</b><span>Çizim</span></div></div>
   </div>
   <div class="sec-h">Sertifikalarım</div>
@@ -601,6 +609,7 @@ function renderStats(){
   const today=S.lastDay===dkey();
   const h=fieldBtn()+`<span class="stat fl ${today?'':'off'}" title="Günlük seri">${fi('flame',24)}${S.streak}</span><span class="stat gm" title="Mozaik taşı">${fi('gem',22)}${S.gems}</span><span class="stat ht" title="Kalp">${fi('heart',24)}${S.hearts}</span>`;
   $$('.stats-slot').forEach(s=>{if(s.classList.contains('stats'))s.innerHTML=h;else{s.style.display='flex';s.innerHTML=h}});
+  const prev=renderStats.prev,cur={fl:S.streak,gm:S.gems,ht:S.hearts};if(prev&&!reduce)Object.keys(cur).forEach(k=>{if(cur[k]>prev[k])$$('.stat.'+k).forEach(e=>e.classList.add('up'));else if(cur[k]<prev[k])$$('.stat.'+k).forEach(e=>e.classList.add('down'))});renderStats.prev=cur;
   const t=dkey(),days=['Pt','Sa','Ça','Pe','Cu','Ct','Pz'],now=new Date(),wd=(now.getDay()+6)%7;
   $('#rcStreak').innerHTML=`<div class="streakbig"><span style="color:${today?'var(--ember)':'var(--off)'}">${fi('flame',40)}</span><div><b>${S.streak}</b><div style="color:var(--muted);font-size:.88rem">günlük seri</div></div></div>
     <p style="color:var(--muted);font-size:.9rem;margin-top:8px">${today?'Bugünkü dersini yaptın. Harika!':'Serini sürdürmek için bugün bir ders yap.'}</p>

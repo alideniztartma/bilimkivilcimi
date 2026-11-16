@@ -90,7 +90,7 @@ function band(n=26,seed=1){let h='',x=seed*9301;const C=['var(--sand)','var(--sa
 function botSVG(){return `<svg viewBox="0 0 40 40" width="100%" height="100%"><path d="M20 2 L26 9 H14 Z" fill="#D9822B"/><rect x="6" y="9" width="28" height="26" rx="4" fill="#A3461F"/><rect x="10" y="14" width="20" height="10" rx="2" fill="#FBF6EA"/><circle cx="16" cy="19" r="2.6" fill="#2F2E24"/><circle cx="24" cy="19" r="2.6" fill="#2F2E24"/><rect x="3" y="14" width="4" height="14" rx="1" fill="#2F3A28"/><rect x="33" y="14" width="4" height="14" rx="1" fill="#2F3A28"/></svg>`}
 
 /* Kod renklendirme */
-const KW=['print','for','in','range','if','else','Tekrarla','kez','Eğer','Değilse'];
+const KW=['print','for','in','range','if','else','Tekrarla','tekrarla','kez','Eğer','Değilse','Sürekli'];
 const HLRE=new RegExp(`(#[^\\n]*)|("[^"\\n]*"?)|(?<![\\p{L}\\d_])(\\d+)(?![\\p{L}\\d_])|(?<![\\p{L}\\d_])(${KW.join('|')})(?![\\p{L}\\d_])`,'gu');
 function hl(code){let out='',last=0;code.replace(HLRE,(m,c,s,n,k,i)=>{out+=esc(code.slice(last,i));
   out+=c?`<i class="cm">${esc(c)}</i>`:s?`<i class="st">${esc(s)}</i>`:n?`<i class="nu">${n}</i>`:`<i class="kw">${k}</i>`;last=i+m.length;return m});
