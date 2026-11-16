@@ -12,8 +12,21 @@
 <link rel="icon" href="img/logo.png">
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/style.css">
+<style>
+#boot{position:fixed;inset:0;z-index:9999;background:#D9822B;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transition:opacity .35s ease}
+#boot.out{opacity:0;pointer-events:none}
+#boot .bt-face{width:min(52vw,210px);height:auto;animation:btIn .5s cubic-bezier(.3,1.5,.5,1) both}
+#boot .bt-name{font:700 clamp(28px,8.5vw,40px)/1 'Zilla Slab',Georgia,serif;color:#FBF3E2;letter-spacing:.2px;animation:btUp .5s .12s ease both}
+#boot .bt-name b{color:#7A2E16}
+#boot .bt-team{position:absolute;bottom:calc(28px + env(safe-area-inset-bottom,0px));font:700 12px/1 Manrope,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#7A2E16;opacity:.75}
+@keyframes btIn{from{transform:scale(.6);opacity:0}}
+@keyframes btUp{from{transform:translateY(10px);opacity:0}}
+@media (prefers-reduced-motion:reduce){#boot *{animation:none!important}}
+</style>
 </head>
 <body>
+<div id="boot" role="presentation"><svg class="bt-face" aria-hidden="true" viewBox="0 0 220 160"><path d="M58 40 L70 8 L88 34 L110 2 L132 34 L150 8 L162 40 Z" fill="#A3461F"/><path d="M30 92 C30 52 64 30 110 30 C156 30 190 52 190 92 C190 132 156 150 110 150 C64 150 30 132 30 92 Z" fill="#EFA04A"/><circle cx="72" cy="88" r="31" fill="#FBF3E2"/><circle cx="148" cy="88" r="31" fill="#FBF3E2"/><circle cx="76" cy="92" r="16" fill="#2F2E24"/><circle cx="144" cy="92" r="16" fill="#2F2E24"/><circle cx="82" cy="85" r="5.5" fill="#fff"/><circle cx="150" cy="85" r="5.5" fill="#fff"/><ellipse cx="50" cy="128" rx="13" ry="7" fill="#E8786A" opacity=".75"/><ellipse cx="170" cy="128" rx="13" ry="7" fill="#E8786A" opacity=".75"/><path d="M96 116 L124 116 L110 140 Z" fill="#B5382A"/><path d="M96 116 L124 116 L118 122 L102 122 Z" fill="#8E2B22"/></svg><div class="bt-name"><b>#</b>BilimKıvılcımı</div><div class="bt-team" lang="en">Antioch Rising #10947</div></div>
+<script>(function(){var b=document.getElementById('boot');if(!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())){b.remove();return}document.documentElement.style.background='#D9822B';window.__bootT=Date.now()})()</script>
 
 <div class="app">
   <aside class="side" aria-label="Menü">

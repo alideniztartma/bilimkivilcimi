@@ -98,6 +98,7 @@ function smallReward(xp,gems,why){
 
 /* Uygulamada (APK) durum çubuğunu temaya uydur */
 function appBars(){try{const SB=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.StatusBar;if(!SB)return;document.documentElement.classList.add('is-app');
+  if(document.getElementById('boot')){SB.setOverlaysWebView({overlay:false});SB.setStyle({style:'DARK'});SB.setBackgroundColor({color:'#D9822B'});return}
   const dark=document.documentElement.dataset.theme==='dark'||(document.documentElement.dataset.theme!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);
   SB.setOverlaysWebView({overlay:false});SB.setStyle({style:dark?'DARK':'LIGHT'});SB.setBackgroundColor({color:getComputedStyle(document.documentElement).getPropertyValue('--tessera').trim()||(dark?'#1C1A14':'#F4EAD6')})}catch(e){}}
 addEventListener('load',appBars);try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',appBars)}catch(e){}
