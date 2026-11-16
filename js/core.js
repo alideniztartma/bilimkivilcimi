@@ -54,9 +54,10 @@ const sfx={ok:()=>tone([[660,.09],[990,.16]]),bad:()=>tone([[196,.14],[147,.22]]
   win:()=>tone([[523,.12],[659,.12],[784,.12],[1047,.3]],'triangle',.12),coin:()=>tone([[1200,.06],[1600,.12]],'square',.05),tick:()=>tone([[880,.03]],'square',.03),chirp:()=>tone([[1180,.05],[1560,.06],[1320,.07]],'sine',.06),
   whoosh:()=>tone([[300,.08],[500,.08],[800,.12]],'sawtooth',.04),splash:()=>tone([[180,.06],[120,.18]],'triangle',.1),thud:()=>tone([[90,.15]],'square',.12)};
 /* Titreşim: uygulamada Capacitor Haptics, tarayıcıda navigator.vibrate */
-function haptic(k){if(!S||S.vib===false)return;try{const H=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.Haptics;
-  if(H){if(k==='ok')H.notification({type:'SUCCESS'});else if(k==='bad')H.notification({type:'ERROR'});else if(k==='win')H.notification({type:'SUCCESS'});else H.impact({style:k==='heavy'?'MEDIUM':'LIGHT'});return}
-  if(navigator.vibrate)navigator.vibrate(k==='bad'?[35,50,35]:k==='ok'||k==='win'?[15,40,20]:k==='heavy'?25:12)}catch(e){}}
+function haptic(k){if(!S||S.vib===false)return;try{const d=k==='bad'?[18,40,18]:k==='ok'||k==='win'?[10,30,12]:k==='heavy'?14:5;
+  const H=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.Haptics;
+  if(H){if(Array.isArray(d)){H.vibrate({duration:d[0]});setTimeout(()=>H.vibrate({duration:d[2]}),d[0]+d[1])}else H.vibrate({duration:d});return}
+  if(navigator.vibrate)navigator.vibrate(d)}catch(e){}}
 ['ok','bad','win'].forEach(k=>{const f=sfx[k];sfx[k]=(...a)=>{haptic(k);return f(...a)}});
 document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('button,a[href],[role="button"],[data-node],.node,label,summary');if(t&&!t.disabled)haptic('tap')},true);
 
