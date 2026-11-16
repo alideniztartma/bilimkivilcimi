@@ -51,3 +51,7 @@ if(location.hash&&!validPage(location.hash.slice(1)))history.replaceState(null,'
 dayCheck();BADGES.forEach(b=>{if(!S.badges[b.id]&&b.t())S.badges[b.id]=dkey()});save();
 renderStats();renderPath();route();
 setInterval(()=>{const h=S.hearts;dayCheck();if(S.hearts!==h)renderStats()},30000);
+
+/* Uygulamada açılış ekranını sayfa hazır olunca kapat */
+(function(){const hide=()=>{try{const SP=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.SplashScreen;if(SP)SP.hide({fadeOutDuration:250})}catch(e){}};
+  requestAnimationFrame(()=>requestAnimationFrame(hide));setTimeout(hide,3000)})();

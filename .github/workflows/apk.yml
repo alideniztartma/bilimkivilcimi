@@ -36,16 +36,16 @@ jobs:
       - name: Web dosyalarını uygulamaya kopyala
         run: |
           mkdir -p app/www app/assets
-          cp -r index.html css js img app/www/
+          cp -r index.html css js img fonts app/www/
           cp assets/*.png app/assets/
 
       - name: Capacitor ile Android projesi oluştur
         working-directory: app
         run: |
           npm init -y
-          npm i @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/haptics@7 @capacitor/status-bar@7 @capacitor/assets@3
+          npm i @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/haptics@7 @capacitor/status-bar@7 @capacitor/splash-screen@7 @capacitor/assets@3
           npx cap init "BilimKıvılcımı" org.antiochrising.bilimkivilcimi --web-dir www
-          node -e "const f='capacitor.config.json',fs=require('fs'),c=JSON.parse(fs.readFileSync(f));c.android=Object.assign({},c.android,{adjustMarginsForEdgeToEdge:'force'});c.backgroundColor='#F4EAD6';c.plugins=Object.assign({},c.plugins,{StatusBar:{overlaysWebView:false,style:'LIGHT',backgroundColor:'#F4EAD6'}});fs.writeFileSync(f,JSON.stringify(c,null,2));console.log(c)"
+          node -e "const f='capacitor.config.json',fs=require('fs'),c=JSON.parse(fs.readFileSync(f));c.android=Object.assign({},c.android,{adjustMarginsForEdgeToEdge:'force'});c.backgroundColor='#F4EAD6';c.plugins=Object.assign({},c.plugins,{StatusBar:{overlaysWebView:false,style:'LIGHT',backgroundColor:'#F4EAD6'},SplashScreen:{launchAutoHide:false,launchShowDuration:0,launchFadeOutDuration:250,backgroundColor:'#F4EAD6',showSpinner:false}});fs.writeFileSync(f,JSON.stringify(c,null,2));console.log(c)"
           npx cap add android
           npx capacitor-assets generate --android --iconBackgroundColor '#D9822B' --splashBackgroundColor '#F4EAD6' --splashBackgroundColorDark '#1C1A14'
           npx cap sync android
