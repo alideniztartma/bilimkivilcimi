@@ -587,7 +587,7 @@ textarea.codes{width:100%;font:500 .9rem/1.4 var(--mono);padding:12px;border:1px
   .side{display:none}
   .mtop .brand{display:flex}
   .center{padding:0 14px 110px}
-  .mtab{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--raised);border-top:1px solid var(--line);padding:4px 4px calc(6px + env(safe-area-inset-bottom));isolation:isolate}
+  .mtab{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;inset:auto 0 0;z-index:20;width:100%;background:var(--raised);border-top:1px solid var(--line);padding:4px 4px calc(6px + env(safe-area-inset-bottom));isolation:isolate;transform:translateZ(0)}
   .mtab .nav{flex-direction:column;gap:2px;padding:6px 0;justify-content:center;font-size:.62rem;letter-spacing:.06em;text-align:center;border:0;background:none}
   .mtab .nav[aria-current="page"]{background:none;box-shadow:inset 0 3px 0 var(--terra)}
   .mtab .nav .lg{display:none}
