@@ -8,10 +8,10 @@ const newDay=()=>({k:dkey(),xp:0,lessons:0,combo:0,perfect:0,robot:0,lab:0,claim
 const newUid=()=>{try{const a=new Uint8Array(6);crypto.getRandomValues(a);return [...a].map(x=>x.toString(36).padStart(2,'0')).join('').slice(0,10)}catch(e){return Math.random().toString(36).slice(2,12)}};
 const DEF=()=>({v:1,name:'',goal:20,xp:0,gems:50,hearts:5,heartAt:null,streak:0,best:0,lastDay:null,days:[],freeze:0,done:{},chests:{},trophies:{},badges:{},owned:{},equip:null,
   sound:true,tts:false,theme:'auto',onb:false,joined:dkey(),lessons:0,wrong:{},speedBest:0,draw:{},dailyDone:{},msgHide:null,
-  lab:{tasks:{},notes:{},found:{},seen:{}},cat:{},field:'yazilim',uid:newUid(),day:newDay()});
+  lab:{tasks:{},notes:{},found:{},seen:{}},cat:{},field:'yazilim',uid:newUid(),tok:newUid()+newUid()+newUid(),share:true,syncH:'',day:newDay()});
 let S=DEF();
-try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===1){S=Object.assign(DEF(),r);if(!r.uid){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(_){}}S.lab=Object.assign({tasks:{},notes:{},found:{},seen:{}},r.lab||{})}}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===1){S=Object.assign(DEF(),r);if(!r.uid||!r.tok){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(_){}}S.lab=Object.assign({tasks:{},notes:{},found:{},seen:{}},r.lab||{})}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(typeof scheduleSync==='function')scheduleSync()}
 
 /* Eski laboratuvar kayıtlarını yeni sisteme taşı */
 /* Alan dersleri artık yol haritasında: eski ayrı kayıtları ders kayıtlarına taşı */

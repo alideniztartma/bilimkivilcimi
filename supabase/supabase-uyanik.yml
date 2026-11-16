@@ -1,0 +1,16 @@
+# İSTEĞE BAĞLI: Supabase'in ücretsiz projeleri bir hafta etkinlik olmazsa duraklatılır.
+# Bu dosyayı .github/workflows/ klasörüne taşırsanız GitHub üç günde bir veritabanını yoklar ve projeyi uyanık tutar.
+name: Supabase uyanık tut
+on:
+  schedule:
+    - cron: '23 7 */3 * *'
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Veritabanını yokla
+        run: |
+          curl -sS -f -X POST "https://lqgfzlznarebrtvvryqb.supabase.co/rest/v1/rpc/bk_ping" \
+            -H "apikey: sb_publishable_qhskVF0RtrRH4f_Zv3ZyHQ_tunx6yq7" \
+            -H "Content-Type: application/json" -d '{}'

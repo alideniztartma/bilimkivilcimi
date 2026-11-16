@@ -10,10 +10,43 @@ const pinHash=p=>{let h=2166136261;for(const ch of 'bk|'+p){h^=ch.charCodeAt(0);
 let admOpen=false;try{admOpen=sessionStorage.getItem('bk-yon-acik')==='1'}catch(e){}
 let admQuery='';
 
+/* ================= CANLI VERİ (Supabase) ================= */
+let SBS=null;try{SBS=JSON.parse(sessionStorage.getItem('bk-yon-sb'))}catch(e){}
+const LIVE={rows:null,at:0,err:'',loading:false};
+const sbsSave=()=>{try{SBS?sessionStorage.setItem('bk-yon-sb',JSON.stringify(SBS)):sessionStorage.removeItem('bk-yon-sb')}catch(e){}};
+async function sbLogin(email,password){
+  const r=await sbFetch('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(/invalid/i.test(j.error_description||j.msg||j.error_code||'')?'E-posta ya da şifre yanlış.':'Giriş yapılamadı: '+(j.error_description||j.msg||r.status));
+  SBS={at:j.access_token,rt:j.refresh_token,exp:Date.now()+(j.expires_in||3600)*1000-60000,email:(j.user&&j.user.email)||email};
+  const a=await sbFetch('/rest/v1/rpc/bk_is_admin',{method:'POST',body:'{}'},SBS.at);
+  if(!a.ok||(await a.json())!==true){SBS=null;sbsSave();throw new Error('Bu hesap yönetici listesinde değil.')}
+  sbsSave();
+}
+async function sbToken(){
+  if(!SBS)return null;if(Date.now()<SBS.exp)return SBS.at;
+  const r=await sbFetch('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:SBS.rt})});
+  if(!r.ok){SBS=null;sbsSave();return null}
+  const j=await r.json();SBS=Object.assign(SBS,{at:j.access_token,rt:j.refresh_token,exp:Date.now()+(j.expires_in||3600)*1000-60000});sbsSave();return SBS.at;
+}
+async function admLoadLive(){
+  if(!SBS||LIVE.loading)return;LIVE.loading=true;LIVE.err='';
+  try{const jwt=await sbToken();if(!jwt)throw new Error('Oturum süresi doldu. Yeniden giriş yapın.');
+    const out={};for(let off=0;off<100000;off+=1000){
+      const r=await sbFetch(`/rest/v1/bk_progress?select=uid,data,updated_at&order=updated_at.desc&limit=1000&offset=${off}`,{},jwt);
+      if(!r.ok)throw new Error('Veriler alınamadı ('+r.status+').');
+      const rows=await r.json();rows.forEach(x=>{const o=reNorm(Object.assign({},x.data,{v:2,i:x.uid}));if(o)out[codeKey(o)]=o});
+      if(rows.length<1000)break}
+    LIVE.rows=out;LIVE.at=Date.now();
+  }catch(e){LIVE.err=e.message||'Bağlantı kurulamadı.';if(!SBS){admOpen=false;try{sessionStorage.removeItem('bk-yon-acik')}catch(_){}}}
+  LIVE.loading=false;if(page==='yonetici')renderAdmin();
+}
+setInterval(()=>{if(page==='yonetici'&&admOpen&&SBS&&document.visibilityState==='visible')admLoadLive()},60000);
+
 /* Kaydedilmiş ya da dosyadan gelen bir kaydı yeniden doğrula */
 function reNorm(o){
   if(!o||typeof o!=='object'||typeof o.x!=='number')return null;
-  if(o.v===2)return normCode({v:2,i:o.i,n:o.n,x:o.x,l:o.L||o.l,c:o.C||o.c,e:o.E||{},w:o.w,k:o.k,b:o.b,s:o.s,h:o.h,a:o.a,j:o.j,t:o.t});
+  if(o.v===2)return normCode({v:2,i:o.i,n:o.n,x:o.x,l:o.L||o.l,c:o.C||o.c,e:o.E||(o.e&&typeof o.e==='object'?o.e:{}),w:o.w,k:o.k,b:o.b,s:o.s,h:o.h,a:o.a,j:o.j,t:o.t});
   return normCode({n:o.n,x:o.x,l:o.l,e:o.e,k:o.k,b:o.b,s:o.s,d:o.d,t:o.t});
 }
 function admAdd(list){let ok=0,newer=0;
@@ -30,8 +63,10 @@ function admParseText(txt){
 }
 
 /* ================= HESAPLAMA ================= */
+function admUsers(){const all=Object.assign({},ADM.users);
+  if(LIVE.rows)Object.entries(LIVE.rows).forEach(([k,o])=>{const old=all[k];if(!old||String(old.t)<=String(o.t))all[k]=o});return Object.values(all)}
 function admStats(){
-  const us=Object.values(ADM.users),tn=dayNum(dkey());
+  const us=admUsers(),tn=dayNum(dkey());
   const last=u=>u.a?dayNum(u.a):null,since=u=>{const l=last(u);return l==null?null:tn-l};
   const act=n=>us.filter(u=>{const s=since(u);return s!=null&&s<n}).length;
   const v2=us.filter(u=>u.v===2);
@@ -73,21 +108,32 @@ function vbars(rows){
 function renderAdmin(){
   const el=$('#pgAdmin');
   if(!admOpen){
-    el.innerHTML=`<div class="card admgate">${anka('think',100,'gozluk')}<h1 class="ph1" style="margin:0">Yönetici paneli</h1><p class="muted">Kayıtlı öğrenci, aktif kullanıcı ve ders istatistiklerini görmek için yönetici şifresini girin.</p>
-      <label for="admPin" style="font-weight:800">Şifre</label><input id="admPin" type="password" inputmode="numeric" autocomplete="off" maxlength="32">
-      <button class="b3" type="button" id="admGo">Paneli aç</button><p class="tres bad" id="admErr" role="alert"></p></div>`;
+    el.innerHTML=`<div class="card admgate">${anka('think',100,'gozluk')}<h1 class="ph1" style="margin:0">Yönetici paneli</h1><p class="muted">Siteden gelen canlı istatistikleri görmek için yönetici hesabınızla giriş yapın.</p>
+      <label for="admMail" style="font-weight:800">E-posta</label><input id="admMail" type="email" autocomplete="username" value="${esc(SBS&&SBS.email||'')}">
+      <label for="admPass" style="font-weight:800">Şifre</label><input id="admPass" type="password" autocomplete="current-password">
+      <button class="b3" type="button" id="admLogin">Giriş yap</button><p class="tres bad" id="admErr" role="alert"></p>
+      <details class="more" style="width:100%"><summary>İnternet yok mu? Kodlarla çalış</summary><p class="muted" style="font-size:.9rem;margin:8px 0">Öğrenci kodları ve sınıf dosyalarıyla, internetsiz çalışır.</p>
+        <label for="admPin" style="font-weight:800">Panel şifresi</label><div style="display:flex;gap:8px;margin-top:6px"><input id="admPin" type="password" inputmode="numeric" autocomplete="off" maxlength="32"><button class="b3 ghost sm" type="button" id="admGo">Aç</button></div></details></div>`;
+    const login=async()=>{const e=$('#admMail').value.trim(),pw=$('#admPass').value;if(!e||!pw){$('#admErr').textContent='E-posta ve şifreyi yazın.';return}
+      const b=$('#admLogin');b.disabled=true;b.textContent='Giriş yapılıyor…';
+      try{await sbLogin(e,pw);admOpen=true;try{sessionStorage.setItem('bk-yon-acik','1')}catch(_){}renderAdmin();admLoadLive()}
+      catch(err){$('#admErr').textContent=err.message||'Bağlantı kurulamadı. İnternetinizi kontrol edin.';b.disabled=false;b.textContent='Giriş yap';sfx.bad()}};
+    $('#admLogin').onclick=login;$('#admPass').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
     const go=()=>{const v=$('#admPin').value.trim();const ok=ADM.pinH?pinHash(v)===ADM.pinH:v===ADM_DEFAULT_PIN;
-      if(ok){admOpen=true;try{sessionStorage.setItem('bk-yon-acik','1')}catch(e){}renderAdmin()}else{$('#admErr').textContent='Şifre yanlış.';sfx.bad()}};
-    $('#admGo').onclick=go;$('#admPin').addEventListener('keydown',e=>{if(e.key==='Enter')go()});setTimeout(()=>{const p=$('#admPin');if(p)p.focus()},50);return;
+      if(ok){admOpen=true;try{sessionStorage.setItem('bk-yon-acik','1')}catch(e){}renderAdmin()}else{$('#admErr').textContent='Panel şifresi yanlış.';sfx.bad()}};
+    $('#admGo').onclick=go;$('#admPin').addEventListener('keydown',e=>{if(e.key==='Enter')go()});setTimeout(()=>{const p=$(SBS?'#admPass':'#admMail');if(p)p.focus()},50);return;
   }
+  if(SBS&&!LIVE.rows&&!LIVE.loading&&!LIVE.err)admLoadLive();
   const st=admStats(),empty=!st.tot;
   const tile=(v,l,icn,note)=>`<div class="card atile"><span>${ic(icn,22)}</span><b>${v}</b><small>${l}</small>${note?`<em>${note}</em>`:''}</div>`;
   const catMax=Math.max(1,...st.cats.map(c=>c.users));
   const groups=[...new Set(st.lessonRows.map(r=>r.grp))];
   const lmax=Math.max(1,...st.lessonRows.map(r=>r.n));
   const rows=st.us.filter(u=>!admQuery||(u.n||'').toLocaleLowerCase('tr').includes(admQuery)).sort((a,b)=>(st.since(a)??1e9)-(st.since(b)??1e9)||b.x-a.x);
-  el.innerHTML=`<div class="admhead"><div><p class="eyebrow">YÖNETİCİ</p><h1 class="ph1" style="margin:4px 0">İstatistik paneli</h1><p class="sub" style="margin:0">${empty?'Henüz veri yok. Aşağıdan öğrenci kodu ya da öğretmenlerin sınıf dosyalarını ekleyin.':`${fmt(st.tot)} öğrencinin verisi · son güncelleme ${String(st.us.reduce((m,u)=>u.t>m?u.t:m,'')).split('-').reverse().join('.')}`}</p></div>
-    <button class="b3 ghost sm" type="button" id="admLock">${ic('lock',16)} Kilitle</button></div>
+  const hm=t=>{const d=new Date(t);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+  const src=SBS?(LIVE.err?`<span class="srcbad">${ic('info',14)} ${esc(LIVE.err)}</span>`:LIVE.loading&&!LIVE.rows?'Canlı veriler yükleniyor…':`<span class="srcok">● Canlı</span> ${fmt(Object.keys(LIVE.rows||{}).length)} öğrenci siteden · ${hm(LIVE.at)} itibarıyla, her dakika yenilenir`):'Çevrimdışı mod: yalnızca bu cihaza eklenen kodlar';
+  el.innerHTML=`<div class="admhead"><div><p class="eyebrow">YÖNETİCİ${SBS?' · '+esc(SBS.email):''}</p><h1 class="ph1" style="margin:4px 0">İstatistik paneli</h1><p class="sub" style="margin:0">${src}</p>${empty&&!LIVE.loading?'<p class="muted" style="margin-top:4px;font-size:.92rem">Henüz veri yok. Öğrenciler ders bitirdikçe sayılar burada görünür.</p>':''}</div>
+    <div class="abtns" style="margin:0">${SBS?`<button class="b3 ghost sm" type="button" id="admRef" ${LIVE.loading?'disabled':''}>${ic('reset',16)} ${LIVE.loading?'Yenileniyor…':'Yenile'}</button>`:''}<button class="b3 ghost sm" type="button" id="admLock">${ic('lock',16)} Çıkış</button></div></div>
   <div class="atiles">
     ${tile(fmt(st.tot),'Toplam kayıtlı kullanıcı','user')}
     ${tile(fmt(st.a7),'Aktif kullanıcı (son 7 gün)','bolt',st.tot?'%'+Math.round(st.a7/st.tot*100):'')}
@@ -110,11 +156,11 @@ function renderAdmin(){
   <div class="card apanel"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><h3>Öğrenciler <small>${fmt(rows.length)} kişi</small></h3>
     <input id="admQ" type="search" placeholder="Ada göre ara" value="${esc(admQuery)}" style="max-width:240px"></div>
     <div class="tscroll" style="max-height:420px;margin-top:10px"><table class="dtable"><thead><tr><th>Ad</th><th>XP</th><th>Ders</th><th>Deney görevi</th><th>Son etkinlik</th><th>Durum</th></tr></thead><tbody>
-    ${rows.slice(0,300).map(u=>{const s=st.since(u);return `<tr><td><b>${esc(u.n||'(adsız)')}</b></td><td>${fmt(u.x)}</td><td>${u.l+(u.v===2?u.C.filter(id=>!u.L.includes(id)).length:0)}</td><td>${u.e}</td><td>${u.a?u.a.split('-').reverse().join('.'):'–'}</td><td>${s==null?'Bilinmiyor':s<7?'<span class="pill-ok">Aktif</span>':s<30?'Son 30 gün':'Pasif'}</td></tr>`}).join('')||'<tr><td colspan="6" class="muted">Öğrenci yok.</td></tr>'}
+    ${rows.slice(0,300).map(u=>{const s=st.since(u);return `<tr><td><b>${esc(u.n||('Öğrenci '+(u.i||'').slice(0,5)))}</b></td><td>${fmt(u.x)}</td><td>${u.l+(u.v===2?u.C.filter(id=>!u.L.includes(id)).length:0)}</td><td>${u.e}</td><td>${u.a?u.a.split('-').reverse().join('.'):'–'}</td><td>${s==null?'Bilinmiyor':s<7?'<span class="pill-ok">Aktif</span>':s<30?'Son 30 gün':'Pasif'}</td></tr>`}).join('')||'<tr><td colspan="6" class="muted">Öğrenci yok.</td></tr>'}
     </tbody></table></div></div>
   <div class="agrid">
-    <div class="card apanel"><h3>Veri ekle</h3>
-      <p class="muted" style="font-size:.92rem">Öğrenci kodlarını (BK1 ya da BK2) yapıştırın ya da öğretmenlerin <b>sınıf dosyalarını</b> seçin. Aynı öğrenci tekrar eklenirse en yeni kodu kalır.</p>
+    <div class="card apanel"><h3>Kodla veri ekle <small>internetsiz sınıflar için</small></h3>
+      <p class="muted" style="font-size:.92rem">İnternete hiç bağlanmayan sınıfların öğrenci kodlarını (BK1 ya da BK2) yapıştırın ya da öğretmenlerin <b>sınıf dosyalarını</b> seçin.</p>
       <textarea class="codes" id="admIn" rows="3" placeholder="BK2.eyJ2Ijoy..."></textarea>
       <div class="abtns"><button class="b3 sm" type="button" id="admAddBtn">Kodları ekle</button>
         <label class="b3 ghost sm" style="cursor:pointer">${ic('notebook',16)} Dosya seç<input id="admFile" type="file" accept=".json,.txt,.csv" multiple hidden></label>
@@ -125,18 +171,19 @@ function renderAdmin(){
       <div class="abtns"><button class="b3 ghost sm" type="button" id="admCsv">${ic('save',16)} CSV indir</button><button class="b3 ghost sm" type="button" id="admBak">${ic('save',16)} Yedek indir</button><button class="b3 ghost sm" type="button" id="admClr">${ic('trash',16)} Verileri sil</button></div>
       <label for="admNew" style="display:block;font-weight:800;margin:14px 0 6px">Şifreyi değiştir</label>
       <div style="display:flex;gap:8px"><input id="admNew" type="password" autocomplete="new-password" placeholder="Yeni şifre (en az 4 karakter)" maxlength="32"><button class="b3 sm" type="button" id="admPinBtn">Kaydet</button></div>
-      <p class="muted" style="font-size:.86rem;margin-top:12px">${ic('info',14)} Site sunucusuz çalışır. Bu paneldeki veriler yalnızca bu cihazda saklanır, hiçbir yere gönderilmez. Şifre meraklıları uzak tutar ama gerçek bir güvenlik sağlamaz.</p></div>
+      <p class="muted" style="font-size:.86rem;margin-top:12px">${ic('info',14)} Canlı veriler Supabase'ten gelir ve adsızdır. Buradan eklenen kodlar ve dosyalar ise yalnızca bu cihazda saklanır; canlı verilerle birleştirilir, aynı öğrenci iki kez sayılmaz. Panel şifresi yalnızca çevrimdışı mod içindir.</p></div>
   </div>`;
   const msg=t=>{const m=$('#admMsg');if(m)m.textContent=t};
   const after=(r,bad)=>{renderAdmin();msg(`${r.ok} yeni öğrenci eklendi${r.newer?`, ${r.newer} öğrenci güncellendi`:''}${bad?`, ${bad} kod okunamadı`:''}.`)};
-  $('#admLock').onclick=()=>{admOpen=false;try{sessionStorage.removeItem('bk-yon-acik')}catch(e){}renderAdmin()};
+  $('#admLock').onclick=()=>{admOpen=false;SBS=null;sbsSave();LIVE.rows=null;LIVE.err='';try{sessionStorage.removeItem('bk-yon-acik')}catch(e){}renderAdmin()};
+  const rf=$('#admRef');if(rf)rf.onclick=()=>admLoadLive();
   $('#admQ').oninput=e=>{admQuery=e.target.value.trim().toLocaleLowerCase('tr');const p=e.target.selectionStart;renderAdmin();const q=$('#admQ');q.focus();try{q.setSelectionRange(p,p)}catch(_){}};
   $('#admAddBtn').onclick=()=>{const {out,bad}=admParseText($('#admIn').value);after(admAdd(out),bad)};
   $('#admFile').onchange=async e=>{let all=[],bad=0;for(const f of e.target.files){try{const r=admParseText(await f.text());all=all.concat(r.out);bad+=r.bad}catch(_){bad++}}after(admAdd(all),bad)};
   $('#admSelf').onclick=()=>{const o=decodeCode(progressCode());after(admAdd(o?[o]:[]),0)};
   $('#admSnf').onclick=()=>{after(admAdd(Object.values(SNF)),0)};
-  $('#admCsv').onclick=()=>{const head='Ad;XP;Ders;Deney görevi;Çizim;En uzun seri;Son etkinlik;Katılma;Kod tarihi';
-    downloadFile('bilimkivilcimi-istatistik-'+dkey()+'.csv','﻿'+[head].concat(st.us.map(u=>[u.n,u.x,u.l+u.c,u.e,u.w,u.b,u.a,u.j,u.t].map(v=>String(v??'').replace(/;/g,',')).join(';'))).join('\n'),'text/csv')};
+  $('#admCsv').onclick=()=>{const head='Ad ya da kimlik;XP;Ders;Deney görevi;Çizim;En uzun seri;Son etkinlik;Katılma;Kod tarihi';
+    downloadFile('bilimkivilcimi-istatistik-'+dkey()+'.csv','﻿'+[head].concat(st.us.map(u=>[u.n||u.i,u.x,u.l+u.c,u.e,u.w,u.b,u.a,u.j,u.t].map(v=>String(v??'').replace(/;/g,',')).join(';'))).join('\n'),'text/csv')};
   $('#admBak').onclick=()=>downloadFile('bilimkivilcimi-yonetici-yedek-'+dkey()+'.json',JSON.stringify({tur:'bk-yonetici',tarih:dkey(),kullanicilar:Object.values(ADM.users)}),'application/json');
   $('#admClr').onclick=e=>{const b=e.currentTarget;if(!b.dataset.arm){b.dataset.arm=1;b.textContent='Emin misiniz? Tekrar basın';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.innerHTML=ic('trash',16)+' Verileri sil'}},4000);return}
     ADM.users={};admSave();renderAdmin();msg('Bütün öğrenci verileri silindi.')};

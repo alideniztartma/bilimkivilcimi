@@ -56,10 +56,17 @@ Her deneyde:
 
 Yeni ünite eklemek için `js/egitim.js` dosyasında `U.push(...)` ile `field` alanı verilmiş bir ünite ekleyin; "Yakında" listesi aynı dosyadaki `FIELDS` içindedir.
 
-### Yönetici istatistik paneli
-`#yonetici` adresinde (menüde **Yönetici paneli**). Toplam kayıtlı kullanıcı, son 7 ve 30 günde aktif kullanıcı, yeni kayıtlar, ders bazında tamamlama sayıları, kategori ve deney bazında kullanım, son 14 günün günlük aktif öğrenci grafiği ve öğrenci listesi.
+### Yönetici istatistik paneli (canlı)
+`#yonetici` adresinde (menüde **Yönetici paneli**). Toplam kayıtlı kullanıcı, son 7 ve 30 günde aktif kullanıcı, yeni kayıtlar, ders bazında tamamlama sayıları, alan ve deney bazında kullanım, son 14 günün günlük aktif öğrenci grafiği ve öğrenci listesi. Veriler her dakika kendiliğinden yenilenir.
 
-Site sunucusuz çalıştığı için veriler öğrencilerin ilerleme kodlarından toplanır: öğrenci kodunu öğretmene gönderir, öğretmen **Sınıf dosyasını indir** ile dosyayı yöneticiye iletir, yönetici dosyaları panele yükler. Her öğrencinin cihazında rastgele, anonim bir kimlik oluşur; aynı öğrenci iki kez sayılmaz. İlk şifre takım numarasıdır (10947); panelden değiştirin. Şifre gerçek bir güvenlik sağlamaz, veriler yalnızca o cihazda tutulur.
+**Nasıl çalışır:** Öğrenci ders bitirdikçe site ilerlemesini [Supabase](https://supabase.com) veritabanına gönderir. Gönderilen veri **adsızdır**: rastgele bir kimlik, ders ve deney sayıları, etkinlik günleri. Her cihaz yalnızca kendi kaydını, cihazda saklanan gizli bir anahtarla güncelleyebilir; kayıtları yalnızca yönetici hesapları okuyabilir. İnternet yoksa site bekler, bağlantı gelince gönderir. Öğrenci isterse **Profil › Ayarlar › Anonim istatistik** ile gönderimi kapatabilir.
+
+**Kurulum (bir kez):**
+1. Supabase panelinde **SQL Editor › New query** açın, [`supabase/kurulum.sql`](supabase/kurulum.sql) dosyasının tamamını yapıştırıp **Run**'a basın.
+2. **Authentication › Users › Add user › Create new user** ile yönetici hesabını oluşturun (e-posta ve şifre, **Auto Confirm User** işaretli). Yönetici e-postaları `kurulum.sql` içindeki `bk_admins` listesindedir.
+3. İsteğe bağlı: ücretsiz projeler bir hafta etkinlik olmazsa duraklatılır. [`supabase/supabase-uyanik.yml`](supabase/supabase-uyanik.yml) dosyasını `.github/workflows/` klasörüne taşırsanız GitHub üç günde bir veritabanını yoklar.
+
+İnternete hiç bağlanmayan sınıflar için panelin **Kodla veri ekle** bölümü öğrenci kodlarını ve öğretmen sınıf dosyalarını da okur; bunlar canlı verilerle birleştirilir.
 
 ### Öğretmenler için
 - 9 hazır ders planı (8 deney + robot kodlama), her biri 40 dakikalık akışla
@@ -84,6 +91,7 @@ js/icons.js       Yardımcılar, simgeler, kod renklendirme
 js/anka.js        Anka maskotu (SVG, ruh halleri, aksesuarlar)
 js/data.js        Dersler, bulmacalar, sözlük, mağaza, görevler
 js/core.js        Durum, ses, bildirim, ödüller
+js/sync.js        Otomatik, adsız istatistik gönderimi (Supabase)
 js/learn.js       Kodlama yolu, alıştırmalar, atölye, profil
 js/lab.js         3 boyutlu deneyler, görevler, deney defteri
 js/egitim.js      Alanlar (Yazılım, Mekanik, Elektronik) ve yeni üniteler

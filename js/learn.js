@@ -534,12 +534,14 @@ function openCert(ui){
     ${framed?'':`<button class="b3" type="button" id="cprint">${ic('printer',18)} Yazdır</button>`}<button class="b3 ghost" type="button" id="cclose">Kapat</button>`,true);
   const p=$('#cprint');if(p)p.onclick=()=>{try{window.print()}catch(e){}};$('#cclose').onclick=closeModal;
 }
-function progressCode(){
-  /* BK2: anonim kimlik + ders, alan, deney ve etkinlik özetleri. Öğretmen tablosu ve yönetici paneli okur. */
+/* BK2: anonim kimlik + ders, deney ve etkinlik özetleri. Öğretmen tablosu, yönetici paneli ve otomatik istatistik aynı biçimi kullanır. */
+function progressObj(){
   const t=dkey(),tn=dayNum(t),ex={};Object.keys(S.lab.tasks).forEach(k=>{const id=k.split('-')[0];ex[id]=(ex[id]||0)+1});
-  const o={v:2,i:S.uid,n:S.name||'',x:S.xp,l:Object.keys(S.done),c:[],e:ex,w:Object.keys(S.draw).length,k:Object.keys(S.trophies).map(Number),
+  return{v:2,i:S.uid,n:S.name||'',x:S.xp,l:Object.keys(S.done),c:[],e:ex,w:Object.keys(S.draw).length,k:Object.keys(S.trophies).map(Number),
     b:S.best,s:S.streak,g:Object.keys(S.badges).length,h:S.days.map(d=>tn-dayNum(d)).filter(n=>n>=0&&n<60),a:S.lastDay||'',j:S.joined,t};
-  try{return 'BK2.'+btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}catch(e){return ''}
+}
+function progressCode(){
+  try{return 'BK2.'+btoa(unescape(encodeURIComponent(JSON.stringify(progressObj())))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}catch(e){return ''}
 }
 function renderProfile(){
   BADGES.forEach(b=>{if(!S.badges[b.id]&&b.t())S.badges[b.id]=dkey()});save();
@@ -567,6 +569,7 @@ function renderProfile(){
     <div><b>Ses efektleri</b><div class="seg" id="sSound"><button type="button" data-v="1" aria-pressed="${S.sound}">Açık</button><button type="button" data-v="0" aria-pressed="${!S.sound}">Kapalı</button></div></div>
     ${canSpeak?`<div><b>Soruları sesli oku</b><div class="seg" id="sTts"><button type="button" data-v="1" aria-pressed="${S.tts}">Açık</button><button type="button" data-v="0" aria-pressed="${!S.tts}">Kapalı</button></div></div>`:''}
     <div><b>Görünüm</b><div class="seg" id="sTheme">${[['auto','Otomatik'],['light','Gündüz'],['dark','Gece']].map(t=>`<button type="button" data-v="${t[0]}" aria-pressed="${S.theme===t[0]}">${t[1]}</button>`).join('')}</div></div>
+    <div><b>Anonim istatistik</b><div class="seg" id="sShare"><button type="button" data-v="1" aria-pressed="${S.share}">Açık</button><button type="button" data-v="0" aria-pressed="${!S.share}">Kapalı</button></div><p class="muted" style="font-size:.82rem;flex-basis:100%">Açıkken bitirdiğin ders ve deney sayıları adın olmadan, rastgele bir kimlikle proje ekibine gönderilir. Böylece sitenin kaç çocuğa ulaştığını görürüz.</p></div>
     <div><b>Günlük hedef</b><div class="seg" id="sGoal">${[10,20,30,50].map(g=>`<button type="button" data-v="${g}" aria-pressed="${S.goal===g}">${g} XP</button>`).join('')}</div></div>
     <div><b>İlerlemeyi sıfırla</b><button class="b3 sm ghost" type="button" id="sReset" style="--oc:var(--garnet)">Sıfırla</button></div>
   </div>
@@ -576,7 +579,7 @@ function renderProfile(){
   $('#pcopy').onclick=async()=>{try{await navigator.clipboard.writeText(code);toast(ic('check',20)+' Kod kopyalandı')}catch(e){const r=document.createRange();r.selectNodeContents($('#pcode'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Kodu seçtim, kopyalayabilirsin')}};
   $$('[data-cert]').forEach(b=>b.onclick=()=>openCert(+b.dataset.cert));
   const segH=(id,fn)=>{const el=$(id);if(el)el.onclick=e=>{const b=e.target.closest('button');if(!b)return;fn(b.dataset.v);save();renderAll()}};
-  segH('#sSound',v=>S.sound=v==='1');segH('#sTts',v=>{S.tts=v==='1';if(S.tts)speak('Sesli okuma açık.')});segH('#sTheme',v=>{S.theme=v;applyTheme()});segH('#sGoal',v=>S.goal=+v);
+  segH('#sSound',v=>S.sound=v==='1');segH('#sTts',v=>{S.tts=v==='1';if(S.tts)speak('Sesli okuma açık.')});segH('#sTheme',v=>{S.theme=v;applyTheme()});segH('#sGoal',v=>S.goal=+v);segH('#sShare',v=>{S.share=v==='1'});
   let armed=false;$('#sReset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Emin misin? Tekrar bas';setTimeout(()=>{armed=false;if(e.target.isConnected)e.target.textContent='Sıfırla'},4000);return}
     try{localStorage.removeItem(KEY)}catch(_){ }S=DEF();S.lab.migrated=1;save();applyTheme();location.hash='#ogren';renderAll();onboard()};
 }
