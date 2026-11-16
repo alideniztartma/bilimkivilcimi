@@ -833,6 +833,33 @@ section.pg-in>*:nth-child(2){animation-delay:.03s}section.pg-in>*:nth-child(3){a
   section.pg-in>*,.path-in .nw,.path-in .uhead,.stat.up,.stat.down,.modal:not([hidden]),.modal:not([hidden]) .mbox,.lesson:not([hidden]),.lbody .ex,.card.xcard,.card.hubc,.card.item,.nfc{animation:none}
 }
 
+/* ===== Ders görselleri ===== */
+.lfig{margin:0;padding:14px 12px;background:#FBF6EA;border:2px solid var(--line);border-radius:12px;display:grid;place-items:center;animation:vtFadeIn .45s .1s ease-out both}
+.lfig svg{width:100%;max-width:520px;height:auto;display:block;overflow:visible}
+.gspin{animation:gSpin 2s linear infinite}.gspinr{animation:gSpin 2s linear infinite reverse}
+@keyframes gSpin{to{transform:rotate(360deg)}}
+.gflow{animation:gFlow .8s linear infinite}@keyframes gFlow{to{stroke-dashoffset:-14}}
+.gchain{animation:gFlow .5s linear infinite}
+.gorbit{animation:gSpin 4s linear infinite}
+.gbob{animation:gBob 2.4s ease-in-out infinite}@keyframes gBob{50%{transform:translateY(-5px)}}
+.gslide{animation:gSlide 2.6s ease-in-out infinite}@keyframes gSlide{0%,20%{transform:translateX(30px)}55%,100%{transform:none}}
+.gswerve{animation:gSw 3s ease-in-out infinite}@keyframes gSw{50%{transform:rotate(45deg)}}
+.gfwd{animation:gMvY 1.6s ease-in-out infinite}.gside{animation:gMvX 1.6s ease-in-out infinite}.gdiag{animation:gMvD 1.6s ease-in-out infinite}
+@keyframes gMvY{50%{transform:translateY(-6px)}}@keyframes gMvX{50%{transform:translateX(6px)}}@keyframes gMvD{50%{transform:translate(5px,-5px)}}
+.gelev{animation:gElev 3s ease-in-out infinite}@keyframes gElev{50%{transform:translateY(-58px)}}
+.garm{animation:gArm 3s ease-in-out infinite}@keyframes gArm{50%{transform:rotate(-25deg)}}
+.gshot{animation:gShot 1.8s ease-in infinite}@keyframes gShot{0%{transform:none;opacity:1}80%{transform:translate(120px,-80px);opacity:1}100%{transform:translate(140px,-70px);opacity:0}}
+.gintake{animation:gIn 1.8s ease-in-out infinite}@keyframes gIn{0%{transform:translateX(30px);opacity:0}30%{opacity:1}100%{transform:translateX(-36px);opacity:0}}
+.gpiston{animation:gPis 1.6s ease-in-out infinite}@keyframes gPis{50%{transform:translateX(-26px)}}
+.gneedle{animation:gNeed 3s ease-in-out infinite}@keyframes gNeed{50%{transform:rotate(-30deg)}}
+.gwave{animation:gWave 1.2s ease-out infinite}@keyframes gWave{0%{opacity:0}40%{opacity:1}100%{opacity:0;transform:translateX(10px)}}
+.gblink{animation:gBlink .8s steps(1) infinite}@keyframes gBlink{50%{opacity:.15}}
+.gcone{animation:gCone 2s ease-in-out infinite}@keyframes gCone{50%{opacity:.1}}
+.gstep{animation:gStep 2.5s ease-in-out infinite}@keyframes gStep{0%,30%{transform:scale(1)}15%{transform:scale(1.15)}}
+.gstep{transform-box:fill-box;transform-origin:center}
+@media (max-width:640px){.lfig{padding:8px}}
+@media (prefers-reduced-motion:reduce){.lfig,.lfig *{animation:none!important}}
+
 @media print{
   body *{visibility:hidden}
   #certPrint,#certPrint *,#paper,#paper *,#notebookPrint,#notebookPrint *{visibility:visible}

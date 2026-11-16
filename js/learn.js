@@ -115,7 +115,8 @@ const mini=(m='happy')=>`<span class="mini">${anka(m,64,undefined,'act-enter')}<
 const qHead=(ex,extra='')=>`${extra}<div class="qh">${mini()}<h2>${esc(ex.q)}</h2>${spkBtn(ex.q)}</div>${ex.code?`<pre class="code">${hl(ex.code)}</pre>`:''}`;
 const DIRS=[[0,-1],[1,0],[0,1],[-1,0]];
 const CMD={f:['İleri git','arrowU'],l:['Sola dön','rotL'],r:['Sağa dön','rotR']};
-function buildEx(ex,ch){
+function buildEx(ex,ch){const o=buildEx0(ex,ch);if(ex.fig&&typeof figHtml==='function'){const at=o.el.querySelector('.say,.qh');if(at)at.insertAdjacentHTML('afterend',figHtml(ex.fig))}return o}
+function buildEx0(ex,ch){
   const el=document.createElement('div');el.className='ex';
   const o={el,ready:()=>false,check:()=>({ok:false})};
   const top=L.mode==='exam'?`<span class="lbl eyebrow">KUPA SINAVI · ${L.done+1} / ${L.total}</span>`:L.mode==='speed'?`<span class="lbl eyebrow">HIZLI TUR · ${L.score} PUAN</span>`:L.combo>=3?`<span class="combo lbl">${fi('flame',18)} ${L.combo} doğru üst üste!</span>`:'';
