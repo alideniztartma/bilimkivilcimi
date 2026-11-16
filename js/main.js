@@ -24,7 +24,11 @@ function route(){
   let h=location.hash.slice(1);if(!validPage(h))h='ogren';
   if(firstRoute||h===page||reduce){firstRoute=false;doRoute();return}
   const dir=navDir(page,h);document.documentElement.dataset.nav=dir;
-  if(document.startViewTransition&&$('#lesson').hidden){try{document.startViewTransition(doRoute);return}catch(e){}}
+  /* View Transition snapshots are painted above fixed mobile UI on some browsers.
+     Use the section animation there so the home bar stays in its own layer. */
+  if(document.startViewTransition&&$('#lesson').hidden&&!matchMedia('(max-width:780px)').matches){
+    try{document.startViewTransition(doRoute);return}catch(e){}
+  }
   doRoute();const sec=$$('[data-page]').find(s=>!s.hidden);if(sec){sec.classList.remove('pg-in');void sec.offsetWidth;sec.classList.add('pg-in')}
 }
 function doRoute(){
