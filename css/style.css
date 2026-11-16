@@ -787,25 +787,12 @@ textarea.codes{width:100%;font:500 .9rem/1.4 var(--mono);padding:12px;border:1px
 @media (prefers-reduced-motion:reduce){.nh,.nfood,.nsay.pop{animation:none}}
 
 /* ===== Geçişler ve hareket ===== */
-@view-transition{navigation:auto}
-.center{view-transition-name:main}
-::view-transition-old(root),::view-transition-new(root){animation:none}
-::view-transition-group(main){animation-duration:.34s}
-::view-transition-old(main){animation:vtOutL .2s ease-in both}
-::view-transition-new(main){animation:vtInR .36s cubic-bezier(.2,.9,.25,1) both}
-html[data-nav="back"]::view-transition-old(main){animation-name:vtOutR}
-html[data-nav="back"]::view-transition-new(main){animation-name:vtInL}
-html[data-nav="fade"]::view-transition-old(main){animation-name:vtFadeOut}
-html[data-nav="fade"]::view-transition-new(main){animation-name:vtFadeIn}
-@keyframes vtOutL{to{opacity:0;transform:translateX(-28px)}}
-@keyframes vtOutR{to{opacity:0;transform:translateX(28px)}}
-@keyframes vtInR{from{opacity:0;transform:translateX(40px)}}
-@keyframes vtInL{from{opacity:0;transform:translateX(-40px)}}
-@keyframes vtFadeOut{to{opacity:0;transform:translateY(-8px)}}
+/* Sayfa geçişi: yalnızca sayfanın içeriği yumuşakça belirir. Üst çubuk ve alt menü hiç oynamaz. */
+.center{overflow-x:clip}
+section.pg-in>*{animation:pgIn .32s cubic-bezier(.22,.8,.3,1) both}
+section.pg-in>*:nth-child(2){animation-delay:.03s}section.pg-in>*:nth-child(3){animation-delay:.06s}section.pg-in>*:nth-child(n+4){animation-delay:.09s}
+@keyframes pgIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes vtFadeIn{from{opacity:0;transform:translateY(14px)}}
-section.pg-in{animation:vtInR .36s cubic-bezier(.2,.9,.25,1) both}
-html[data-nav="back"] section.pg-in{animation-name:vtInL}
-html[data-nav="fade"] section.pg-in{animation-name:vtFadeIn}
 .path-in .nw{animation:nwIn .55s cubic-bezier(.2,1.5,.4,1) both;animation-delay:calc(min(var(--i),26) * 32ms)}
 .path-in .uhead{animation:vtFadeIn .4s ease-out both}
 @keyframes nwIn{from{opacity:0;scale:.4;translate:0 22px}}
@@ -824,8 +811,7 @@ html[data-nav="fade"] section.pg-in{animation-name:vtFadeIn}
 .xgrid>*:nth-child(5),.shop>*:nth-child(5){animation-delay:.16s}.xgrid>*:nth-child(6),.shop>*:nth-child(6){animation-delay:.2s}.xgrid>*:nth-child(7){animation-delay:.24s}.xgrid>*:nth-child(8){animation-delay:.28s}
 #toast{transition:transform .45s cubic-bezier(.2,1.4,.4,1)}
 @media (prefers-reduced-motion:reduce){
-  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
-  section.pg-in,.path-in .nw,.path-in .uhead,.stat.up,.stat.down,.modal:not([hidden]),.modal:not([hidden]) .mbox,.lesson:not([hidden]),.lbody .ex,.card.xcard,.card.hubc,.card.item,.nfc{animation:none}
+  section.pg-in>*,.path-in .nw,.path-in .uhead,.stat.up,.stat.down,.modal:not([hidden]),.modal:not([hidden]) .mbox,.lesson:not([hidden]),.lbody .ex,.card.xcard,.card.hubc,.card.item,.nfc{animation:none}
 }
 
 @media print{

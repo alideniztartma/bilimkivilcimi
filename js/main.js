@@ -16,20 +16,12 @@ function renderNav(){
   $$('.side .small a[aria-current]').forEach(a=>a.setAttribute('aria-current','page'));
 }
 const validPage=h=>PAGES.some(p=>p[0]===h)||SUB[h]!=null||isTrack(h)||(/^lab-[a-z]+$/.test(h)&&EXPS.some(x=>'lab-'+x.id===h));
-/* Sayfa geçişleri: sekmeler arasında yana kayma, alt sayfaya girerken ileri, çıkarken geri */
-const tabIdx=h=>{const i=PAGES.findIndex(p=>p[0]===h);return i};
-function navDir(from,to){const a=tabIdx(from),b=tabIdx(to),da=a<0?1:0,db=b<0?1:0;if(db>da)return'fwd';if(db<da)return'back';if(a>=0&&b>=0)return b>a?'fwd':'back';return'fade'}
+/* Sayfa geçişi: yalnızca içerik yumuşakça belirir */
 let firstRoute=true;
 function route(){
   let h=location.hash.slice(1);if(!validPage(h))h='ogren';
   if(firstRoute||h===page||reduce){firstRoute=false;doRoute();return}
-  const dir=navDir(page,h);document.documentElement.dataset.nav=dir;
-  /* View Transition snapshots are painted above fixed mobile UI on some browsers.
-     Use the section animation there so the home bar stays in its own layer. */
-  if(document.startViewTransition&&$('#lesson').hidden&&!matchMedia('(max-width:780px)').matches){
-    try{document.startViewTransition(doRoute);return}catch(e){}
-  }
-  doRoute();const sec=$$('[data-page]').find(s=>!s.hidden);if(sec){sec.classList.remove('pg-in');void sec.offsetWidth;sec.classList.add('pg-in')}
+  doRoute();const sec=$$('[data-page]').find(s=>!s.hidden);if(sec){$$('section.pg-in').forEach(x=>x.classList.remove('pg-in'));void sec.offsetWidth;sec.classList.add('pg-in');clearTimeout(route.t);route.t=setTimeout(()=>sec.classList.remove('pg-in'),700)}
 }
 function doRoute(){
   let h=location.hash.slice(1);if(!validPage(h))h='ogren';
