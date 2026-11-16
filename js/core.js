@@ -79,12 +79,12 @@ let framed=true;try{framed=window.self!==window.top}catch(e){}
 /* Görev ve rozet kontrolü: ödülü ver, yeni kazanılanları döndür */
 function questCheck(){const out=[];quests().forEach(q=>{if(!S.day.claimed[q.id]&&(S.day[q.f]||0)>=q.n){S.day.claimed[q.id]=1;S.gems+=q.gems;out.push(q)}});return out}
 function quests(){const d=dayNum(S.day.k),a=QPOOL[d%QPOOL.length];let b=QPOOL[(d+2)%QPOOL.length];if(b.id===a.id)b=QPOOL[(d+1)%QPOOL.length];
-  return[{id:'xp',name:S.goal+' XP kazan',n:S.goal,f:'xp',gems:10,icon:'bolt'},a,b]}
-/* Ders dışı küçük ödül (atölye, laboratuvar): XP + taş + seri + görevler + rozetler, hepsini bildirir */
+  return[{id:'xp',name:S.goal+' DP kazan',n:S.goal,f:'xp',gems:10,icon:'bolt'},a,b]}
+/* Ders dışı küçük ödül (atölye, laboratuvar): DP + taş + seri + görevler + rozetler, hepsini bildirir */
 function smallReward(xp,gems,why){
   const before=new Set(Object.keys(S.badges));addXP(xp);S.gems+=gems;touchStreak();
   const q=questCheck();const nb=[...badgeSet()].filter(b=>!before.has(b));nb.forEach(b=>S.badges[b]=dkey());save();renderStats();
-  toast(`${fi('bolt',20)} ${why?esc(why)+' · ':''}+${xp} XP${gems?`, +${gems} taş`:''}`);
+  toast(`${fi('bolt',20)} ${why?esc(why)+' · ':''}+${xp} DP${gems?`, +${gems} taş`:''}`);
   if(q.length)setTimeout(()=>toast(`${ic('chest',20)} Görev tamam: ${esc(q[0].name)} · +${q[0].gems} taş`),2900);
   if(nb.length){const b=BADGES.find(x=>x.id===nb[0]);setTimeout(()=>{sfx.win();openModal(`<div class="medal" style="width:110px;height:110px">${ic(b.icon,54)}</div><h2>Yeni rozet: ${b.name}</h2><p>${b.desc}</p>${anka('cheer',90,undefined,'act-dance')}<button class="b3" type="button" id="mok">Harika!</button>`);$('#mok').onclick=closeModal},q.length?5800:2900)}
 }

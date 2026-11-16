@@ -83,8 +83,8 @@ function clsRender(){
   const rows=Object.values(SNF).sort((a,b)=>b.x-a.x),n=rows.length;
   const tot=rows.reduce((s,r)=>s+r.l,0),avg=n?Math.round(rows.reduce((s,r)=>s+r.x,0)/n):0,act=rows.filter(r=>r.l>0||r.e>0).length,ex=rows.reduce((s,r)=>s+(r.e||0),0);
   const tile=(v,l)=>`<div><b>${v}</b><span>${l}</span></div>`;
-  $('#clsSum').innerHTML=tile(n,'Öğrenci')+tile(act,'Aktif öğrenci')+tile(tot,'Bitirilen ders')+tile(ex,'Deney görevi')+tile(avg,'Ortalama XP');
-  $('#clsTbl').innerHTML=n?`<thead><tr>${['Ad','XP','Ders','Deney','Kupa','En uzun seri','Aktif gün','Kod tarihi'].map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(r.n||'(adsız)')}</b></td><td>${r.x}</td><td>${r.l} / ${ALL_LESSONS.length}</td><td>${r.e||0} / ${labTotal()}</td><td>${(r.k||[]).length} / ${U.length}</td><td>${r.b}</td><td>${r.d}</td><td>${String(r.t).split('-').reverse().join('.')}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="muted">Henüz kod eklenmedi.</td></tr></tbody>';
+  $('#clsSum').innerHTML=tile(n,'Öğrenci')+tile(act,'Aktif öğrenci')+tile(tot,'Bitirilen ders')+tile(ex,'Deney görevi')+tile(avg,'Ortalama DP');
+  $('#clsTbl').innerHTML=n?`<thead><tr>${['Ad','DP','Ders','Deney','Kupa','En uzun seri','Aktif gün','Kod tarihi'].map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(r.n||'(adsız)')}</b></td><td>${r.x}</td><td>${r.l} / ${ALL_LESSONS.length}</td><td>${r.e||0} / ${labTotal()}</td><td>${(r.k||[]).length} / ${U.length}</td><td>${r.b}</td><td>${r.d}</td><td>${String(r.t).split('-').reverse().join('.')}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="muted">Henüz kod eklenmedi.</td></tr></tbody>';
 }
 function clsWire(){
   $('#clsAdd').onclick=()=>{let ok=0,bad=0;$('#clsIn').value.split(/\s+/).filter(Boolean).forEach(c=>{const o=decodeCode(c);if(o){const k=codeKey(o);const old=SNF[k];if(!old||String(old.t)<=String(o.t))SNF[k]=o;ok++}else bad++});
@@ -94,7 +94,7 @@ function clsWire(){
   $('#clsFile').onclick=()=>{const n=Object.keys(SNF).length;if(!n){$('#clsMsg').textContent='Önce öğrenci kodlarını ekleyin.';return}
     downloadFile('bilimkivilcimi-sinif-'+dkey()+'.json',JSON.stringify({tur:'bk-sinif',tarih:dkey(),ogrenciler:Object.values(SNF)}),'application/json');
     $('#clsMsg').textContent=n+' öğrencilik sınıf dosyası indirildi. Bu dosyayı yöneticiye gönderebilirsiniz.'};
-  $('#clsCsv').onclick=async()=>{const rows=Object.values(SNF);const csv=['Ad;XP;Ders;Deney görevi;Kupa;En uzun seri;Aktif gün;Tarih'].concat(rows.map(r=>[r.n,r.x,r.l,r.e||0,(r.k||[]).length,r.b,r.d,r.t].join(';'))).join('\n');
+  $('#clsCsv').onclick=async()=>{const rows=Object.values(SNF);const csv=['Ad;DP;Ders;Deney görevi;Kupa;En uzun seri;Aktif gün;Tarih'].concat(rows.map(r=>[r.n,r.x,r.l,r.e||0,(r.k||[]).length,r.b,r.d,r.t].join(';'))).join('\n');
     try{await navigator.clipboard.writeText(csv);$('#clsMsg').textContent='Tablo kopyalandı. Excel ya da E-Tablolar\'a yapıştırabilirsiniz.'}catch(e){$('#clsMsg').textContent='Kopyalanamadı. Tabloyu seçip elle kopyalayın.'}};
 }
 
@@ -120,7 +120,7 @@ function renderAbout(){
     <li><span>${ic('chart',22)}</span><div><b>Ölçülebilir</b><small>Öğretmenler sınıf takibiyle öğrencilerin ilerlemesini görür. Kaç okula, öğretmene ve öğrenciye ulaştığımızı sayıyoruz.</small></div></li>
     <li><span>${ic('calendar',22)}</span><div><b>Bütün yıl açık</b><small>Yalnızca yarışma sezonunda değil, her gün kullanılabilir. Günlük görevler ve bulmacalar her gün yenilenir.</small></div></li>
     <li><span>${ic('offline',22)}</span><div><b>Herkese açık</b><small>Ücretsiz, Türkçe, açık kaynak ve internetsiz çalışır. Hesap açmak ya da kişisel bilgi vermek gerekmez.</small></div></li></ul>
-    <div class="sumtiles"><div><b>${Object.keys(S.done).length}</b><span>Bu cihazda bitirilen ders</span></div><div><b>${labDoneCount()}</b><span>Bu cihazda bitirilen deney bölümü</span></div><div><b>${S.xp}</b><span>Bu cihazdaki XP</span></div></div></div>
+    <div class="sumtiles"><div><b>${Object.keys(S.done).length}</b><span>Bu cihazda bitirilen ders</span></div><div><b>${labDoneCount()}</b><span>Bu cihazda bitirilen deney bölümü</span></div><div><b>${S.xp}</b><span>Bu cihazdaki DP</span></div></div></div>
   <div class="card meet" style="margin-top:22px"><img src="img/logo.png" alt="Antioch Rising logosu" width="96" height="96" style="width:96px;height:96px;object-fit:contain"><div><p class="eyebrow">Biz kimiz?</p><h2 style="margin:6px 0">Bu site bir Antioch Rising projesidir.</h2>
     <p>Antioch Rising, Hatay'dan FIRST Robotics Competition'a katılan 10947 numaralı robot takımıdır. Robot yaparken öğrendiklerimizi Hatay'ın çocuklarıyla paylaşmak için #BilimKıvılcımı'nı kurduk.</p>
     <p class="muted" style="margin-top:8px">Kaynak kodu GitHub'da açık: <a href="https://github.com/alideniztartma/bilimkivilcimi" target="_blank" rel="noopener">github.com/alideniztartma/bilimkivilcimi</a></p></div></div>`;

@@ -25,7 +25,7 @@ Duolingo'daki Duo gibi canlıdır: nefes alır, göz kırpar, etrafına bakar, k
 ### Kodlama yolu ("Yazılımın Duolingosu")
 - 5 ünite, 16 ders: algoritma, döngüler, koşullar, değişkenler, fonksiyonlar
 - 7 çeşit alıştırma: seçmeli soru, boşluk doldurma, blok dizme, eşleştirme, cevabı yazma, hatalı satırı bulma, robot yönetme
-- XP, günlük seri, kalpler, mozaik taşları, sandıklar, kupalar, rozetler ve ünite sertifikaları
+- DP, günlük seri, kalpler, mozaik taşları, sandıklar, kupalar, rozetler ve ünite sertifikaları
 - Karışık tekrar, hatalarımı çalış, hız turu, ünite sınavı ve günün robot bulmacası
 - Çizim atölyesi (kaplumbağa grafiği), kodlama sözlüğü, sesli okuma
 - Günlük görevler ve mağaza
@@ -48,7 +48,7 @@ Her oyunda:
 - 5 bölüm, her bölümde 1–3 yıldız. Bazı bölümler bir **tahmin sorusuyla** başlar
 - Her deneme **deney defterine kendiliğinden** yazılır (tablo ve grafik, formül eğrisiyle karşılaştırma)
 - "Bu nasıl çalışıyor?": formül, açıklama, gerçek hayattan örnek, ilginç bilgi
-- İlk bitirilen bölüm başına +10 XP ve +5 mozaik taşı, üç yıldıza +3 taş
+- İlk bitirilen bölüm başına +10 DP ve +5 mozaik taşı, üç yıldıza +3 taş
 
 **Deney defterim** sayfası bütün ölçümleri tablo ve grafik olarak toplar, yazdırılabilir.
 
@@ -80,7 +80,7 @@ Yeni ünite eklemek için `js/egitim.js` dosyasında `U.push(...)` ile `field` a
 ### Öğretmenler için
 - 9 hazır ders planı (8 deney + robot kodlama), her biri 40 dakikalık akışla
 - Siyah beyaz basılabilen A4 etkinlik kâğıtları
-- Sınıf takibi: öğrenciler profillerindeki ilerleme kodunu öğretmene gönderir, öğretmen kodları yapıştırıp ders, deney görevi ve XP tablosunu görür. Hiçbir veri sunucuya gönderilmez.
+- Sınıf takibi: öğrenciler profillerindeki ilerleme kodunu öğretmene gönderir, öğretmen kodları yapıştırıp ders, deney görevi ve DP tablosunu görür. Hiçbir veri sunucuya gönderilmez.
 
 ## Kullanma
 

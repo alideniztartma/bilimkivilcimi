@@ -140,7 +140,7 @@ function renderAdmin(){
     ${tile(fmt(st.a30),'Aktif kullanıcı (son 30 gün)','calendar',st.tot?'%'+Math.round(st.a30/st.tot*100):'')}
     ${tile(fmt(st.newJ),'Yeni kayıt (son 30 gün)','star')}
     ${tile(fmt(st.lessonsTot),'Tamamlanan ders','book')}
-    ${tile(fmt(st.avgXP),'Ortalama XP','chart')}
+    ${tile(fmt(st.avgXP),'Ortalama DP','chart')}
   </div>
   ${st.old?`<p class="muted anote">${ic('info',16)} ${st.old} öğrenci eski tip kodla (BK1) eklendi. Bu kodlarda son etkinlik, alan dersleri ve ders ayrıntısı yok; bu öğrenciler yalnızca toplamlara katılır.</p>`:''}
   <div class="agrid">
@@ -155,7 +155,7 @@ function renderAdmin(){
   </div>
   <div class="card apanel"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><h3>Öğrenciler <small>${fmt(rows.length)} kişi</small></h3>
     <input id="admQ" type="search" placeholder="Ada göre ara" value="${esc(admQuery)}" style="max-width:240px"></div>
-    <div class="tscroll" style="max-height:420px;margin-top:10px"><table class="dtable"><thead><tr><th>Ad</th><th>XP</th><th>Ders</th><th>Deney görevi</th><th>Son etkinlik</th><th>Durum</th></tr></thead><tbody>
+    <div class="tscroll" style="max-height:420px;margin-top:10px"><table class="dtable"><thead><tr><th>Ad</th><th>DP</th><th>Ders</th><th>Deney görevi</th><th>Son etkinlik</th><th>Durum</th></tr></thead><tbody>
     ${rows.slice(0,300).map(u=>{const s=st.since(u);return `<tr><td><b>${esc(u.n||('Öğrenci '+(u.i||'').slice(0,5)))}</b></td><td>${fmt(u.x)}</td><td>${u.l+(u.v===2?u.C.filter(id=>!u.L.includes(id)).length:0)}</td><td>${u.e}</td><td>${u.a?u.a.split('-').reverse().join('.'):'–'}</td><td>${s==null?'Bilinmiyor':s<7?'<span class="pill-ok">Aktif</span>':s<30?'Son 30 gün':'Pasif'}</td></tr>`}).join('')||'<tr><td colspan="6" class="muted">Öğrenci yok.</td></tr>'}
     </tbody></table></div></div>
   <div class="agrid">
@@ -182,7 +182,7 @@ function renderAdmin(){
   $('#admFile').onchange=async e=>{let all=[],bad=0;for(const f of e.target.files){try{const r=admParseText(await f.text());all=all.concat(r.out);bad+=r.bad}catch(_){bad++}}after(admAdd(all),bad)};
   $('#admSelf').onclick=()=>{const o=decodeCode(progressCode());after(admAdd(o?[o]:[]),0)};
   $('#admSnf').onclick=()=>{after(admAdd(Object.values(SNF)),0)};
-  $('#admCsv').onclick=()=>{const head='Ad ya da kimlik;XP;Ders;Deney görevi;Çizim;En uzun seri;Son etkinlik;Katılma;Kod tarihi';
+  $('#admCsv').onclick=()=>{const head='Ad ya da kimlik;DP;Ders;Deney görevi;Çizim;En uzun seri;Son etkinlik;Katılma;Kod tarihi';
     downloadFile('bilimkivilcimi-istatistik-'+dkey()+'.csv','﻿'+[head].concat(st.us.map(u=>[u.n||u.i,u.x,u.l+u.c,u.e,u.w,u.b,u.a,u.j,u.t].map(v=>String(v??'').replace(/;/g,',')).join(';'))).join('\n'),'text/csv')};
   $('#admBak').onclick=()=>downloadFile('bilimkivilcimi-yonetici-yedek-'+dkey()+'.json',JSON.stringify({tur:'bk-yonetici',tarih:dkey(),kullanicilar:Object.values(ADM.users)}),'application/json');
   $('#admClr').onclick=e=>{const b=e.currentTarget;if(!b.dataset.arm){b.dataset.arm=1;b.textContent='Emin misiniz? Tekrar basın';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.innerHTML=ic('trash',16)+' Verileri sil'}},4000);return}

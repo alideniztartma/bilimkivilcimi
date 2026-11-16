@@ -10,7 +10,7 @@ function ankaMsg(){
   if(!S.lessons){mood='wave';txt=`Merhaba${S.name?' <b>'+esc(S.name)+'</b>':''}! İlk dersin hazır. Birlikte başlayalım mı?`;cta=cur?['Başla','lesson']:null}
   else if(S.hearts<=0){mood='sad';txt='Kalplerin bitti. Atölyede <b>karışık tekrar</b> yaparak kalp kazanabilirsin.';cta=['Atölye','#atolye']}
   else if(S.lastDay!==t&&S.streak>0){mood='sad';txt=`Serin <b>${S.streak} gün</b>! Bugün bir ders yapmazsan söner.`;cta=cur?['Derse başla','lesson']:['Atölye','#atolye']}
-  else if(S.day.xp<S.goal){mood='happy';txt=`Bugünkü hedefine <b>${S.goal-S.day.xp} XP</b> kaldı. Hadi devam!`;cta=cur?['Devam et','lesson']:['Atölye','#atolye']}
+  else if(S.day.xp<S.goal){mood='happy';txt=`Bugünkü hedefine <b>${S.goal-S.day.xp} DP</b> kaldı. Hadi devam!`;cta=cur?['Devam et','lesson']:['Atölye','#atolye']}
   else if(!S.dailyDone[t]){mood='think';txt='Günün bulmacasını çözdün mü? <b>15 mozaik taşı</b> seni bekliyor.';cta=['Bulmaca','daily']}
   else{mood='cheer';txt='Bugünkü hedefini tamamladın! Laboratuvarda deney yapmaya ne dersin?';cta=['Laboratuvar','#lab']}
   return `<div class="card amsg">${anka(mood,84,undefined,'act-enter')}<div class="bub">${txt}</div>${cta?(cta[1][0]==='#'?`<a class="b3 sm" href="${cta[1]}">${cta[0]}</a>`:`<button class="b3 sm" type="button" data-amsg="${cta[1]}">${cta[0]}</button>`):''}<button class="x" type="button" data-amsg="hide" aria-label="Mesajı kapat">${ic('x',18)}</button></div>`;
@@ -88,11 +88,11 @@ $('#path').addEventListener('click',e=>{
     popIn(w,st==='open'?'<h3>Sandık açıldı</h3><p>Bu sandığın ödülünü aldın.</p>':'<h3>Hazine sandığı</h3><p>Önceki dersi bitirince açılır.</p>','lock');return}
   if(n.k==='trophy'){
     if(st==='done'){const p=popIn(w,`<h3>${UNIT_BADGE[n.ui]}!</h3><p>Kupa sınavını geçtin. Sertifikan hazır.</p><button class="b3" type="button">Sertifikayı aç</button>`,'','var(--olive)');p.querySelector('button').onclick=ev=>{ev.stopPropagation();closePops();openCert(n.ui)};return}
-    if(st==='ready'){const p=popIn(w,`<h3>Kupa sınavı</h3><p>${U[n.ui].title} ünitesinden 8 soru. En fazla 2 hata yaparsan kupayı ve sertifikayı kazanırsın.</p><button class="b3" type="button">Sınava başla +20 XP</button>`,'','var(--ember)');p.querySelector('button').onclick=ev=>{ev.stopPropagation();closePops();startMode('exam',{ui:n.ui})};return}
+    if(st==='ready'){const p=popIn(w,`<h3>Kupa sınavı</h3><p>${U[n.ui].title} ünitesinden 8 soru. En fazla 2 hata yaparsan kupayı ve sertifikayı kazanırsın.</p><button class="b3" type="button">Sınava başla +20 DP</button>`,'','var(--ember)');p.querySelector('button').onclick=ev=>{ev.stopPropagation();closePops();startMode('exam',{ui:n.ui})};return}
     popIn(w,`<h3>${unitNo(n.ui)}. ünite kupası</h3><p>Bu ünitenin bütün derslerini bitirince kupa sınavı açılır.</p>`,'lock');return}
   const u=U[n.ui];const xp=st==='done'?5:10;
   const p=popIn(w,`<h3>${esc(n.l.title)}</h3><p>${st==='lock'?'Önce önceki dersleri bitir.':`${n.li+1}. ders / ${u.lessons.length}`+(st==='done'?' · Bitirdin':'')}</p>
-    <button class="b3" type="button" data-start="${n.id}">${st==='done'?'Tekrar et':'Başla'} +${xp} XP</button>`,st==='lock'?'lock':'');
+    <button class="b3" type="button" data-start="${n.id}">${st==='done'?'Tekrar et':'Başla'} +${xp} DP</button>`,st==='lock'?'lock':'');
   const b=p.querySelector('[data-start]');if(b)b.addEventListener('click',ev=>{ev.stopPropagation();closePops();startMode('lesson',{lesson:n.l})});
 });
 document.addEventListener('click',e=>{if(!e.target.closest('.nw'))closePops()});
@@ -341,10 +341,10 @@ function finish(){
   const mm=Math.floor(secs/60)+':'+String(secs%60).padStart(2,'0');
   const third=m==='speed'?`<div style="--c:var(--terra)"><small>SKOR</small><b>${ic('timer',22)}${L.score}</b></div>`:`<div style="--c:var(--olive)"><small>SÜRE</small><b>${ic('clock',22)}${mm}</b></div>`;
   const steps=[()=>`<div class="done-screen">${anka(mood,150,undefined,mood==='sad'?'act-shake':'act-dance')}<h1>${title}</h1><p>${sub}</p>
-    <div class="trio"><div style="--c:var(--ember)"><small>XP</small><b>${fi('bolt',22)}${xp}</b></div>
+    <div class="trio"><div style="--c:var(--ember)"><small>DP</small><b>${fi('bolt',22)}${xp}</b></div>
     <div style="--c:var(--terra)"><small>DOĞRULUK</small><b>${ic('target2',22)}%${acc}</b></div>${third}</div>${gems?`<div class="stat gm" style="font-size:1.4rem">${fi('gem',28)} +${gems} taş</div>`:''}${extra}</div>`];
   if(firstToday)steps.push(()=>`<div class="done-screen"><div class="bigflame">${fi('flame',190)}<b>${S.streak}</b></div><h1 style="color:var(--ember)">${S.streak} günlük seri!</h1><p>${S.streak===1?'Serin başladı! Yarın da gel, ateşi canlı tut.':'Bugün de geldin. Yarın görüşürüz!'}</p></div>`);
-  if(goalHit)steps.push(()=>`<div class="done-screen">${anka('wow',130,undefined,'act-jump')}<h1>Günlük hedefe ulaştın!</h1><p>Bugün ${S.day.xp} XP topladın. Hedefin ${S.goal} XP idi.</p></div>`);
+  if(goalHit)steps.push(()=>`<div class="done-screen">${anka('wow',130,undefined,'act-jump')}<h1>Günlük hedefe ulaştın!</h1><p>Bugün ${S.day.xp} DP topladın. Hedefin ${S.goal} DP idi.</p></div>`);
   qDone.forEach(q=>steps.push(()=>`<div class="done-screen"><div style="color:var(--ember)">${ic('chest',120)}</div><h1>Görev tamam!</h1><p>${esc(q.name)}</p><div class="stat gm" style="font-size:1.6rem">${fi('gem',32)} +${q.gems}</div></div>`));
   newB.forEach(id=>{const b=BADGES.find(x=>x.id===id);steps.push(()=>`<div class="done-screen"><div class="medal" style="width:120px;height:120px">${ic(b.icon,60)}</div><h1>Yeni rozet!</h1><h2>${b.name}</h2><p>${b.desc}</p></div>`)});
   let k=0;
@@ -363,7 +363,7 @@ function renderQuests(){
   <div class="sec-h">Bugünün görevleri <small>${hoursLeft()} kaldı</small></div>
   <div class="qlist">${questRows()}</div>
   <div class="sec-h">Günlük hedef</div>
-  <div class="card"><div class="bar"><i style="width:${Math.min(1,S.day.xp/S.goal)*100}%"></i><span>${Math.min(S.day.xp,S.goal)} / ${S.goal} XP</span></div><p style="color:var(--muted);margin-top:10px;font-size:.92rem">Hedefini profilden değiştirebilirsin.</p></div>`;
+  <div class="card"><div class="bar"><i style="width:${Math.min(1,S.day.xp/S.goal)*100}%"></i><span>${Math.min(S.day.xp,S.goal)} / ${S.goal} DP</span></div><p style="color:var(--muted);margin-top:10px;font-size:.92rem">Hedefini profilden değiştirebilirsin.</p></div>`;
 }
 
 /* ================= ATÖLYE ================= */
@@ -373,7 +373,7 @@ function renderHub(){
   const drawn=Object.keys(S.draw).length;
   $('#pgHub').innerHTML=`<h1>Atölye</h1><p class="sub">Derslerin dışında oyna, çiz ve tekrar et.</p>
   <div class="hub">
-   <div class="card hubc wide"><div class="hi" style="background:var(--ember);color:#2F2E24">${ic('puzzle',26)}</div><div><span class="tag">${dDone?'Bugün çözüldü':'+15 taş · +10 XP'}</span><h3 style="margin-top:6px">Günün bulmacası</h3><p>Her gün yeni bir robot bulmacası. Yarın başka biri gelir.</p></div><button class="b3 ${dDone?'ghost':'ember'}" type="button" id="hDaily">${dDone?'Tekrar oyna':'Çöz'}</button></div>
+   <div class="card hubc wide"><div class="hi" style="background:var(--ember);color:#2F2E24">${ic('puzzle',26)}</div><div><span class="tag">${dDone?'Bugün çözüldü':'+15 taş · +10 DP'}</span><h3 style="margin-top:6px">Günün bulmacası</h3><p>Her gün yeni bir robot bulmacası. Yarın başka biri gelir.</p></div><button class="b3 ${dDone?'ghost':'ember'}" type="button" id="hDaily">${dDone?'Tekrar oyna':'Çöz'}</button></div>
    <a class="card hubc" href="#cizim"><div class="hi" style="background:var(--terra)">${ic('pen',26)}</div><span class="tag">${drawn} / ${CHAL.length} çizim</span><h3>Çizim atölyesi</h3><p>Kalemli robota komut ver: kare, üçgen, yıldız çiz ya da serbest çalış.</p></a>
    <button class="card hubc" type="button" id="hSpeed" ${anyDone?'':'disabled'}><div class="hi" style="background:var(--olive)">${ic('timer',26)}</div><span class="tag">Rekor: ${S.speedBest}</span><h3>Hızlı tur</h3><p>60 saniyede bildiğin kadar soruyu cevapla.${anyDone?'':' Önce bir ders bitir.'}</p></button>
    <button class="card hubc" type="button" id="hWrong" ${nWrong?'':'disabled'}><div class="hi" style="background:var(--garnet)">${ic('bug',26)}</div><span class="tag">${nWrong} soru</span><h3>Hata defterim</h3><p>${nWrong?'Yanlış yaptığın soruları yeniden çöz. Doğru yaptıkça defterden silinir.':'Henüz yanlış yaptığın soru yok.'}</p></button>
@@ -526,8 +526,8 @@ const BADGES=[
  {id:'ilk',name:'İlk Adım',desc:'İlk dersini bitir.',icon:'star',t:()=>S.lessons>=1},
  {id:'seri3',name:'Ateş Yaktın',desc:'3 günlük seri yap.',icon:'bolt',t:()=>S.best>=3},
  {id:'seri7',name:'Sönmeyen Kıvılcım',desc:'7 günlük seri yap.',icon:'bolt',t:()=>S.best>=7},
- {id:'xp100',name:'100 XP',desc:'Toplam 100 XP topla.',icon:'target',t:()=>S.xp>=100},
- {id:'xp500',name:'500 XP',desc:'Toplam 500 XP topla.',icon:'target',t:()=>S.xp>=500},
+ {id:'xp100',name:'100 DP',desc:'Toplam 100 DP topla.',icon:'target',t:()=>S.xp>=100},
+ {id:'xp500',name:'500 DP',desc:'Toplam 500 DP topla.',icon:'target',t:()=>S.xp>=500},
  {id:'kusur',name:'Kusursuz',desc:'Bir dersi hiç hata yapmadan bitir.',icon:'target2',t:()=>S.day.perfect>0},
  {id:'u1',name:UNIT_BADGE[0],desc:'Algoritma ünitesini bitir.',icon:'split',t:()=>unitDone(0)},
  {id:'u2',name:UNIT_BADGE[1],desc:'Döngüler ünitesini bitir.',icon:'loop',t:()=>unitDone(1)},
@@ -571,7 +571,7 @@ function renderProfile(){
   <div class="sec-h">İstatistikler</div>
   <div class="tiles">
     <div class="card tile"><span style="color:var(--ember)">${fi('flame',30)}</span><div><b>${S.streak}</b><span>Günlük seri</span></div></div>
-    <div class="card tile"><span style="color:var(--ember)">${fi('bolt',30)}</span><div><b>${S.xp}</b><span>Toplam XP</span></div></div>
+    <div class="card tile"><span style="color:var(--ember)">${fi('bolt',30)}</span><div><b>${S.xp}</b><span>Toplam deneyim puanı (DP)</span></div></div>
     <div class="card tile"><span style="color:var(--olive)">${ic('book',30)}</span><div><b>${Object.keys(S.done).length}/${ALL_LESSONS.length}</b><span>Bitirilen ders</span></div></div>
     <div class="card tile"><span style="color:var(--terra)">${ic('trophy',30)}</span><div><b>${Object.keys(S.trophies).length}/${U.length}</b><span>Kupa</span></div></div>
     <div class="card tile"><span style="color:var(--olive)">${ic('flask',30)}</span><div><b>${labDoneCount()}/${labTotal()}</b><span>Deney bölümü</span></div></div>
@@ -590,7 +590,7 @@ function renderProfile(){
     ${canSpeak?`<div><b>Soruları sesli oku</b><div class="seg" id="sTts"><button type="button" data-v="1" aria-pressed="${S.tts}">Açık</button><button type="button" data-v="0" aria-pressed="${!S.tts}">Kapalı</button></div></div>`:''}
     <div><b>Görünüm</b><div class="seg" id="sTheme">${[['auto','Otomatik'],['light','Gündüz'],['dark','Gece']].map(t=>`<button type="button" data-v="${t[0]}" aria-pressed="${S.theme===t[0]}">${t[1]}</button>`).join('')}</div></div>
     <div><b>Anonim istatistik</b><div class="seg" id="sShare"><button type="button" data-v="1" aria-pressed="${S.share}">Açık</button><button type="button" data-v="0" aria-pressed="${!S.share}">Kapalı</button></div><p class="muted" style="font-size:.82rem;flex-basis:100%">Açıkken bitirdiğin ders ve deney sayıları adın olmadan, rastgele bir kimlikle proje ekibine gönderilir. Böylece sitenin kaç çocuğa ulaştığını görürüz.</p></div>
-    <div><b>Günlük hedef</b><div class="seg" id="sGoal">${[10,20,30,50].map(g=>`<button type="button" data-v="${g}" aria-pressed="${S.goal===g}">${g} XP</button>`).join('')}</div></div>
+    <div><b>Günlük hedef</b><div class="seg" id="sGoal">${[10,20,30,50].map(g=>`<button type="button" data-v="${g}" aria-pressed="${S.goal===g}">${g} DP</button>`).join('')}</div></div>
     <div><b>İlerlemeyi sıfırla</b><button class="b3 sm ghost" type="button" id="sReset" style="--oc:var(--garnet)">Sıfırla</button></div>
   </div>
   <p style="color:var(--muted);font-size:.88rem;margin-top:10px">İlerlemen yalnızca bu cihazda saklanır.</p>
@@ -615,7 +615,7 @@ function renderStats(){
     <p style="color:var(--muted);font-size:.9rem;margin-top:8px">${today?'Bugünkü dersini yaptın. Harika!':'Serini sürdürmek için bugün bir ders yap.'}</p>
     <div class="week">${days.map((d,i)=>{const dt=new Date(now);dt.setDate(now.getDate()-wd+i);const k=dkey(dt),on=S.days.includes(k);return `<div><i class="${on?'on':''} ${k===t?'today':''}">${on?`<span>${fi('flame',14)}</span>`:''}</i>${d}</div>`}).join('')}</div>`;
   const p=Math.min(1,S.day.xp/S.goal);
-  $('#rcGoal').innerHTML=`<h3>Günlük hedef</h3><div style="display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center"><span style="color:var(--ember)">${fi('bolt',32)}</span><div class="bar"><i style="width:${p*100}%"></i><span>${Math.min(S.day.xp,S.goal)} / ${S.goal} XP</span></div></div>`;
+  $('#rcGoal').innerHTML=`<h3>Günlük hedef</h3><div style="display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center"><span style="color:var(--ember)">${fi('bolt',32)}</span><div class="bar"><i style="width:${p*100}%"></i><span>${Math.min(S.day.xp,S.goal)} / ${S.goal} DP</span></div></div>`;
   const dd=!!S.dailyDone[dkey()];
   $('#rcDaily').innerHTML=`<h3>Günün bulmacası</h3><p style="color:var(--muted);font-size:.9rem;margin-bottom:12px">${dd?'Bugünkü bulmacayı çözdün. Yarın yenisi gelir.':esc(dailyPuzzle().q)}</p><button class="b3 sm ${dd?'ghost':'ember'}" type="button" id="rDaily" style="width:100%">${dd?'Tekrar oyna':'Çöz · +15 taş'}</button>`;
   $('#rDaily').onclick=()=>startMode('daily');
@@ -637,7 +637,7 @@ function onboard(){
   const s3=()=>{openModal(`${anka('happy',90,undefined,'act-enter')}<h2>Adın ne?</h2><p>Sertifikalarında bu ad yazacak. İstersen boş bırakabilirsin.</p><input id="oname" maxlength="24" placeholder="Adın" value="${esc(S.name)}"><button class="b3" type="button" id="o2">Devam</button>`);lock();
     const go=()=>{S.name=$('#oname').value.trim();s4()};$('#o2').onclick=go;$('#oname').addEventListener('keydown',e=>{if(e.key==='Enter')go()})};
   const s4=()=>{openModal(`${anka('wow',90,undefined,'act-enter')}<h2>${S.name?esc(S.name)+', g':'G'}ünde ne kadar çalışmak istersin?</h2>
-    <div class="goals">${[[10,'Rahat','5 dakika'],[20,'Normal','10 dakika'],[30,'Ciddi','15 dakika'],[50,'Çılgın','20 dakika']].map(g=>`<button type="button" data-g="${g[0]}" aria-pressed="${g[0]===goal}"><span>${g[1]} · ${g[2]}</span><span class="num">${g[0]} XP</span></button>`).join('')}</div>
+    <div class="goals">${[[10,'Rahat','5 dakika'],[20,'Normal','10 dakika'],[30,'Ciddi','15 dakika'],[50,'Çılgın','20 dakika']].map(g=>`<button type="button" data-g="${g[0]}" aria-pressed="${g[0]===goal}"><span>${g[1]} · ${g[2]}</span><span class="num">${g[0]} DP</span></button>`).join('')}</div>
     ${canSpeak?`<label style="display:flex;gap:10px;align-items:center;justify-content:center;font-weight:700"><input type="checkbox" id="otts" style="width:22px;height:22px"> Soruları bana sesli oku</label>`:''}
     <button class="b3" type="button" id="o3">İlk dersime başla</button>`);lock();
     $('.goals').onclick=e=>{const b=e.target.closest('[data-g]');if(!b)return;goal=+b.dataset.g;$$('.goals button').forEach(x=>x.setAttribute('aria-pressed',x===b))};
