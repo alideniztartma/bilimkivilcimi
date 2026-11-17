@@ -64,12 +64,50 @@ function addJoy(n){const p=S.pet;p.joy=Math.min(100,p.joy+n);p.pets=(p.pets||0)+
 function setSleep(on){YV.sleep=on;const n=$('#pgNest .nest');if(n)n.classList.toggle('sleeping',on);const w=$('#pgNest .nwin .nlab');if(w)w.textContent=on?'Uyandır':'Uyut';
   if(on){stopMusic();closeTray();nestBird('sleep');nestSay('İyi geceler… Zzz…')}else{nestBird(petMood(),'act-jump');nestSay('Günaydın! Ne güzel uyudum.');sfx.chirp()}}
 function wake(){setSleep(false)}
+/* Radyo: Web Audio ile çalan küçük, özgün şarkılar. Her basışta sıradaki şarkı çalar. */
+const SONGS=[
+  {name:'Kıvılcım Dansı',bpm:122,lead:'triangle',
+   mel:'C5 E5 G5 E5 A5 - G5 . F5 A5 G5 E5 D5 - C5 . E5 G5 C6 B5 A5 - G5 . F5 E5 D5 E5 C5 - - .',
+   bass:'C3 G3 C3 G3 F3 C4 G3 D3 A2 E3 A2 E3 G2 D3 C3 G2',drum:'K.H.S.H.K.H.S.HK'},
+  {name:'Antakya Ezgisi',bpm:100,lead:'sawtooth',
+   mel:'D5 Eb5 F#5 G5 A5 - G5 F#5 G5 A5 Bb5 A5 G5 F#5 Eb5 D5 F#5 G5 A5 - D6 C6 Bb5 A5 G5 F#5 Eb5 F#5 D5 - - .',
+   bass:'D3 A2 D3 A2 G2 D3 G2 D3 D3 A2 C3 Bb2 G2 A2 D3 D3',drum:'D.TT.TD.D.T.T...'},
+  {name:'Robot Bip Bop',bpm:128,lead:'square',
+   mel:'A4 . C5 E5 A5 . G5 E5 F5 . E5 D5 E5 - . . A4 . C5 E5 A5 . B5 C6 B5 A5 G5 E5 A5 - - .',
+   bass:'A2 A2 E3 A2 F2 F2 C3 F2 A2 A2 E3 A2 G2 G2 E2 A2',drum:'K.HSK.HSKKHSK.HS'}];
+const NOTE={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+function nfreq(n){const m=/^([A-G])([#b]?)(\d)$/.exec(n);if(!m)return 0;const k=NOTE[m[1]]+(m[2]==='#'?1:m[2]==='b'?-1:0)+12*(+m[3]+1);return 440*Math.pow(2,(k-69)/12)}
+const MZ={songI:-1,t:null,out:null,next:0,step:0,song:null,noise:null};
+function mzVoice(f,t,d,type,vol){const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.012);g.gain.setValueAtTime(vol*.8,t+Math.max(.03,d-.06));g.gain.linearRampToValueAtTime(0,t+d);
+  o.connect(g);g.connect(MZ.out);o.start(t);o.stop(t+d+.02)}
+function mzNoise(){if(MZ.noise)return MZ.noise;const b=AC.createBuffer(1,AC.sampleRate*.3,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return MZ.noise=b}
+function mzDrum(k,t){
+  if(k==='K'||k==='D'){const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(k==='D'?150:120,t);o.frequency.exponentialRampToValueAtTime(45,t+.14);g.gain.setValueAtTime(.55,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.connect(g);g.connect(MZ.out);o.start(t);o.stop(t+.22);return}
+  const s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=mzNoise();
+  f.type=k==='H'?'highpass':'bandpass';f.frequency.value=k==='H'?7000:k==='T'?2600:1800;
+  const v=k==='H'?.12:k==='T'?.22:.28,d=k==='H'?.05:k==='T'?.08:.13;
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);s.connect(f);f.connect(g);g.connect(MZ.out);s.start(t);s.stop(t+d+.02)}
+function mzTick(){const s=MZ.song,mel=s.mel.split(' '),bass=s.bass.split(' '),e=60/s.bpm/2;
+  while(MZ.next<AC.currentTime+.2){const i=MZ.step%mel.length,t=MZ.next;
+    const n=mel[i];if(n!=='.'&&n!=='-'){let len=1;while(mel[(i+len)%mel.length]==='-'&&len<8)len++;mzVoice(nfreq(n),t,e*len*.95,s.lead,s.lead==='triangle'?.22:.09)}
+    if(i%2===0){const b=bass[(i/2)%bass.length];mzVoice(nfreq(b),t,e*1.8,'triangle',.26)}
+    const dk=s.drum[i%s.drum.length];if(dk&&dk!=='.')mzDrum(dk,t);
+    MZ.step++;MZ.next+=e}}
+function startTune(){if(!S.sound)return false;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+    stopTune(true);MZ.songI=(MZ.songI+1)%SONGS.length;MZ.song=SONGS[MZ.songI];
+    MZ.out=AC.createGain();MZ.out.gain.value=0;MZ.out.gain.linearRampToValueAtTime(.55,AC.currentTime+.3);MZ.out.connect(AC.destination);
+    MZ.step=0;MZ.next=AC.currentTime+.08;mzTick();MZ.t=setInterval(mzTick,40);return MZ.song.name}catch(e){return false}}
+function stopTune(now){clearInterval(MZ.t);MZ.t=null;const o=MZ.out;MZ.out=null;if(o&&AC){try{o.gain.cancelScheduledValues(AC.currentTime);o.gain.setValueAtTime(o.gain.value,AC.currentTime);o.gain.linearRampToValueAtTime(0,AC.currentTime+(now?.05:.4));setTimeout(()=>o.disconnect(),now?120:500)}catch(e){}}}
 let musicT=null;
-function stopMusic(){YV.music=false;clearInterval(musicT);const r=$('#pgNest .nrad');if(r)r.classList.remove('on')}
+function stopMusic(){YV.music=false;clearInterval(musicT);stopTune();const r=$('#pgNest .nrad');if(r)r.classList.remove('on')}
 function toggleMusic(){if(YV.sleep){nestSay('Şşş… Anka uyuyor.');return}if(YV.music){stopMusic();nestBird(petMood(),'act-nod');nestSay('Ne güzel danstı!');return}
-  YV.music=true;$('#pgNest .nrad').classList.add('on');closeTray();nestBird('cheer','act-dance');sfx.win();nestSay('Hadi dans edelim!');addJoy(5);
-  const notes=()=>{const r=$('#pgNest .nrad');if(!r||!YV.music){stopMusic();return}const b=r.getBoundingClientRect();heartsAt(b.left+b.width/2,b.top+10,2,'nnote');const s=$('#nBird svg.anka');if(s&&!YV.busy)ankaAct(s,pick(['dance','wiggle','jump','spin']))};
-  notes();musicT=setInterval(notes,1300);setTimeout(()=>{if(YV.music)stopMusic()},12000)}
+  YV.music=true;$('#pgNest .nrad').classList.add('on');closeTray();nestBird('cheer','act-dance');addJoy(5);
+  const name=startTune();nestSay(name?'♪ '+name+' çalıyor. Hadi dans edelim!':'Ses kapalı, Profil\'den açabilirsin. Ben yine de dans ediyorum!');
+  const notes=()=>{const r=$('#pgNest .nrad');if(!r||!YV.music){stopMusic();return}const b=r.getBoundingClientRect();heartsAt(b.left+b.width/2,b.top+10,2,'nnote');const s=$('#nBird svg.anka');if(s&&!YV.busy)ankaAct(s,pick(['dance','wiggle','jump','spin']))}
+  notes();musicT=setInterval(notes,1300)}
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&YV.music)stopMusic()});
 function feed(id,from){const it=SHOP.find(i=>i.id===id),p=S.pet;if(YV.busy||!it)return;if(YV.sleep){nestSay('Anka uyuyor. Önce onu uyandır.');return}
   if(!(p.inv[id]>0)){nestSay('Bundan hiç kalmadı.');return}
   if(p.food>=96){nestSay('Doydum, teşekkürler! Biraz sonra yerim.');nestBird('happy','act-nod');return}
