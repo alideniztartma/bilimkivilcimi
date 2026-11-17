@@ -21,7 +21,7 @@ function petLine(){const p=S.pet;if(YV.sleep)return'Zzz… Uyandırmak için pen
   return pickL(['Yuvama hoş geldin!','Sepete dokun, birlikte yiyelim.','Dolaba bak, bana bir şey giydir!','Radyoyu açarsan dans ederim!'])}
 const friendLv=()=>1+Math.floor(((S.pet.fed||0)+(S.pet.pets||0)/12)/6);
 function nestBird(mood,act){const b=$('#nBird');if(!b)return;b.innerHTML=anka(mood||petMood(),260,undefined,act||'')}
-function nestSay(t){const e=$('#nSay');if(!e)return;e.textContent=t;e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')}
+function nestSay(t){const e=$('#nSay');if(!e)return;e.textContent=t;e.classList.remove('spop');void e.offsetWidth;e.classList.add('spop')}
 function nestBars(){const p=S.pet,f=$('#nFood'),j=$('#nJoy');if(f)f.style.width=p.food+'%';if(j)j.style.width=p.joy+'%';
   const l=$('#nLv');if(l)l.textContent=friendLv();const g=$('#nGem');if(g)g.textContent=S.gems;
   const c=$('#nBasketN');if(c){const n=Object.values(p.inv).reduce((a,b)=>a+(b||0),0);c.textContent=n;c.hidden=!n}}
@@ -83,7 +83,7 @@ function feed(id,from){const it=SHOP.find(i=>i.id===id),p=S.pet;if(YV.busy||!it)
   setTimeout(()=>{p.food=Math.min(100,p.food+it.food.t);p.joy=Math.min(100,p.joy+it.food.j);p.fed=(p.fed||0)+1;p.t=p.t||Date.now();save();nestBars();
     nestBird(p.food>=75&&p.joy>=75?'love':'cheer','act-jump');sfx.ok();YV.busy=false;
     const b=$('#nBird');if(b){const r=b.getBoundingClientRect();heartsAt(r.left+r.width/2,r.top+r.height*.3,3)}},reduce?300:1900)}
-function buyItem(id){const it=SHOP.find(i=>i.id===id);if(!it||S.gems<it.price){toast(fi('gem',20)+' Yeterli mozaik taşın yok. Ders yaparak taş kazanabilirsin.');sfx.bad();return false}
+function buyItem(id,inNest){const it=SHOP.find(i=>i.id===id);if(!it||S.gems<it.price){if(inNest){nestSay('Bunun için '+(it?it.price:'')+' mozaik taşı lazım. Ders yaparak taş kazanabilirsin!');nestBird('sad');sfx.bad();return false}toast(fi('gem',20)+' Yeterli mozaik taşın yok. Ders yaparak taş kazanabilirsin.');sfx.bad();return false}
   S.gems-=it.price;if(it.food)S.pet.inv[id]=(S.pet.inv[id]||0)+1;else if(it.cos){S.owned[id]=1;S.wear[it.slot]=id}save();sfx.coin();renderStats();nestBars();return true}
 function openTray(k){if(YV.sleep){nestSay('Anka uyuyor. Önce pencereye dokunup uyandır.');return}if(YV.tray===k){closeTray();return}YV.tray=k;sfx.tap();trayRender();
   nestSay(k==='food'?'Bir yiyeceği bana sürükle ya da dokun!':'Hangisini giyeyim?')}
@@ -106,7 +106,7 @@ document.addEventListener('click',e=>{
   const o=e.target.closest('[data-nobj]');if(o){const k=o.dataset.nobj;if(k==='window'){sfx.tap();setSleep(!YV.sleep);return}if(k==='music'){toggleMusic();return}openTray(k);return}
   if(e.target.closest('[data-nclose]')){closeTray();return}
   const sl=e.target.closest('[data-nslot]');if(sl){YV.slot=sl.dataset.nslot;sfx.tap();trayRender();return}
-  const b=e.target.closest('[data-nbuy]');if(b){const it=SHOP.find(i=>i.id===b.dataset.nbuy);if(buyItem(it.id)){if(it.cos){nestBird('wow','act-spin');nestSay('Yeni bir şey mi? Hemen giyiyorum!')}else nestSay(it.name+' sepete eklendi!');trayRender()}return}
+  const b=e.target.closest('[data-nbuy]');if(b){const it=SHOP.find(i=>i.id===b.dataset.nbuy);if(buyItem(it.id,true)){if(it.cos){nestBird('wow','act-spin');nestSay('Yeni bir şey mi? Hemen giyiyorum!')}else nestSay(it.name+' sepete eklendi!');trayRender()}return}
   const w=e.target.closest('[data-wear]');if(w){const it=SHOP.find(i=>i.id===w.dataset.wear);S.wear[it.slot]=S.wear[it.slot]===it.id?null:it.id;save();sfx.tap();
     nestBird(S.wear[it.slot]?'wow':'happy','act-spin');nestSay(S.wear[it.slot]?pickL(['Nasıl görünüyorum?','Bu bana çok yakıştı!','Şimdi çok havalıyım!']):'Tamam, onu çıkardım.');trayRender();return}
   if(YV.tray&&!e.target.closest('#nTray'))closeTray();
