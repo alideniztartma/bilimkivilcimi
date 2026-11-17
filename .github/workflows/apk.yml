@@ -48,6 +48,7 @@ jobs:
           node -e "const f='capacitor.config.json',fs=require('fs'),c=JSON.parse(fs.readFileSync(f));c.android=Object.assign({},c.android,{adjustMarginsForEdgeToEdge:'force'});c.backgroundColor='#D9822B';c.plugins=Object.assign({},c.plugins,{StatusBar:{overlaysWebView:false,style:'DARK',backgroundColor:'#D9822B'},SplashScreen:{launchAutoHide:false,launchShowDuration:0,launchFadeOutDuration:150,backgroundColor:'#D9822B',showSpinner:false}});fs.writeFileSync(f,JSON.stringify(c,null,2));console.log(c)"
           npx cap add android
           npx capacitor-assets generate --android --iconBackgroundColor '#D9822B' --splashBackgroundColor '#D9822B' --splashBackgroundColorDark '#D9822B'
+          cp ../android/MainActivity.java android/app/src/main/java/org/antiochrising/bilimkivilcimi/MainActivity.java
           mkdir -p android/app/src/main/res/drawable-nodpi
           cp ../android/splash_icon.png android/app/src/main/res/drawable-nodpi/splash_icon.png
           node -e "const fs=require('fs');for(const f of ['android/app/src/main/res/values/styles.xml','android/app/src/main/res/values-v31/styles.xml']){if(!fs.existsSync(f))continue;let s=fs.readFileSync(f,'utf8');s=s.replace(/(<style name=\"AppTheme.NoActionBarLaunch\"[^>]*>)/,'\$1<item name=\"windowSplashScreenBackground\">#D9822B</item><item name=\"windowSplashScreenAnimatedIcon\">@drawable/splash_icon</item><item name=\"android:windowBackground\">#D9822B</item>');fs.writeFileSync(f,s);console.log(f,s)}"

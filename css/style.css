@@ -568,8 +568,8 @@ textarea.codes{width:100%;font:500 .9rem/1.4 var(--mono);padding:12px;border:1px
 .goals button{display:flex;justify-content:space-between;padding:14px 16px;border:1px solid var(--line);border-bottom-width:5px;border-radius:4px;background:var(--raised);cursor:pointer;font-weight:800}
 .goals button[aria-pressed="true"]{border-color:var(--terra);background:var(--terra-soft);color:var(--terra-ts)}
 .mbox input[type=text],.mbox input:not([type]){width:100%;font:700 1.2rem/1.2 var(--body);padding:14px;border:1px solid var(--line);border-radius:4px;background:var(--tessera);color:var(--ink);text-align:center}
-#toast{position:fixed;left:50%;bottom:90px;z-index:60;transform:translate(-50%,160px);display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:4px;background:var(--olive-deep);color:#F4EAD6;font-weight:800;transition:transform .3s;max-width:calc(100% - 32px);border-left:6px solid var(--ember)}
-#toast.show{transform:translate(-50%,0)}
+#toast{position:fixed;left:50%;bottom:90px;z-index:60;transform:translate(-50%,calc(100% + 160px));opacity:0;visibility:hidden;display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:4px;background:var(--olive-deep);color:#F4EAD6;font-weight:800;transition:transform .3s;width:max-content;max-width:min(440px,calc(100vw - 32px));box-sizing:border-box;border-left:6px solid var(--ember)}
+#toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:70;width:100%;height:100%}
 
 @media (max-width:1200px){
@@ -828,7 +828,8 @@ section.pg-in>*:nth-child(2){animation-delay:.03s}section.pg-in>*:nth-child(3){a
 .card.xcard,.card.hubc,.card.item,.nfc{animation:vtFadeIn .4s ease-out both}
 .xgrid>*:nth-child(2),.shop>*:nth-child(2){animation-delay:.04s}.xgrid>*:nth-child(3),.shop>*:nth-child(3){animation-delay:.08s}.xgrid>*:nth-child(4),.shop>*:nth-child(4){animation-delay:.12s}
 .xgrid>*:nth-child(5),.shop>*:nth-child(5){animation-delay:.16s}.xgrid>*:nth-child(6),.shop>*:nth-child(6){animation-delay:.2s}.xgrid>*:nth-child(7){animation-delay:.24s}.xgrid>*:nth-child(8){animation-delay:.28s}
-#toast{transition:transform .45s cubic-bezier(.2,1.4,.4,1)}
+#toast{transition:transform .45s cubic-bezier(.2,1.4,.4,1),opacity .3s,visibility 0s .45s}
+#toast.show{transition:transform .45s cubic-bezier(.2,1.4,.4,1),opacity .2s,visibility 0s}
 @media (prefers-reduced-motion:reduce){
   section.pg-in>*,.path-in .nw,.path-in .uhead,.stat.up,.stat.down,.modal:not([hidden]),.modal:not([hidden]) .mbox,.lesson:not([hidden]),.lbody .ex,.card.xcard,.card.hubc,.card.item,.nfc{animation:none}
 }
