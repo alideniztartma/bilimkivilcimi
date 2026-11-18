@@ -84,11 +84,12 @@ setInterval(()=>{const h=S.hearts;dayCheck();if(S.hearts!==h)renderStats()},3000
       const prev=localStorage.getItem('bk-upd-id');
       if(localStorage.getItem('bk-upd')===id&&prev){ready(prev);return}
       const a=(j.assets||[]).find(x=>x.name==='www.zip');if(!a)throw new Error('Güncelleme paketi yok');
+      const sum=(/sum:([a-f0-9]{64})/.exec(j.body||'')||[])[1];if(!sum)throw new Error('Paket doğrulama bilgisi yok');
       toast(`${fi('bolt',18)} Yeni sürüm indiriliyor…`,8000);
-      const b=await U.download({url:a.browser_download_url,version:id});
+      const b=await U.download({url:a.browser_download_url,version:id,checksum:sum});
       await U.next({id:b.id});localStorage.setItem('bk-upd',id);localStorage.setItem('bk-upd-id',b.id);
       ready(b.id);
-    }catch(e){if(manual)toast('Güncellenemedi: '+esc(String(e&&e.message||e)).slice(0,140),8000)}
+    }catch(e){if(manual)toast('Güncellenemedi: '+esc(String(e&&e.message||e)).slice(0,240),10000)}
     finally{busy=false}
   }
   window.bkCheckUpdate=check;

@@ -40,6 +40,7 @@ jobs:
           echo "window.BK_BUILD='${GITHUB_SHA::7}.${GITHUB_RUN_NUMBER}';" > app/www/js/build.js
           echo "BUILD_ID=${GITHUB_SHA::7}.${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
           (cd app/www && zip -qr ../../www.zip .)
+          echo "BUILD_SUM=$(sha256sum www.zip | cut -d' ' -f1)" >> $GITHUB_ENV
 
       - name: Capacitor ile Android projesi oluştur
         working-directory: app
@@ -81,6 +82,7 @@ jobs:
             Uygulama kuruluysa yeni sürümü kendisi indirir (www.zip).
 
             build:${{ env.BUILD_ID }}
+            sum:${{ env.BUILD_SUM }}
           files: |
             BilimKivilcimi.apk
             www.zip
