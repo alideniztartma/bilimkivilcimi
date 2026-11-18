@@ -98,7 +98,7 @@ $('#path').addEventListener('click',e=>{
 });
 document.addEventListener('click',e=>{if(!e.target.closest('.nw'))closePops()});
 /* Ünite atlama: bilen biri kupa sınavını geçerek o üniteyi (ve aynı alandaki önceki üniteleri) tamamlanmış saydırır */
-function askSkip(ui){const u=U[ui],f=u.field,before=U.filter((x,i)=>x.field===f&&i<ui&&!x.lessons.every(l=>S.done[l.id])).length;
+function askSkip(ui){const u=U[ui],f=u.field,before=U.filter((x,i)=>x.field===f&&unitOrd(i)<unitOrd(ui)&&!x.lessons.every(l=>S.done[l.id])).length;
   openModal(`${anka('think',90)}<h2>${esc(u.title)} ünitesini atla</h2><p>Konuyu biliyorsan kupa sınavına gir: <b>8 soru</b>, en fazla <b>2 hata</b>. Sorular derslerdekinden farklı.</p>
     <p>Geçersen bu ünitenin dersleri${before?` ve önceki ${before} ünite`:''} tamamlanmış sayılır, kupayı da kazanırsın. Geçemezsen hiçbir şey kaybetmezsin.</p>
     <div class="ngbtns"><button class="b3 ghost" type="button" id="skNo">Vazgeç</button><button class="b3" type="button" id="skGo">${ic('bolt',20)} Sınava gir</button></div>`);
@@ -335,7 +335,7 @@ function finish(){
   else if(m==='speed'){xp=Math.min(20,L.score);const rec=L.score>S.speedBest;if(rec)S.speedBest=L.score;title=rec&&L.score>0?'Yeni rekor!':'Süre doldu!';sub=`60 saniyede ${L.score} doğru cevap. En iyi skorun: ${S.speedBest}.`;mood=L.score?'cheer':'wow'}
   else if(m==='exam'){const pass=L.misses<=2;
     if(pass){const fresh=!S.trophies[L.ui];S.trophies[L.ui]=dkey();xp=fresh?20:5;gems=fresh?30:0;title='Kupa senin!';sub=`${U[L.ui].title} ünitesinin kupasını kazandın. Sertifikan profilinde.`;
-      if(L.skip){const f=U[L.ui].field;U.forEach((u,ui)=>{if(u.field===f&&ui<=L.ui)u.lessons.forEach(x=>{if(!S.done[x.id])S.done[x.id]=1})});title='Üniteyi atladın!';sub=`${U[L.ui].title} ünitesini zaten biliyormuşsun. Dersleri tamamlanmış sayıldı, kupa da senin.`}}
+      if(L.skip){const f=U[L.ui].field;U.forEach((u,ui)=>{if(u.field===f&&unitOrd(ui)<=unitOrd(L.ui))u.lessons.forEach(x=>{if(!S.done[x.id])S.done[x.id]=1})});title='Üniteyi atladın!';sub=`${U[L.ui].title} ünitesini zaten biliyormuşsun. Dersleri tamamlanmış sayıldı, kupa da senin.`}}
     else{xp=5;title='Az kaldı!';sub=`${L.misses} hata yaptın. Kupa için en fazla 2 hata olmalı. Dersleri tekrar edip yeniden dene.`;mood='sad'}
     extra=pass?`<button class="b3 ghost" type="button" id="openCertNow">${ic('cert',20)} Sertifikayı aç</button>`:''}
   addXP(xp);S.gems+=gems;
