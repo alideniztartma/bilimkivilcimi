@@ -61,24 +61,38 @@ setInterval(()=>{const h=S.hearts;dayCheck();if(S.hearts!==h)renderStats()},3000
   setTimeout(go,Math.max(300,1100-(Date.now()-(window.__bootT||Date.now()))))})();
 
 /* Otomatik güncelleme (yalnızca Android uygulamasında):
-   Her açılışta GitHub'daki son sürüme bakar. Yeni bir sürüm varsa web dosyalarını arka planda indirir;
-   uygulama bir sonraki açılışında ya da arka plana alınıp dönünce yeni sürümle başlar. APK indirmek gerekmez. */
+   Açılışta ve uygulama her öne geldiğinde (en fazla dakikada bir) GitHub'daki son sürüme bakar.
+   Yeni sürüm varsa web dosyalarını indirir; "Şimdi yenile" ile hemen, yoksa bir sonraki açılışta yeni sürüm başlar.
+   Profil'deki "Güncellemeleri denetle" düğmesi aynı denetimi elle yapar ve sonucu yazar. */
 (function(){
   const U=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.CapacitorUpdater;
   if(!U)return;
+  window.BK_UPD=true;
   try{U.notifyAppReady()}catch(e){}
-  const check=async()=>{
+  let busy=false,last=0;
+  const ready=(id)=>{toast(`${fi('bolt',18)} Yeni sürüm hazır. <button type="button" class="tbtn" id="updNow">Şimdi yenile</button>`,12000);
+    const n=document.getElementById('updNow');if(n)n.onclick=()=>U.set({id})};
+  async function check(manual){
+    if(busy)return;busy=true;last=Date.now();
+    const say=t=>{if(manual)toast(t,5000)};
     try{
-      const r=await fetch('https://api.github.com/repos/alideniztartma/bilimkivilcimi/releases/tags/apk-latest',{cache:'no-store'});if(!r.ok)return;
-      const j=await r.json(),m=/build:([\w.-]+)/.exec(j.body||'');if(!m)return;const id=m[1];
-      if(id===window.BK_BUILD||localStorage.getItem('bk-upd')===id)return;
-      const a=(j.assets||[]).find(x=>x.name==='www.zip');if(!a)return;
+      say('Güncellemeler denetleniyor…');
+      const r=await fetch('https://api.github.com/repos/alideniztartma/bilimkivilcimi/releases/tags/apk-latest',{cache:'no-store'});
+      if(!r.ok)throw new Error('GitHub yanıtı '+r.status);
+      const j=await r.json(),m=/build:([\w.-]+)/.exec(j.body||'');if(!m)throw new Error('Sürüm bilgisi bulunamadı');const id=m[1];
+      if(id===window.BK_BUILD){say(`${fi('star',16)} Uygulama güncel (${id}).`);return}
+      const prev=localStorage.getItem('bk-upd-id');
+      if(localStorage.getItem('bk-upd')===id&&prev){ready(prev);return}
+      const a=(j.assets||[]).find(x=>x.name==='www.zip');if(!a)throw new Error('Güncelleme paketi yok');
+      toast(`${fi('bolt',18)} Yeni sürüm indiriliyor…`,8000);
       const b=await U.download({url:a.browser_download_url,version:id});
-      await U.next({id:b.id});localStorage.setItem('bk-upd',id);
-      toast(`${fi('bolt',18)} Yeni sürüm indi. <button type="button" class="tbtn" id="updNow">Şimdi yenile</button>`,9000);
-      const n=document.getElementById('updNow');if(n)n.onclick=()=>U.set({id:b.id});
-    }catch(e){}
-  };
-  setTimeout(()=>{check.t=Date.now();check()},4000);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-(check.t||0)>36e5){check.t=Date.now();check()}});
+      await U.next({id:b.id});localStorage.setItem('bk-upd',id);localStorage.setItem('bk-upd-id',b.id);
+      ready(b.id);
+    }catch(e){if(manual)toast('Güncellenemedi: '+esc(String(e&&e.message||e)).slice(0,140),8000)}
+    finally{busy=false}
+  }
+  window.bkCheckUpdate=check;
+  setTimeout(()=>check(false),3000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-last>6e4)check(false)});
+  document.addEventListener('click',e=>{if(e.target.closest('#sUpd'))check(true)});
 })();

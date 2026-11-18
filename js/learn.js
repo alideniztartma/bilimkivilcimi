@@ -602,6 +602,7 @@ function renderProfile(){
     <div><b>Görünüm</b><div class="seg" id="sTheme">${[['auto','Otomatik'],['light','Gündüz'],['dark','Gece']].map(t=>`<button type="button" data-v="${t[0]}" aria-pressed="${S.theme===t[0]}">${t[1]}</button>`).join('')}</div></div>
     <div><b>Anonim istatistik</b><div class="seg" id="sShare"><button type="button" data-v="1" aria-pressed="${S.share}">Açık</button><button type="button" data-v="0" aria-pressed="${!S.share}">Kapalı</button></div><p class="muted" style="font-size:.82rem;flex-basis:100%">Açıkken bitirdiğin ders ve deney sayıları adın olmadan, rastgele bir kimlikle proje ekibine gönderilir. Böylece sitenin kaç çocuğa ulaştığını görürüz.</p></div>
     <div><b>Günlük hedef</b><div class="seg" id="sGoal">${[10,20,30,50].map(g=>`<button type="button" data-v="${g}" aria-pressed="${S.goal===g}">${g} DP</button>`).join('')}</div></div>
+    ${window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.CapacitorUpdater?`<div><b>Uygulama sürümü</b><span class="upd"><code>${esc(window.BK_BUILD)}</code><button class="b3 sm ghost" type="button" id="sUpd">Güncellemeleri denetle</button></span></div>`:''}
     <div><b>İlerlemeyi sıfırla</b><button class="b3 sm ghost" type="button" id="sReset" style="--oc:var(--garnet)">Sıfırla</button></div>
   </div>
   <p style="color:var(--muted);font-size:.88rem;margin-top:10px">İlerlemen yalnızca bu cihazda saklanır.</p>
