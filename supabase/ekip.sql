@@ -98,9 +98,7 @@ grant execute on function public.bk_jwt_email(), public.bk_is_owner(), public.bk
 grant execute on function public.bk_invited(text) to anon, authenticated;
 revoke insert, update, delete on public.bk_admins from anon, authenticated;
 
--- 6) ANA YÖNETİCİYİ ATA: aşağıdaki satırdaki e-postayı kendi e-postanla değiştirip
---    yalnızca bu satırı ayrıca çalıştır. (Bu e-posta Supabase'de giriş yapılan hesabın e-postası olmalı.)
---    Ana yöneticiyi değiştirmek için önce eskisini 'collab' yap, sonra yenisini 'owner' yap.
---
--- insert into public.bk_admins (email, role) values (lower('EPOSTAN@ornek.com'), 'owner')
---   on conflict (email) do update set role = 'owner';
+-- 6) Ana yönetici: tartma@alideniz.me
+--    Değiştirmek için önce eskisini 'collab' yapın, sonra yenisini 'owner' yapın.
+insert into public.bk_admins (email, role) values ('tartma@alideniz.me', 'owner')
+  on conflict (email) do update set role = 'owner';
