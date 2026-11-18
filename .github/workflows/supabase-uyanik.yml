@@ -1,5 +1,5 @@
-# İSTEĞE BAĞLI: Supabase'in ücretsiz projeleri bir hafta etkinlik olmazsa duraklatılır.
-# Bu dosyayı .github/workflows/ klasörüne taşırsanız GitHub üç günde bir veritabanını yoklar ve projeyi uyanık tutar.
+# Supabase'in ücretsiz projeleri bir hafta etkinlik olmazsa duraklatılır.
+# GitHub bu iş akışıyla üç günde bir veritabanını yoklar ve projeyi uyanık tutar.
 name: Supabase uyanık tut
 on:
   schedule:
