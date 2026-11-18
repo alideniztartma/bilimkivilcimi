@@ -14,28 +14,28 @@ U.forEach((u,i)=>{if(!u.badge)u.badge=['Algoritmacı','Döngü Ustası','Karar V
 
 U.push(
 {id:'u6',field:'yazilim',title:'Robot yazılımı',desc:'Girdi, çıktı ve sensörle karar veren robotlar.',badge:'Robot Yazılımcısı',
- guide:[{h:'Girdi, işlem, çıktı',p:'Her program girdi alır, bir işlem yapar ve çıktı verir. Robotta girdi sensörlerden gelir, çıktı motorlara gider.'},
-        {h:'Algıla, karar ver, hareket et',p:'Robot programı bu üç işi sürekli tekrar eder. FRC robotları bu döngüyü saniyede 50 kez çalıştırır.'}],
+ guide:[{h:'Girdi, işlem, çıktı',p:'Her program girdi alır, işler ve çıktı verir. Robotta girdi sensörlerden gelir, çıktı motorlara gider.'},
+        {h:'Algıla, karar ver, hareket et',p:'Robot programı bu üç işi durmadan tekrarlar. FRC robotları bunu saniyede 50 kez yapar.'}],
  lessons:[
- {id:'yz1',title:'Program nasıl çalışır?',desc:'Girdi, işlem ve çıktı. Kodu okuyup sonucunu bulma.',ex:[
-  {t:'info',fig:'gio',h:'Girdi, işlem, çıktı',p:'Her program üç adımda çalışır: <b>girdi</b> alır, bir <b>işlem</b> yapar ve bir <b>çıktı</b> verir. Hesap makinesinde bastığın sayılar girdi, toplama işlem, ekranda gördüğün sonuç ise çıktıdır.'},
-  {t:'mc',q:'Marketin otomatik kapısı, biri yaklaşınca açılıyor. Kapının açılması nedir?',opts:['Çıktı','Girdi','İşlem'],a:0,tip:'Yaklaşan kişi girdidir. Kapının açılması, programın dışarı verdiği iştir: çıktı.'},
+ {id:'yz1',title:'Program nasıl çalışır?',desc:'Girdi, işlem ve çıktı.',ex:[
+  {t:'info',fig:'gio',h:'Girdi, işlem, çıktı',p:'Her program üç adımda çalışır: <b>girdi</b> alır, <b>işlem</b> yapar, <b>çıktı</b> verir. Hesap makinesinde bastığın tuşlar girdi, toplama işlem, ekrandaki sonuç çıktıdır.'},
+  {t:'mc',q:'Marketin kapısı biri yaklaşınca kendiliğinden açılıyor. Kapının açılması nedir?',opts:['Çıktı','Girdi','İşlem'],a:0,tip:'Yaklaşan kişi girdidir. Kapının açılması programın sonucudur, yani çıktı.'},
   {t:'match',q:'Kavramları anlamlarıyla eşleştir.',pairs:[['Girdi','Klavyeden yazılan sayı'],['İşlem','Sayıları toplamak'],['Çıktı','Ekranda görünen sonuç'],['Hata','Programdaki yanlış']]},
   {t:'mc',q:'Robotun kamerası bir top gördü. Bu bilgi program için nedir?',opts:['Girdi','Çıktı','İşlem'],a:0,tip:'Programa dışarıdan gelen her bilgi girdidir.'},
   {t:'order',q:'Hesap makinesi programının adımlarını sırala.',lines:true,plain:true,items:['İki sayıyı al','Sayıları topla','Sonucu ekrana yaz'],tip:'Önce girdi (sayılar), sonra işlem (toplama), en son çıktı (sonuç).'},
-  {t:'info',h:'Kodu adım adım oku',p:'Bilgisayar satırları yukarıdan aşağıya sırayla yapar. Değişken, adı olan bir kutudur. <b>sayı = sayı + 3</b> satırı, "kutudaki sayıya 3 ekle ve kutuya geri koy" demektir.',code:'sayı = 4\nsayı = sayı + 3\n# sayı kutusunda artık 7 var'},
-  {t:'type',q:'Bu program ekrana ne yazar?',code:'sayı = 4\nsayı = sayı + 3\nyaz(sayı)',a:['7','yedi'],tip:'Kutuda 4 vardı, 3 eklendi: 7. "yaz" kutunun içindekini ekrana yazar.'},
-  {t:'line',q:'Program 10 yazmalı ama 2 yazıyor. Hangi satır hatalı?',lines:['a = 6','b = 4','toplam = a - b','yaz(toplam)'],a:[2],tip:'6 - 4 = 2 olur. 6 + 4 = 10 için eksi değil artı kullanılmalı.'},
-  {t:'mc',q:'Bir programa aynı girdiyi iki kez verirsen ne olur?',opts:['İki seferde de aynı çıktıyı verir','Her seferinde başka bir şey yapar','İkinci seferde çalışmaz'],a:0,tip:'Bilgisayar her seferinde aynı adımları aynı sırayla yapar. Moda değiştirmez, keyfi yoktur!'}
+  {t:'info',h:'Kodu satır satır oku',p:'Bilgisayar satırları yukarıdan aşağıya sırayla okur. <code>yaz</code> komutu kutudakini ekrana yazar.',code:'sayı = 4\nsayı = sayı + 3\nyaz(sayı)   # 7'},
+  {t:'type',q:'Bu program ekrana ne yazar?',code:'sayı = 4\nsayı = sayı + 3\nyaz(sayı)',a:['7','yedi'],tip:'Kutuda 4 vardı, 3 eklendi: 7.'},
+  {t:'line',q:'Program 10 yazmalı ama 2 yazıyor. Hangi satır hatalı?',lines:['a = 6','b = 4','toplam = a - b','yaz(toplam)'],a:[2],tip:'6 − 4 = 2 eder. 10 bulmak için eksi yerine artı kullanılmalı.'},
+  {t:'mc',q:'Bir programa aynı girdiyi iki kez verirsen ne olur?',opts:['İki seferde de aynı çıktıyı verir','Her seferinde başka bir şey yapar','İkinci seferde çalışmaz'],a:0,tip:'Bilgisayarın keyfi yoktur; her seferinde aynı adımları aynı sırayla yapar.'}
  ]},
- {id:'yz2',title:'Robot yazılımı: algıla, karar ver, hareket et',desc:'Sensör okuma, "eğer" ile karar verme ve sürekli dönen döngü.',ex:[
-  {t:'info',fig:'sdh',h:'Robotun üç işi',p:'Robotun gözü ve kulağı <b>sensörlerdir</b>: çevreyi ölçen parçalar. Robot programı sürekli üç işi tekrar eder: <b>algılar</b> (sensörden okur), <b>karar verir</b> ("eğer … ise") ve <b>hareket eder</b> (motoru çalıştırır). FRC robotları bu döngüyü saniyede 50 kez yapar. Sen bir göz kırpana kadar robot onlarca kez bakıp karar verir!'},
+ {id:'yz2',title:'Algıla, karar ver, hareket et',desc:'Sensörle karar veren robot.',ex:[
+  {t:'info',fig:'sdh',h:'Robotun üç işi',p:'<b>Sensörler</b> robotun gözü ve kulağıdır. Robot programı üç işi durmadan tekrarlar: <b>algılar</b>, <b>karar verir</b>, <b>hareket eder</b>. FRC robotları bunu saniyede 50 kez yapar.'},
   {t:'match',q:'Robotun parçalarını görevleriyle eşleştir.',pairs:[['Sensör','Çevreyi ölçer'],['Motor','Robotu hareket ettirir'],['Eğer','Karar verir'],['Döngü','İşi sürekli tekrarlar']]},
-  {t:'info',h:'Mesafe sensörü',p:'Bir mesafe sensörü, önündeki engele kaç santimetre kaldığını söyler. Hatırla: <code>&lt;</code> "küçüktür" demektir. "mesafe &lt; 20", "engel 20 cm\'den yakın" anlamına gelir.',code:'Eğer mesafe < 20:\n    Motoru durdur'},
-  {t:'fill',q:'Engel yakınsa robot durmalı. Boşluğu doldur.',code:'Sürekli tekrarla:\n    mesafe = sensörü oku\n    ___ mesafe < 20:\n        Motoru durdur',opts:['Eğer','Tekrarla','Yaz'],a:0,tip:'Karar vermek için "Eğer" kullanırız. Sürekli tekrarlama işini zaten ilk satır yapıyor.'},
-  {t:'mc',q:'Mesafe sensörü 50 cm gösteriyor. Programda "Eğer mesafe < 20 ise dur" yazıyor. Robot ne yapar?',opts:['Gitmeye devam eder','Durur','Geri döner'],a:0,tip:'50, 20\'den küçük değil. Koşul doğru olmadığı için robot durmaz.'},
-  {t:'mc',q:'Şimdi sensör 10 cm gösteriyor. Aynı programda robot ne yapar?',opts:['Durur','Gitmeye devam eder','Geri döner'],a:0,tip:'10, 20\'den küçüktür. Koşul doğru, bu yüzden robot durur ve engele çarpmaz.'},
-  {t:'order',q:'Çizgi izleyen robotun programını sırala.',lines:true,items:['Sürekli tekrarla:','    Işık sensörünü oku','    Eğer çizgi soldaysa:','        Sola dön','    Değilse:','        Sağa dön'],tip:'Önce sürekli tekrar, içinde sırayla: algıla (oku), karar ver (eğer), hareket et (dön).'},
+  {t:'info',h:'Mesafe sensörü',p:'Mesafe sensörü, önündeki engelin kaç santimetre uzakta olduğunu söyler. <code>mesafe &lt; 20</code>, "engel 20 cm\'den yakın" demektir.',code:'Eğer mesafe < 20:\n    Motoru durdur'},
+  {t:'fill',q:'Engel yakınsa robot durmalı. Boşluğu doldur.',code:'Sürekli tekrarla:\n    mesafe = sensörü oku\n    ___ mesafe < 20:\n        Motoru durdur',opts:['Eğer','Tekrarla','Yaz'],a:0,tip:'Karar vermek için "Eğer" kullanırız.'},
+  {t:'mc',q:'Mesafe sensörü 50 cm gösteriyor. Programda "Eğer mesafe < 20 ise dur" yazıyor. Robot ne yapar?',opts:['Gitmeye devam eder','Durur','Geri döner'],a:0,tip:'50, 20\'den küçük değil. Koşul yanlış, robot durmaz.'},
+  {t:'mc',q:'Şimdi sensör 10 cm gösteriyor. Aynı programda robot ne yapar?',opts:['Durur','Gitmeye devam eder','Geri döner'],a:0,tip:'10, 20\'den küçüktür. Koşul doğru, robot durur.'},
+  {t:'order',q:'Çizgi izleyen robotun programını sırala.',lines:true,items:['Sürekli tekrarla:','    Işık sensörünü oku','    Eğer çizgi soldaysa:','        Sola dön','    Değilse:','        Sağa dön'],tip:'En dışta sürekli tekrar; içinde önce oku, sonra karar ver, sonra dön.'},
   {t:'type',q:'Robotun döngüsü saniyede 50 kez çalışıyor. 2 saniyede kaç kez çalışır?',a:['100','yüz'],tip:'Her saniye 50 tur var. 2 saniye × 50 tur = 100 tur.'}
  ]}]},
 /* ===== MEKANİK (FRC) ===== */
