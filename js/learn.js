@@ -52,7 +52,7 @@ function renderPath(){if(typeof petTick==='function')petTick();
     const un=ns.filter(n=>n.ui===ui),k=fi_+1;
     h+=`<section class="unit" style="--c:var(--u${ui+1});--cd:var(--u${ui+1}d)">
       <div class="uhead frame"><div class="uin"><div><span class="lbl">${F.title.toLocaleUpperCase('tr')} · ${k}. ÜNİTE</span><h2>${u.title}</h2><p>${u.desc}</p></div>
-      <button class="guide" type="button" data-guide="${ui}">${ic('book',22)}<span>Rehber</span></button></div></div><div class="nodes">`;
+      <div class="ubtns">${!unitDone(ui)&&!S.trophies[ui]?`<button class="guide" type="button" data-skip="${ui}" aria-label="${u.title} ünitesini atla">${ic('bolt',22)}<span>Atla</span></button>`:''}<button class="guide" type="button" data-guide="${ui}">${ic('book',22)}<span>Rehber</span></button></div></div></div><div class="nodes">`;
     un.forEach((n,i)=>{
       const st=nodeState(n),dx=OFF[i%8]*(k%2?1:-1);
       let inner,lbl;
@@ -81,6 +81,7 @@ function closePops(){$$('.pop').forEach(p=>p.remove());$$('.nw.open').forEach(n=
 function popIn(w,html,cls,color){const p=document.createElement('div');p.className='pop'+(cls?' '+cls:'');if(color)p.style.setProperty('--c',color);p.innerHTML=html;w.appendChild(p);w.classList.add('open');return p}
 $('#path').addEventListener('click',e=>{
   const g=e.target.closest('[data-guide]');if(g){openGuide(+g.dataset.guide);return}
+  const sk=e.target.closest('[data-skip]');if(sk){sfx.tap();askSkip(+sk.dataset.skip);return}
   const btn=e.target.closest('.node');if(!btn)return;
   const w=btn.closest('.nw'),id=w.dataset.node,n=allNodes().find(x=>x.id===id),st=nodeState(n);
   const had=$('.pop',w);closePops();if(had)return;sfx.tap();
@@ -89,13 +90,19 @@ $('#path').addEventListener('click',e=>{
   if(n.k==='trophy'){
     if(st==='done'){const p=popIn(w,`<h3>${UNIT_BADGE[n.ui]}!</h3><p>Kupa sınavını geçtin. Sertifikan hazır.</p><button class="b3" type="button">Sertifikayı aç</button>`,'','var(--olive)');p.querySelector('button').onclick=ev=>{ev.stopPropagation();closePops();openCert(n.ui)};return}
     if(st==='ready'){const p=popIn(w,`<h3>Kupa sınavı</h3><p>${U[n.ui].title} ünitesinden 8 soru. En fazla 2 hata yaparsan kupayı ve sertifikayı kazanırsın.</p><button class="b3" type="button">Sınava başla +20 DP</button>`,'','var(--ember)');p.querySelector('button').onclick=ev=>{ev.stopPropagation();closePops();startMode('exam',{ui:n.ui})};return}
-    popIn(w,`<h3>${unitNo(n.ui)}. ünite kupası</h3><p>Bu ünitenin bütün derslerini bitirince kupa sınavı açılır.</p>`,'lock');return}
+    {const p=popIn(w,`<h3>${unitNo(n.ui)}. ünite kupası</h3><p>Bütün dersleri bitirince sınav açılır. Konuyu zaten biliyorsan sınava şimdi girip üniteyi atlayabilirsin.</p><button class="b3" type="button">${ic('bolt',20)} Sınava gir, üniteyi atla</button>`,'','var(--ember)');p.querySelector('button').onclick=ev=>{ev.stopPropagation();closePops();askSkip(n.ui)}}return}
   const u=U[n.ui];const xp=st==='done'?5:10;
   const p=popIn(w,`<h3>${esc(n.l.title)}</h3><p>${st==='lock'?'Önce önceki dersleri bitir.':`${n.li+1}. ders / ${u.lessons.length}`+(st==='done'?' · Bitirdin':'')}</p>
     <button class="b3" type="button" data-start="${n.id}">${st==='done'?'Tekrar et':'Başla'} +${xp} DP</button>`,st==='lock'?'lock':'');
   const b=p.querySelector('[data-start]');if(b)b.addEventListener('click',ev=>{ev.stopPropagation();closePops();startMode('lesson',{lesson:n.l})});
 });
 document.addEventListener('click',e=>{if(!e.target.closest('.nw'))closePops()});
+/* Ünite atlama: bilen biri kupa sınavını geçerek o üniteyi (ve aynı alandaki önceki üniteleri) tamamlanmış saydırır */
+function askSkip(ui){const u=U[ui],f=u.field,before=U.filter((x,i)=>x.field===f&&i<ui&&!x.lessons.every(l=>S.done[l.id])).length;
+  openModal(`${anka('think',90)}<h2>${esc(u.title)} ünitesini atla</h2><p>Konuyu biliyorsan kupa sınavına gir: <b>8 soru</b>, en fazla <b>2 hata</b>. Sorular derslerdekinden farklı.</p>
+    <p>Geçersen bu ünitenin dersleri${before?` ve önceki ${before} ünite`:''} tamamlanmış sayılır, kupayı da kazanırsın. Geçemezsen hiçbir şey kaybetmezsin.</p>
+    <div class="ngbtns"><button class="b3 ghost" type="button" id="skNo">Vazgeç</button><button class="b3" type="button" id="skGo">${ic('bolt',20)} Sınava gir</button></div>`);
+  $('#skNo').onclick=closeModal;$('#skGo').onclick=()=>{closeModal();startMode('exam',{ui,skip:true})}}
 function openGuide(ui){const u=U[ui];
   openModal(`${anka('happy',80)}<h2>${fieldOf(u.field).title} · ${unitNo(ui)}. Ünite: ${u.title}</h2><p>Derse başlamadan önce bunları oku.</p>
   ${u.guide.map(g=>`<div class="gitem"><h3>${g.h}</h3><p>${g.p}</p>${g.code?`<pre class="code">${hl(g.code)}</pre>`:''}</div>`).join('')}
@@ -222,7 +229,7 @@ function startMode(mode,o={}){
   else if(mode==='mistakes')ex=shuffle(Object.keys(S.wrong).map(id=>EXBYID[id]).filter(Boolean)).slice(0,8);
   else if(mode==='daily')ex=[Object.assign({t:'robot',id:'daily'},dailyPuzzle())];
   else if(mode==='speed')ex=shuffle(ALL_LESSONS.filter(l=>S.done[l.id]).flatMap(l=>l.ex).filter(e=>['mc','fill','line'].includes(e.t)));
-  else if(mode==='exam')ex=shuffle(gradables(U[o.ui].lessons.flatMap(l=>l.ex)).filter(e=>e.t!=='match')).slice(0,8);
+  else if(mode==='exam')ex=kupaQuestions(o.ui);
   if(!ex||!ex.length){toast('Önce birkaç ders bitirmelisin.');return}
   L=Object.assign({mode,queue:ex,total:mode==='speed'?0:ex.length,done:0,misses:0,first:new Set(),combo:0,maxCombo:0,t0:Date.now(),robotOK:0,cur:null,state:'q',score:0,gradable:gradables(ex).length},o);
   $('#lesson').hidden=false;document.body.style.overflow='hidden';
@@ -327,7 +334,8 @@ function finish(){
   else if(m==='daily'){const fresh=!S.dailyDone[today];if(fresh){xp=10;gems=15;S.dailyDone={[today]:1}}title='Günün bulmacası çözüldü!';sub=fresh?'Yarın yeni bir bulmaca gelecek.':'Bugünün ödülünü daha önce almıştın.'}
   else if(m==='speed'){xp=Math.min(20,L.score);const rec=L.score>S.speedBest;if(rec)S.speedBest=L.score;title=rec&&L.score>0?'Yeni rekor!':'Süre doldu!';sub=`60 saniyede ${L.score} doğru cevap. En iyi skorun: ${S.speedBest}.`;mood=L.score?'cheer':'wow'}
   else if(m==='exam'){const pass=L.misses<=2;
-    if(pass){const fresh=!S.trophies[L.ui];S.trophies[L.ui]=dkey();xp=fresh?20:5;gems=fresh?30:0;title='Kupa senin!';sub=`${U[L.ui].title} ünitesinin kupasını kazandın. Sertifikan profilinde.`}
+    if(pass){const fresh=!S.trophies[L.ui];S.trophies[L.ui]=dkey();xp=fresh?20:5;gems=fresh?30:0;title='Kupa senin!';sub=`${U[L.ui].title} ünitesinin kupasını kazandın. Sertifikan profilinde.`;
+      if(L.skip){const f=U[L.ui].field;U.forEach((u,ui)=>{if(u.field===f&&ui<=L.ui)u.lessons.forEach(x=>{if(!S.done[x.id])S.done[x.id]=1})});title='Üniteyi atladın!';sub=`${U[L.ui].title} ünitesini zaten biliyormuşsun. Dersleri tamamlanmış sayıldı, kupa da senin.`}}
     else{xp=5;title='Az kaldı!';sub=`${L.misses} hata yaptın. Kupa için en fazla 2 hata olmalı. Dersleri tekrar edip yeniden dene.`;mood='sad'}
     extra=pass?`<button class="b3 ghost" type="button" id="openCertNow">${ic('cert',20)} Sertifikayı aç</button>`:''}
   addXP(xp);S.gems+=gems;
@@ -626,6 +634,17 @@ function renderStats(){
 }
 
 /* ================= TANIŞMA ================= */
+/* Anka'nın konuşma balonu harf harf yazılır; her harfte telefon çok hafif titrer.
+   Harfler baştan yerini alır (görünmez), böylece balonun boyu yazarken değişmez. */
+let typeTok=0;
+function typeBubbles(root){const tok=++typeTok;
+  $$('.obub',root).forEach((b,bi)=>{const txt=b.textContent;b.setAttribute('aria-label',txt);
+    if(reduce)return;
+    b.innerHTML=[...txt].map(ch=>`<span class="tch" aria-hidden="true">${esc(ch)}</span>`).join('');
+    const sp=$$('.tch',b);let i=0;
+    const step=()=>{if(tok!==typeTok||!b.isConnected)return;if(i>=sp.length)return;const ch=sp[i].textContent;sp[i].classList.add('on');i++;
+      if(/[^\s.,!?'"…:;-]/.test(ch))haptic('type');setTimeout(step,/[.!?]/.test(ch)?220:/[,:]/.test(ch)?120:42)};
+    setTimeout(step,bi===0?280:500)})}
 function onboard(){
   if($('#onb'))return;
   const st={i:0,goal:0,field:null,dir:1};
@@ -646,6 +665,7 @@ function onboard(){
       if(k==='tts'){ok=S.tts!=null&&st.ttsSet;body=head('Soruları sana sesli okuyayım mı?','happy')+`<div class="oopts">${opt('ot',1,st.ttsSet&&S.tts,'Evet, sesli oku','Okumayı yeni öğrenenler için')}${opt('ot',0,st.ttsSet&&!S.tts,'Hayır, gerek yok','Kendim okurum')}</div>`}
       if(k==='end'){btn='İLK DERSİME BAŞLA';body=`<div class="ocenter">${bubble(`Harika${S.name?', '+esc(S.name):''}! Hadi ilk dersine başlayalım.`)}<div class="oank">${anka('cheer',190,undefined,'act-dance')}</div></div>`}}
     el.innerHTML=`${top}<div class="obody ${st.dir<0?'back':''}">${body}</div><div class="ofoot"><button type="button" class="obtn" data-onext ${ok?'':'disabled'}>${btn}</button></div>`;
+    typeBubbles(el);
     const n=$('#oname');if(n){n.addEventListener('keydown',e=>{if(e.key==='Enter')next()});setTimeout(()=>n.focus(),300)}
     else setTimeout(()=>{const b=el.querySelector('.obtn:not([disabled])');if(b)b.focus({preventScroll:true})},60)}
   function next(){const k=steps[st.i];if(k==='name')S.name=($('#oname').value||'').trim();

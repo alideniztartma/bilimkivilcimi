@@ -595,7 +595,7 @@ textarea.codes{width:100%;font:500 .9rem/1.4 var(--mono);padding:12px;border:1px
   .mtab .nav.dsk{display:none}
   .uin{padding:12px 14px}
   .uin h2{font-size:1.4rem}
-  .guide span{display:none}
+  .guide:not([data-skip]) span{display:none}.ubtns{flex-direction:column;align-items:flex-end}
   .buddy{width:110px;transform:translateX(calc(-50% + var(--side) * 128px))}
   .buddy .anka{width:72px;height:auto}
   .buddy .bb{font-size:.75rem}
@@ -1036,3 +1036,5 @@ section.pg-in>*:nth-child(2){animation-delay:.03s}section.pg-in>*:nth-child(3){a
 @media (prefers-reduced-motion:reduce){.ngame,.ngcard,.nphoto,.nflash,.ngemfly{animation:none;transition:none}}
 @keyframes ngIn{from{transform:translateY(30px);opacity:0}}
 .tbtn{margin-left:8px;padding:5px 10px;border:0;border-radius:999px;background:#FBF6EA;color:#2F2E24;font:800 .8rem/1 var(--body);cursor:pointer}
+.ubtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.tch{opacity:0}.tch.on{opacity:1}
