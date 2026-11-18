@@ -59,3 +59,5 @@ grant execute on function public.bk_is_admin() to authenticated;
 grant execute on function public.bk_ping() to anon, authenticated;
 revoke insert, update, delete on public.bk_progress from anon, authenticated;
 revoke insert, update, delete on public.bk_admins from anon, authenticated;
+
+-- 8) Ekip ve yetkiler (ana yönetici, ekip üyeleri): ardından supabase/ekip.sql dosyasını çalıştırın.
