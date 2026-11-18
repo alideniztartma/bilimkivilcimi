@@ -181,7 +181,9 @@ a{color:var(--terra)}
 .guide:hover{background:rgba(251,246,234,.12)}
 .nodes{display:flex;flex-direction:column;align-items:center;gap:40px;padding:60px 0 30px}
 .nw{position:relative;z-index:1;transform:translateX(var(--dx));display:grid;justify-items:center}
-.nw.open,.nw:has(.pop){z-index:6}
+.nw.open,.nw:has(.pop){z-index:3}
+/* BAŞLA / KUPA SINAVI etiketi için düğümün üstünde yer aç (üstteki sandıkla çakışmasın) */
+.nw:has(.tipstart){margin-top:34px}
 .nw:has(.k-trophy) .tipstart,.nw:has(.k-chest) .tipstart{bottom:calc(100% + 4px)}
 .node{position:relative;width:62px;height:62px;border:0;border-radius:6px;transform:rotate(45deg);display:grid;place-items:center;cursor:pointer;background:var(--c);color:#FBF6EA;box-shadow:5px 5px 0 var(--cd);transition:transform .08s,box-shadow .08s}
 .node>*{transform:rotate(-45deg)}
@@ -202,7 +204,7 @@ a{color:var(--terra)}
 .buddy .bb{background:var(--raised);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:.85rem;font-weight:700;text-align:center;box-shadow:var(--shadow)}
 .udeco{position:absolute;top:-10px;left:50%;transform:translateX(calc(-50% + var(--side) * 170px));color:var(--sand);pointer-events:none}
 .pop{position:absolute;top:calc(100% + 24px);left:50%;transform:translateX(-50%);z-index:3;width:290px;padding:18px;border-radius:8px;background:var(--c);color:#FBF6EA;box-shadow:0 14px 30px -12px rgba(0,0,0,.45);text-align:left}
-.pop::before{content:"";position:absolute;bottom:100%;left:50%;width:16px;height:16px;background:var(--c);transform:translate(-50%,8px) rotate(45deg)}
+.pop::before{content:"";position:absolute;bottom:100%;left:calc(50% - var(--px,0px));width:16px;height:16px;background:var(--c);transform:translate(-50%,8px) rotate(45deg)}
 .pop.lock{--c:var(--raised);color:var(--muted);border:1px solid var(--line)}
 .pop h3{font-size:1.3rem;margin-bottom:4px}
 .pop p{font-weight:600;opacity:.92;margin-bottom:14px}

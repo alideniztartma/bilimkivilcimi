@@ -78,7 +78,12 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-field]');i
   if(page!=='ogren')location.hash='#ogren';else{window.scrollTo(0,0);scrollCur()}
   if(changed)toast(ic(fieldOf(S.field).icon,20)+' '+fieldOf(S.field).title+' yoluna geçtin')});
 function closePops(){$$('.pop').forEach(p=>p.remove());$$('.nw.open').forEach(n=>n.classList.remove('open'))}
-function popIn(w,html,cls,color){const p=document.createElement('div');p.className='pop'+(cls?' '+cls:'');if(color)p.style.setProperty('--c',color);p.innerHTML=html;w.appendChild(p);w.classList.add('open');return p}
+function popIn(w,html,cls,color){const p=document.createElement('div');p.className='pop'+(cls?' '+cls:'');if(color)p.style.setProperty('--c',color);p.innerHTML=html;w.appendChild(p);w.classList.add('open');
+  /* Kutucuk ekrandan taşmasın: kenara yaslanınca içini kaydır, oku düğümün altında bırak */
+  const r=p.getBoundingClientRect(),m=10,vw=document.documentElement.clientWidth;let s=0;
+  if(r.right>vw-m)s=vw-m-r.right;if(r.left+s<m)s=m-r.left;
+  if(s){p.style.transform=`translateX(calc(-50% + ${s}px))`;p.style.setProperty('--px',s+'px')}
+  return p}
 $('#path').addEventListener('click',e=>{
   const g=e.target.closest('[data-guide]');if(g){openGuide(+g.dataset.guide);return}
   const sk=e.target.closest('[data-skip]');if(sk){sfx.tap();askSkip(+sk.dataset.skip);return}

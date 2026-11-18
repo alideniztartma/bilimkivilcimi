@@ -9,7 +9,7 @@ const U=[
         {h:'Hata',p:'Programdaki yanlışa hata (bug) denir. Hatayı bulup düzeltmeye hata ayıklama denir.'}],
  lessons:[
  {id:'u1l1',title:'Algoritma nedir?',ex:[
-  {t:'info',h:'Adım adım',p:'Bir işi yapmak için sırayla izlediğimiz adımlara <b>algoritma</b> denir. Yemek tarifi de bir algoritmadır: önce tavayı ısıtırsın, sonra yumurtayı kırarsın.'},
+  {t:'info',fig:'tarif',h:'Adım adım',p:'Bir işi yapmak için sırayla izlediğimiz adımlara <b>algoritma</b> denir. Yemek tarifi de bir algoritmadır: önce tavayı ısıtırsın, sonra yumurtayı kırarsın.'},
   {t:'mc',q:'Hangisi bir algoritmadır?',opts:['Bir kek tarifi','Bir elma','Mavi renk','Bir kedi'],a:0,tip:'Tarif adım adım uygulanır. Ötekiler adım değil, birer nesnedir.'},
   {t:'order',q:'Dişlerini fırçalamanın adımlarını sırala.',lines:true,plain:true,items:['Diş fırçasını al','Üstüne macun sür','Dişlerini fırçala','Ağzını çalkala'],tip:'Önce fırçayı hazırlarız, sonra fırçalarız. Çalkalamak en sona kalır.'},
   {t:'mc',q:'Önce ayakkabını, sonra çorabını giyersen ne olur?',opts:['Olmaz, sıra yanlış','Fark etmez','Daha çabuk giyinirim'],a:0,tip:'Adımların sırası önemlidir. Sıra bozulursa iş de bozulur.'},
@@ -42,7 +42,7 @@ const U=[
         {h:'İçeriden başlayan satırlar',p:'Döngüye ait komutlar biraz içeriden başlar. Yalnızca onlar tekrarlanır.'}],
  lessons:[
  {id:'u2l1',title:'Tekrar eden adımlar',ex:[
-  {t:'info',h:'Döngüyle tanış',p:'Anka üç kez zıplayacak. Üç kez "Zıpla" yazabiliriz. Peki yüz kez zıplayacaksa? Burada <b>döngü</b> imdadımıza yetişir: aynı komutu istediğimiz kadar tekrarlatır.',code:'3 kez tekrarla:\n    Zıpla'},
+  {t:'info',fig:'dongu',h:'Döngüyle tanış',p:'Anka üç kez zıplayacak. Üç kez "Zıpla" yazabiliriz. Peki yüz kez zıplayacaksa? Burada <b>döngü</b> imdadımıza yetişir: aynı komutu istediğimiz kadar tekrarlatır.',code:'3 kez tekrarla:\n    Zıpla'},
   {t:'mc',q:'"İleri git, İleri git, İleri git" programının kısa hâli hangisi?',mono:true,opts:['3 kez tekrarla:\n    İleri git','2 kez tekrarla:\n    İleri git','İleri git'],a:0,tip:'"3 kez tekrarla", içindeki komutu 3 kez yaptırır.'},
   {t:'fill',q:'Kurbağa 5 kez zıplamalı. Boşluğu doldur.',code:'___ kez tekrarla:\n    Zıpla',opts:['5','3','1'],a:0,tip:'Buraya yazılan sayı, kaç kez tekrarlanacağını söyler.'},
   {t:'info',h:'İçeride mi, dışarıda mı?',p:'Döngüye ait komutlar satıra biraz <b>içeriden</b> başlar ve yalnızca onlar tekrarlanır. Hizadan başlayan satır döngünün dışındadır, bir kez çalışır.',code:'2 kez tekrarla:\n    Zıpla\nAlkışla'},
@@ -73,7 +73,7 @@ const U=[
         {h:'Karşılaştırma',p:'> büyüktür, < küçüktür, == eşittir, != eşit değildir demektir. Sonuç ya doğrudur ya yanlış.'}],
  lessons:[
  {id:'u3l1',title:'Eğer',ex:[
-  {t:'info',h:'Bilgisayar da karar verir',p:'Sabah pencereden bakarsın: yağmur yağıyorsa şemsiyeni alırsın. Doğru ya da yanlış olabilen bu soruya <b>koşul</b> denir ve <b>Eğer</b> ile başlar. Koşul doğruysa komut çalışır, yanlışsa çalışmaz.',code:'Eğer ışık kırmızıysa:\n    Dur'},
+  {t:'info',fig:'kosul',h:'Bilgisayar da karar verir',p:'Sabah pencereden bakarsın: yağmur yağıyorsa şemsiyeni alırsın. Doğru ya da yanlış olabilen bu soruya <b>koşul</b> denir ve <b>Eğer</b> ile başlar. Koşul doğruysa komut çalışır, yanlışsa çalışmaz.',code:'Eğer ışık kırmızıysa:\n    Dur'},
   {t:'mc',q:'Bugün hava güneşli. Ne olur?',code:'Eğer hava yağmurluysa:\n    Şemsiye al',opts:['Şemsiye almayız','Şemsiye alırız','Hava yağmurlu olur'],a:0,tip:'Hava yağmurlu değil, yani koşul yanlış. İçindeki komut çalışmaz.'},
   {t:'match',q:'Eşleri bul',pairs:[['Işık kırmızıysa','Dur'],['Acıktıysan','Yemek ye'],['Kapı çalarsa','Kapıyı aç'],['Hava soğuksa','Mont giy']]},
   {t:'mc',q:'Telefonun şarjı %90. Şarja takar mıyız?',code:'Eğer şarj azsa:\n    Şarja tak',opts:['Hayır','Evet'],a:0,tip:'%90 az değildir. Koşul yanlış olduğu için şarja takmayız.'},
@@ -113,7 +113,7 @@ const U=[
   {t:'fill',q:'elma kutusuna 4 koy.',code:'elma ___ 4',opts:['=','+','?'],a:0,tip:'Kutuya bir şey koymak için = kullanırız.'}
  ]},
  {id:'u4l2',title:'Kutuyu değiştir',ex:[
-  {t:'info',h:'Yeni değer, eskisinin yerine',p:'Kutudaki değeri değiştirebiliriz; yeni değer eskisinin yerini alır. <code>puan = puan + 2</code> şöyle okunur: "puandaki sayıya 2 ekle, sonucu yine puana koy." Kumbarandaki 5 liraya 2 lira eklemek gibi.',code:'puan = 5\npuan = puan + 2\n# puan artık 7'},
+  {t:'info',fig:'kutu2',h:'Yeni değer, eskisinin yerine',p:'Kutudaki değeri değiştirebiliriz; yeni değer eskisinin yerini alır. <code>puan = puan + 2</code> şöyle okunur: "puandaki sayıya 2 ekle, sonucu yine puana koy." Kumbarandaki 5 liraya 2 lira eklemek gibi.',code:'puan = 5\npuan = puan + 2\n# puan artık 7'},
   {t:'type',q:'Sonunda x kaç?',code:'x = 4\nx = 9',a:['9'],tip:'Yeni değer eskisinin yerine geçer: x artık 9.'},
   {t:'type',q:'puan kaç oldu?',code:'puan = 5\npuan = puan + 3',a:['8'],tip:'Kutudaki 5\'e 3 eklenir: 8.'},
   {t:'info',h:'İşlem işaretleri',p:'<code>+</code> toplar, <code>-</code> çıkarır, <code>*</code> çarpar.',code:'a = 2\na = a * 3   # 2 çarpı 3'},
@@ -136,7 +136,7 @@ const U=[
         {h:'Girinti önemli',p:'for ve if satırları iki noktayla (:) biter. İçlerindeki satırlar 4 boşluk içeriden başlar.',code:'for i in range(3):\n    print("Hey!")'}],
  lessons:[
  {id:'u5l1',title:'print ile yazdır',ex:[
-  {t:'info',h:'Python\'a hoş geldin',p:'Şimdi gerçek bir programlama diliyle tanışıyoruz: <b>Python</b>. Ekrana yazı yazdırmak için <code>print</code> kullanılır. Yazdırılacak yazı tırnak içinde olur.',code:'print("Merhaba Hatay!")'},
+  {t:'info',fig:'py',h:'Python\'a hoş geldin',p:'Şimdi gerçek bir programlama diliyle tanışıyoruz: <b>Python</b>. Ekrana yazı yazdırmak için <code>print</code> kullanılır. Yazdırılacak yazı tırnak içinde olur.',code:'print("Merhaba Hatay!")'},
   {t:'mc',q:'Ekranda ne görünür?',code:'print("Bilim")',opts:['Bilim','print','"Bilim"','Hiçbir şey'],a:0,tip:'Tırnaklar ekrana yazılmaz, yalnızca yazının nerede başlayıp bittiğini gösterir.'},
   {t:'line',q:'Hangi satırda hata var?',lines:['print("Merhaba")','print("Nasılsın?)','print("Görüşürüz")'],a:[1],tip:'Tırnak açılmış ama kapanmamış. Doğrusu: print("Nasılsın?")'},
   {t:'fill',q:'Ekrana Kıvılcım yazdır.',code:'print(___)',opts:['"Kıvılcım"','Kıvılcım','(Kıvılcım)'],a:0,tip:'Yazı her zaman tırnak içinde olmalı.'},
@@ -254,6 +254,11 @@ const QPOOL=[
 
 /* Yazılım ünitelerinin görselleri (FIG js/gorsel.js içinde tanımlı) */
 Object.assign(FIG,{
+ tarif:`<svg viewBox="0 0 360 150">${[['1','Tavayı ısıt',GK.terra,10],['2','Yumurtayı kır',GK.ember,130],['3','Pişmesini bekle',GK.olive,250]].map(([n,t,c,x],i)=>`<rect x="${x}" y="30" width="100" height="80" rx="12" fill="${c}"/><circle cx="${x+50}" cy="30" r="14" fill="${GK.cream}" stroke="${GK.ink}" stroke-width="2"/>${gt(x+50,35,n,{s:14})}${gt(x+50,78,t,{s:11,c:GK.cream})}${i<2?`<path class="gflow" d="M${x+103} 70 H${x+127}" stroke="${GK.ink}" stroke-width="4" stroke-dasharray="4 3"/>`:''}`).join('')}${gt(180,138,'Sırayla yapılan adımlar = algoritma',{s:12,c:GK.terra})}</svg>`,
+ dongu:`<svg viewBox="0 0 360 150"><rect x="130" y="62" width="100" height="40" rx="12" fill="${GK.ember}"/>${gt(180,88,'Zıpla',{s:16,c:GK.cream})}<path class="gflow" d="M230 82 C310 82 310 24 180 24 C50 24 50 82 130 82" fill="none" stroke="${GK.ink}" stroke-width="4" stroke-dasharray="6 5"/><circle cx="180" cy="24" r="17" fill="${GK.terra}"/>${gt(180,30,'3x',{s:16,c:GK.cream})}${gt(180,132,'3 kez tekrarla: aynı komut yine yine yine',{s:12,c:GK.terra})}</svg>`,
+ kosul:`<svg viewBox="0 0 360 160"><polygon points="180,8 270,52 180,96 90,52" fill="${GK.gold}" stroke="${GK.ink}" stroke-width="2.5"/>${gt(180,48,'Yağmur',{s:12})}${gt(180,63,'yağıyor mu?',{s:12})}<path d="M100 74 L62 108" stroke="${GK.ink}" stroke-width="3"/><path d="M260 74 L298 108" stroke="${GK.ink}" stroke-width="3" stroke-dasharray="5 4"/>${gt(42,92,'EVET',{s:11,c:GK.olive})}${gt(320,92,'HAYIR',{s:11,c:GK.garnet})}<rect x="8" y="110" width="120" height="36" rx="10" fill="${GK.olive}"/>${gt(68,133,'Şemsiye al',{s:13,c:GK.cream})}<rect x="232" y="110" width="120" height="36" rx="10" fill="${GK.line}"/>${gt(292,133,'Hiçbir şey yapma',{s:11})}</svg>`,
  kosul2:`<svg viewBox="0 0 360 160"><polygon points="180,8 270,52 180,96 90,52" fill="${GK.gold}" stroke="${GK.ink}" stroke-width="2.5"/>${gt(180,48,'Yağmur',{s:12})}${gt(180,63,'yağıyor mu?',{s:12})}<path d="M100 74 L62 108" stroke="${GK.ink}" stroke-width="3"/><path d="M260 74 L298 108" stroke="${GK.ink}" stroke-width="3"/>${gt(42,92,'EVET',{s:11,c:GK.olive})}${gt(314,92,'DEĞİLSE',{s:11,c:GK.garnet})}<rect x="8" y="110" width="120" height="36" rx="10" fill="${GK.olive}"/>${gt(68,133,'Şemsiye al',{s:13,c:GK.cream})}<rect x="232" y="110" width="120" height="36" rx="10" fill="${GK.terra}"/>${gt(292,133,'Şapka tak',{s:13,c:GK.cream})}</svg>`,
  kutu:`<svg viewBox="0 0 360 150">${[['puan','5',GK.terra,10],['isim','Ela',GK.olive,130],['can','3',GK.ember,250]].map(([a,v,c,x])=>`<rect x="${x}" y="40" width="100" height="70" rx="8" fill="${GK.sand}" stroke="${GK.ink}" stroke-width="2.5"/><rect x="${x+20}" y="28" width="60" height="22" rx="6" fill="${c}"/>${gt(x+50,44,a,{s:13,c:GK.cream})}${gt(x+50,92,v,{s:28})}`).join('')}${gt(180,134,'Her kutunun bir adı ve içinde bir değer var',{s:12,c:'#6B604A'})}</svg>`,
+ kutu2:`<svg viewBox="0 0 360 150">${[['5',10],['7',250]].map(([v,x])=>`<rect x="${x}" y="40" width="100" height="70" rx="8" fill="${GK.sand}" stroke="${GK.ink}" stroke-width="2.5"/><rect x="${x+20}" y="28" width="60" height="22" rx="6" fill="${GK.terra}"/>${gt(x+50,44,'puan',{s:13,c:GK.cream})}${gt(x+50,92,v,{s:28})}`).join('')}<path class="gflow" d="M120 75 H240" stroke="${GK.ink}" stroke-width="4" stroke-dasharray="6 5"/>${gt(180,64,'+ 2',{s:18,c:GK.terra})}${gt(60,134,'Önce',{s:12})}${gt(290,134,'Sonra: eskisinin yerine',{s:11})}</svg>`,
+ py:`<svg viewBox="0 0 360 150"><rect x="10" y="30" width="160" height="70" rx="10" fill="${GK.ink}"/>${gt(90,60,'print("Merhaba")',{s:13,c:GK.gold})}${gt(90,82,'Python kodu',{s:11,c:GK.cream,w:600})}<path class="gflow" d="M178 65 H206" stroke="${GK.ink}" stroke-width="4" stroke-dasharray="4 3"/><rect x="214" y="22" width="136" height="86" rx="8" fill="${GK.steel}" stroke="${GK.steelD}" stroke-width="2"/><rect x="222" y="30" width="120" height="70" rx="4" fill="${GK.cream}"/>${gt(282,72,'Merhaba',{s:16,c:GK.terra})}${gt(282,130,'Ekranda görünen',{s:11,w:700})}${gt(90,130,'Sen yazarsın',{s:11,w:700})}</svg>`
 });
