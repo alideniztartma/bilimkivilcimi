@@ -22,7 +22,7 @@ renderNest=function(){
   const sc=$('#nScene');if(!sc)return;
   S.pet.best=S.pet.best||{};
   sc.insertAdjacentHTML('beforeend',`<button type="button" class="nobj ntoy" data-nobj="games" aria-label="Oyuncak kutusu: Anka ile oyun oyna">${TOY_SVG}<span class="nlab">Oyunlar</span></button>`);
-  const ch=$('#pgNest .nchips');if(ch)ch.insertAdjacentHTML('beforeend',`<button type="button" class="nround ncam" id="nCam" aria-label="Anka'nın fotoğrafını çek">${ic('camera',20)}</button>`);
+  sc.insertAdjacentHTML('beforeend',`<button type="button" class="nround ncam" id="nCam" aria-label="Anka'nın fotoğrafını çek">${ic('camera',20)}</button>`);
   nestVisit();
 };
 const _trayRender=trayRender;

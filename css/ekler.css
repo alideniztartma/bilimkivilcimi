@@ -31,3 +31,6 @@
 .gal-i span{display:block;font:700 .72rem/1.2 var(--body);margin-top:4px;color:var(--ink,#2F2E24)}
 .gal-big{width:100%;max-width:420px;display:block;margin:0 auto;border-radius:8px;border:2px solid #D8C7A4}
 .nrad.playing svg{animation:radBump .45s ease-in-out infinite alternate}
+@media (max-width:440px){#pgNest .nchips{gap:4px}#pgNest .nchips .nchip{padding-left:7px;padding-right:7px}#pgNest .ncam{width:36px;height:36px}#pgNest .nhud{gap:6px}}
+/* Kamera: üst çubuğu taşırmasın diye geri düğmesinin altında */
+#pgNest .ncam{position:absolute;z-index:6;left:clamp(10px,2.4cqw,22px);top:calc(clamp(10px,2.4cqw,22px) + 66px);width:46px;height:46px}

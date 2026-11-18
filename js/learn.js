@@ -193,7 +193,7 @@ function buildEx0(ex,ch){
     el.innerHTML=`${top}<div class="qh">${mini('think')}<h2>${esc(ex.q)}</h2>${spkBtn(ex.q)}</div><div class="lines-pick">${ex.lines.map((t,i)=>`<button class="lr ${ex.plain?'plain':''}" type="button" data-i="${i}" aria-pressed="false"><span>${i+1}</span>${ex.plain?esc(t):hl(t)}</button>`).join('')}</div>`;
     el.addEventListener('click',e=>{const b=e.target.closest('.lr');if(!b)return;sel=+b.dataset.i;$$('.lr',el).forEach(x=>x.setAttribute('aria-pressed',x===b));sfx.tap();ch()});
     o.key=k=>{const n=+k;if(n>=1&&n<=ex.lines.length)$$('.lr',el)[n-1].click()};
-    o.ready=()=>sel>=0;o.check=()=>({ok:ex.a.includes(sel),ans:(ex.a[0]+1)+'. satır: '+ex.lines[ex.a[0]],mono:!ex.plain,tip:ex.tip});return o}
+    o.ready=()=>sel>=0;o.check=()=>({ok:ex.a.includes(sel),ans:'"'+ex.lines[ex.a[0]].trim()+'" ('+(ex.a[0]+1)+'. satır)',mono:!ex.plain,tip:ex.tip});return o}
   if(ex.t==='type'){
     el.innerHTML=qHead(ex,top)+`<input class="tin" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Cevabını buraya yaz" aria-label="Cevabın">`;
     const inp=$('input',el);inp.addEventListener('input',()=>ch());setTimeout(()=>inp.focus(),60);
