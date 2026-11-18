@@ -22,7 +22,7 @@ renderNest=function(){
   const sc=$('#nScene');if(!sc)return;
   S.pet.best=S.pet.best||{};
   sc.insertAdjacentHTML('beforeend',`<button type="button" class="nobj ntoy" data-nobj="games" aria-label="Oyuncak kutusu: Anka ile oyun oyna">${TOY_SVG}<span class="nlab">Oyunlar</span></button>`);
-  sc.insertAdjacentHTML('beforeend',`<button type="button" class="nround ncam" id="nCam" aria-label="Anka'nın fotoğrafını çek">${ic('camera',20)}</button>`);
+  const ch=$('#pgNest .nchips');if(ch)ch.insertAdjacentHTML('beforeend',`<button type="button" class="nround ncam" id="nCam" aria-label="Anka'nın fotoğrafını çek">${ic('camera',20)}</button>`);
   nestVisit();
 };
 const _trayRender=trayRender;
@@ -32,11 +32,11 @@ trayRender=function(){if(YV.tray==='games')return gamesTray();return _trayRender
 function nestVisit(){
   const v=S.pet.visit;if(!v)return;S.pet.visit=null;save();
   if(Date.now()-v.t>864e5)return;
-  const g=$('#nGem');
+  const g=$('#nGem');let shown=S.gems-(v.gems||0);if(g&&v.gems)g.textContent=shown;
   setTimeout(()=>{
     if(!$('#nBird'))return;
     nestBird('cheer','act-jump');sfx.win();
-    nestSay(`Hoş geldin! "${v.title}" dersini bitirdin, aferin!`+(v.gems?` ${v.gems} mozaik taşı kazandın.`:''));
+    nestSay(`Hoş geldin! "${v.title}" dersini bitirdin, aferin!`+(v.gems?` ${v.gems} taş kazandın.`:''));
     const fx=$('#nFx'),bas=$('#pgNest .nbas');if(!v.gems||!fx||!bas)return;
     const r=fx.getBoundingClientRect(),b=bas.getBoundingClientRect(),bird=$('#nBird').getBoundingClientRect();
     const x0=bird.left-r.left+bird.width/2,y0=bird.top-r.top+bird.height*.35,x1=b.left-r.left+b.width/2,y1=b.top-r.top+b.height*.35;
@@ -44,7 +44,7 @@ function nestVisit(){
       const e=document.createElement('span');e.className='ngemfly';e.innerHTML=fi('gem',30);
       e.style.left=x0+(Math.random()-.5)*60+'px';e.style.top=y0+(Math.random()-.5)*30+'px';fx.appendChild(e);
       requestAnimationFrame(()=>requestAnimationFrame(()=>{e.style.transform=`translate(${x1-parseFloat(e.style.left)}px,${y1-parseFloat(e.style.top)}px) scale(.7)`;e.style.opacity='.2'}));
-      setTimeout(()=>{e.remove();if(g){g.textContent=S.gems;g.parentElement.classList.remove('bump');void g.offsetWidth;g.parentElement.classList.add('bump')}
+      setTimeout(()=>{e.remove();shown++;if(g){g.textContent=shown;g.parentElement.classList.remove('bump');void g.offsetWidth;g.parentElement.classList.add('bump')}
         bas.classList.remove('nbump');void bas.offsetWidth;bas.classList.add('nbump');sfx.coin()},reduce?50:820)},reduce?0:900+i*170);
   },500);
 }
@@ -181,8 +181,8 @@ function simonGame(){
   const seq=[];let pos=0,busy=true;
   const say=t=>{$('#ngHint').textContent=t},bird=(m,a)=>{const b=$('#nsBird');if(b)b.innerHTML=anka(m,150,undefined,a||'')};
   const lit=(i,ms)=>{const b=P.querySelector(`[data-si="${i}"]`);if(!b)return;b.classList.add('lit');tone([[COL[i][2],ms/1000*.9]],'triangle',.14);setTimeout(()=>b&&b.classList.remove('lit'),ms)};
-  const play=async()=>{busy=true;bird('think');const first=seq.length<=1;say(first?'Hazır mısın? İyi bak!':'Anka gösteriyor… İyi bak!');await sleep(first?1000:700);if(!NG||NG.over)return;say('Anka gösteriyor… İyi bak!');
-    const ms=first?850:Math.max(260,520-seq.length*25);for(const i of seq){if(!NG||NG.over)return;lit(i,ms);await sleep(ms+(first?300:140))}
+  const play=async()=>{busy=true;bird('think');say('Anka gösteriyor… İyi bak!');await sleep(700);
+    const ms=Math.max(260,520-seq.length*25);for(const i of seq){if(!NG||NG.over)return;lit(i,ms);await sleep(ms+140)}
     if(!NG||NG.over)return;busy=false;pos=0;bird('happy');say('Şimdi sen! Aynı sırayla dokun.')};
   const next=()=>{seq.push(Math.random()*4|0);play()};
   P.onclick=e=>{const b=e.target.closest('[data-si]');if(!b||busy||!NG||NG.over)return;const i=+b.dataset.si;lit(i,220);
@@ -258,6 +258,3 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#nCam')){e.stopPropagation();if(YV.sleep){nestSay('Uyurken fotoğraf çekme, flaş beni uyandırır!');return}nestPhoto();return}
 },true);
 addEventListener('hashchange',()=>{if(location.hash!=='#yuva'&&NG)gameClose()});
-
-/* Üst çubuk ile yuvadaki mozaik taşı sayısı her zaman aynı olsun */
-{const _rs=renderStats;renderStats=function(){const r=_rs.apply(this,arguments);const g=$('#nGem');if(g)g.textContent=S.gems;return r}}

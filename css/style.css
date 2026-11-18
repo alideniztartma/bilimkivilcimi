@@ -7,7 +7,7 @@
   --ember:#D9822B; --rust:#6F3420; --olive:#4B5A3A; --on-olive:#FBF6EA; --olive-soft:#E2E6D2; --olive-ts:#3F4D30; --olive-deep:#2F3A28;
   --garnet:#8E2B22; --garnet-soft:#F3DAD6; --focus:#D9822B;
   --code:#2F3A28; --code-ink:#F4EAD6; --tile:#E6D3AE; --off:#B5A27D; --stage:#26301F;
-  --u1:#A3461F; --u1d:#6F3420; --u2:#4B5A3A; --u2d:#2F3A28; --u3:#6F3420; --u3d:#45200F; --u4:#8E2B22; --u4d:#5C1A14; --u5:#2F3A28; --u5d:#141A11; --u6:#7A3B1E; --u6d:#4A220F; --u7:#4B5A3A; --u7d:#2F3A28; --u8:#8F5314; --u8d:#5A3209; --u9:#5A6630; --u9d:#363E1A; --u10:#9A5A12; --u10d:#5E360A; --u11:#7E4A16; --u11d:#4C2B0B; --u12:#A8701E; --u12d:#66420F; --u13:#B5532A; --u13d:#73311A; --u14:#55663A; --u14d:#323D22; --u15:#A7651A; --u15d:#62390C; --u16:#5E5A2E; --u16d:#38351A;
+  --u1:#A3461F; --u1d:#6F3420; --u2:#4B5A3A; --u2d:#2F3A28; --u3:#6F3420; --u3d:#45200F; --u4:#8E2B22; --u4d:#5C1A14; --u5:#2F3A28; --u5d:#141A11; --u6:#7A3B1E; --u6d:#4A220F; --u7:#4B5A3A; --u7d:#2F3A28; --u8:#8F5314; --u8d:#5A3209; --u9:#5A6630; --u9d:#363E1A; --u10:#9A5A12; --u10d:#5E360A; --u11:#7E4A16; --u11d:#4C2B0B; --u12:#A8701E; --u12d:#66420F;
   --display:"Zilla Slab","Roboto Slab",Georgia,serif;
   --body:Manrope,"Segoe UI",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -20,7 +20,7 @@
     --terra:#E58552; --on-terra:#1C1A14; --terra-soft:#3A2016; --terra-ts:#EFB08A;
     --ember:#F0A04B; --rust:#9A4A28; --olive:#A9B98F; --on-olive:#1C1A14; --olive-soft:#232B1D; --olive-ts:#B9C79F; --olive-deep:#141A11;
     --garnet:#E8776A; --garnet-soft:#3A1A17; --code:#141A11; --code-ink:#F2E9D6; --tile:#3A3428; --off:#6B604A; --stage:#141A11;
-    --u1:#C4602F; --u1d:#7A3518; --u2:#5E7148; --u2d:#36432A; --u3:#9A4A28; --u3d:#5A2A15; --u4:#B03F33; --u4d:#6E231C; --u5:#3E4D33; --u5d:#1F281A; --u6:#9A4A28; --u6d:#5A2A15; --u7:#5E7148; --u7d:#36432A; --u8:#A86418; --u8d:#5E370B; --u9:#6E7C3C; --u9d:#40481F; --u10:#B26C1C; --u10d:#663D0C; --u11:#965A1E; --u11d:#57340E; --u12:#C08328; --u12d:#6E4A12; --u13:#C96A3A; --u13d:#7D3C1E; --u14:#667A48; --u14d:#3B4829; --u15:#BC7A26; --u15d:#6C4511; --u16:#76723C; --u16d:#45421F;
+    --u1:#C4602F; --u1d:#7A3518; --u2:#5E7148; --u2d:#36432A; --u3:#9A4A28; --u3d:#5A2A15; --u4:#B03F33; --u4d:#6E231C; --u5:#3E4D33; --u5d:#1F281A; --u6:#9A4A28; --u6d:#5A2A15; --u7:#5E7148; --u7d:#36432A; --u8:#A86418; --u8d:#5E370B; --u9:#6E7C3C; --u9d:#40481F; --u10:#B26C1C; --u10d:#663D0C; --u11:#965A1E; --u11d:#57340E; --u12:#C08328; --u12d:#6E4A12;
     --shadow:0 1px 0 #3D382B,0 2px 8px rgba(0,0,0,.4); color-scheme:dark;
   }
 }
@@ -29,7 +29,7 @@
   --terra:#E58552; --on-terra:#1C1A14; --terra-soft:#3A2016; --terra-ts:#EFB08A;
   --ember:#F0A04B; --rust:#9A4A28; --olive:#A9B98F; --on-olive:#1C1A14; --olive-soft:#232B1D; --olive-ts:#B9C79F; --olive-deep:#141A11;
   --garnet:#E8776A; --garnet-soft:#3A1A17; --code:#141A11; --code-ink:#F2E9D6; --tile:#3A3428; --off:#6B604A; --stage:#141A11;
-  --u1:#C4602F; --u1d:#7A3518; --u2:#5E7148; --u2d:#36432A; --u3:#9A4A28; --u3d:#5A2A15; --u4:#B03F33; --u4d:#6E231C; --u5:#3E4D33; --u5d:#1F281A; --u6:#9A4A28; --u6d:#5A2A15; --u7:#5E7148; --u7d:#36432A; --u8:#A86418; --u8d:#5E370B; --u9:#6E7C3C; --u9d:#40481F; --u10:#B26C1C; --u10d:#663D0C; --u11:#965A1E; --u11d:#57340E; --u12:#C08328; --u12d:#6E4A12; --u13:#C96A3A; --u13d:#7D3C1E; --u14:#667A48; --u14d:#3B4829; --u15:#BC7A26; --u15d:#6C4511; --u16:#76723C; --u16d:#45421F;
+  --u1:#C4602F; --u1d:#7A3518; --u2:#5E7148; --u2d:#36432A; --u3:#9A4A28; --u3d:#5A2A15; --u4:#B03F33; --u4d:#6E231C; --u5:#3E4D33; --u5d:#1F281A; --u6:#9A4A28; --u6d:#5A2A15; --u7:#5E7148; --u7d:#36432A; --u8:#A86418; --u8d:#5E370B; --u9:#6E7C3C; --u9d:#40481F; --u10:#B26C1C; --u10d:#663D0C; --u11:#965A1E; --u11d:#57340E; --u12:#C08328; --u12d:#6E4A12;
   --shadow:0 1px 0 #3D382B,0 2px 8px rgba(0,0,0,.4); color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -181,9 +181,7 @@ a{color:var(--terra)}
 .guide:hover{background:rgba(251,246,234,.12)}
 .nodes{display:flex;flex-direction:column;align-items:center;gap:40px;padding:60px 0 30px}
 .nw{position:relative;z-index:1;transform:translateX(var(--dx));display:grid;justify-items:center}
-.nw.open,.nw:has(.pop){z-index:3}
-/* BAŞLA / KUPA SINAVI etiketi için düğümün üstünde yer aç (üstteki sandıkla çakışmasın) */
-.nw:has(.tipstart){margin-top:34px}
+.nw.open,.nw:has(.pop){z-index:6}
 .nw:has(.k-trophy) .tipstart,.nw:has(.k-chest) .tipstart{bottom:calc(100% + 4px)}
 .node{position:relative;width:62px;height:62px;border:0;border-radius:6px;transform:rotate(45deg);display:grid;place-items:center;cursor:pointer;background:var(--c);color:#FBF6EA;box-shadow:5px 5px 0 var(--cd);transition:transform .08s,box-shadow .08s}
 .node>*{transform:rotate(-45deg)}
@@ -204,7 +202,7 @@ a{color:var(--terra)}
 .buddy .bb{background:var(--raised);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:.85rem;font-weight:700;text-align:center;box-shadow:var(--shadow)}
 .udeco{position:absolute;top:-10px;left:50%;transform:translateX(calc(-50% + var(--side) * 170px));color:var(--sand);pointer-events:none}
 .pop{position:absolute;top:calc(100% + 24px);left:50%;transform:translateX(-50%);z-index:3;width:290px;padding:18px;border-radius:8px;background:var(--c);color:#FBF6EA;box-shadow:0 14px 30px -12px rgba(0,0,0,.45);text-align:left}
-.pop::before{content:"";position:absolute;bottom:100%;left:calc(50% - var(--px,0px));width:16px;height:16px;background:var(--c);transform:translate(-50%,8px) rotate(45deg)}
+.pop::before{content:"";position:absolute;bottom:100%;left:50%;width:16px;height:16px;background:var(--c);transform:translate(-50%,8px) rotate(45deg)}
 .pop.lock{--c:var(--raised);color:var(--muted);border:1px solid var(--line)}
 .pop h3{font-size:1.3rem;margin-bottom:4px}
 .pop p{font-weight:600;opacity:.92;margin-bottom:14px}
@@ -1054,16 +1052,3 @@ section.pg-in>*:nth-child(2){animation-delay:.03s}section.pg-in>*:nth-child(3){a
 @media (max-width:640px){.trow{grid-template-columns:1fr}.trow .b3{justify-self:start}}
 .tadd input[type=email]{width:100%;max-width:420px;font:600 1rem/1.2 var(--body);padding:12px 14px;border:1px solid var(--line);border-radius:4px;background:var(--tessera);color:var(--ink)}
 .admgate input[type=email],.admgate input[type=password]{font:600 1rem/1.2 var(--body);padding:12px 14px;border:1px solid var(--line);border-radius:4px;background:var(--tessera);color:var(--ink)}.tres.info{color:var(--muted)}
-
-/* --- Ders akışı: ipucu, konfeti katmanı, dokunulabilir sayılar --- */
-.hintrow{margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
-.hintb{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border:2px solid var(--line);border-bottom-width:4px;border-radius:8px;background:var(--tessera);color:var(--ink);font:700 .95rem/1 var(--sans,inherit);cursor:pointer}
-.hintb:disabled{opacity:.5;cursor:default}
-.hintt{flex:1 1 200px;margin:0;color:var(--muted);font-size:.95rem}
-.hintt:empty{display:none}
-.ex.lock-ui .hintb{display:none}
-.opt.hinted,.chip.hinted{opacity:.3;text-decoration:line-through;pointer-events:none}
-#fx.fx-in{position:fixed;z-index:0}
-.lesson .lbody{position:relative;z-index:1}
-.lesson .lfoot{position:relative;z-index:1}
-.stat[role="button"],[data-dp][role="button"]{cursor:pointer;min-height:44px}

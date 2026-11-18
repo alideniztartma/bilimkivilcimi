@@ -28,7 +28,6 @@ if(!S.frc){if(S.trophies&&S.trophies[7]&&!S.trophies[9]){S.trophies[9]=S.trophie
 function applyTheme(){if(S.theme==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',S.theme);if(typeof appBars==='function')appBars()}
 applyTheme();
 
-const HEART_MS=5*60*1000;/* her 5 dakikada 1 kalp */
 function dayCheck(){
   const t=dkey();
   if(S.day.k!==t)S.day=newDay();
@@ -36,7 +35,7 @@ function dayCheck(){
     if(gap>1){const miss=gap-1;
       if(S.freeze>=miss){S.freeze-=miss;const y=new Date();y.setDate(y.getDate()-1);S.lastDay=dkey(y);setTimeout(()=>toast(ic('snow',20)+'Seri koruyucu serini kurtardı!'),600)}
       else S.streak=0}}
-  const HR=HEART_MS;
+  const HR=10*60*1000;
   if(S.hearts<5&&S.heartAt){const n=Math.floor((Date.now()-S.heartAt)/HR);if(n>0){S.hearts=Math.min(5,S.hearts+n);S.heartAt=S.hearts>=5?null:S.heartAt+n*HR}}
   if(S.hearts>=5)S.heartAt=null;
   save();
@@ -63,13 +62,8 @@ function haptic(k){if(!S||S.vib===false)return;try{const d=k==='bad'?[18,40,18]:
 document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('button,a[href],[role="button"],[data-node],.node,label,summary');if(t&&!t.disabled)haptic('tap')},true);
 
 /* Sesli okuma */
-const nativeTTS=()=>{try{return window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.TextToSpeech||null}catch(e){return null}};
-const canSpeak=!!nativeTTS()||('speechSynthesis' in window&&typeof SpeechSynthesisUtterance!=='undefined');
-function stopSpeak(){try{const T=nativeTTS();if(T){const r=T.stop();if(r&&r.catch)r.catch(()=>{})}}catch(e){}try{if('speechSynthesis' in window)speechSynthesis.cancel()}catch(e){}}
-function speak(text){if(!canSpeak)return;const t=strip(text).replace(/_{3}/g,'boşluk');
-  const T=nativeTTS();
-  if(T){try{const r=T.stop();const go=()=>{const q=T.speak({text:t,lang:'tr-TR',rate:.95,pitch:1,volume:1});if(q&&q.catch)q.catch(()=>{})};if(r&&r.then)r.then(go,go);else go()}catch(e){}return}
-  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='tr-TR';u.rate=.95;
+const canSpeak='speechSynthesis' in window&&typeof SpeechSynthesisUtterance!=='undefined';
+function speak(text){if(!canSpeak)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(strip(text).replace(/_{3}/g,'boşluk'));u.lang='tr-TR';u.rate=.95;
   const v=speechSynthesis.getVoices().find(v=>/^tr/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
 const spkBtn=t=>canSpeak?`<button class="spk" type="button" data-say="${esc(strip(t))}" aria-label="Sesli oku">${ic('vol',20)}</button>`:'';
 document.addEventListener('click',e=>{const b=e.target.closest('[data-say]');if(b){e.stopPropagation();speak(b.dataset.say)}});
@@ -83,7 +77,7 @@ function openModal(html,wide){$('#mbox').className='mbox'+(wide?' wide':'');$('#
 function closeModal(){$('#modal').hidden=true;delete $('#mbox').dataset.lockbg}
 document.addEventListener('DOMContentLoaded',()=>{$('#modal').addEventListener('click',e=>{if(e.target.id==='modal'&&!$('#mbox').dataset.lockbg)closeModal()})});
 function confetti(){
-  if(reduce)return;const c=$('#fx'),x=c.getContext('2d');const ls=$('#lesson'),host=ls&&!ls.hidden?ls:document.body;if(c.parentNode!==host)host.appendChild(c);c.classList.toggle('fx-in',host===ls);c.width=innerWidth;c.height=innerHeight;
+  if(reduce)return;const c=$('#fx'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
   const cols=['#A3461F','#D9822B','#4B5A3A','#DCC190','#8E2B22','#EBC27A'];
   const P=Array.from({length:150},()=>({x:innerWidth/2+(Math.random()-.5)*220,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,s:7+Math.random()*7,r:Math.random()*6,vr:(Math.random()-.5)*.3,c:pick(cols)}));
   let n=0;(function f(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.vy+=.38;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/2,p.s,p.s);x.restore()});
@@ -95,12 +89,12 @@ let framed=true;try{framed=window.self!==window.top}catch(e){}
 function questCheck(){const out=[];quests().forEach(q=>{if(!S.day.claimed[q.id]&&(S.day[q.f]||0)>=q.n){S.day.claimed[q.id]=1;S.gems+=q.gems;out.push(q)}});return out}
 function quests(){const d=dayNum(S.day.k),a=QPOOL[d%QPOOL.length];let b=QPOOL[(d+2)%QPOOL.length];if(b.id===a.id)b=QPOOL[(d+1)%QPOOL.length];
   return[{id:'xp',name:S.goal+' DP kazan',n:S.goal,f:'xp',gems:10,icon:'bolt'},a,b]}
-/* Ders dışı küçük ödül (atölye, laboratuvar): DP + mozaik taşı + seri + görevler + rozetler, hepsini bildirir */
+/* Ders dışı küçük ödül (atölye, laboratuvar): DP + taş + seri + görevler + rozetler, hepsini bildirir */
 function smallReward(xp,gems,why){
   const before=new Set(Object.keys(S.badges));addXP(xp);S.gems+=gems;touchStreak();
   const q=questCheck();const nb=[...badgeSet()].filter(b=>!before.has(b));nb.forEach(b=>S.badges[b]=dkey());save();renderStats();
-  toast(`${fi('bolt',20)} ${why?esc(why)+' · ':''}+${xp} DP${gems?`, +${gems} mozaik taşı`:''}`);
-  if(q.length)setTimeout(()=>toast(`${ic('chest',20)} Görev tamam: ${esc(q[0].name)} · +${q[0].gems} mozaik taşı`),2900);
+  toast(`${fi('bolt',20)} ${why?esc(why)+' · ':''}+${xp} DP${gems?`, +${gems} taş`:''}`);
+  if(q.length)setTimeout(()=>toast(`${ic('chest',20)} Görev tamam: ${esc(q[0].name)} · +${q[0].gems} taş`),2900);
   if(nb.length){const b=BADGES.find(x=>x.id===nb[0]);setTimeout(()=>{sfx.win();openModal(`<div class="medal" style="width:110px;height:110px">${ic(b.icon,54)}</div><h2>Yeni rozet: ${b.name}</h2><p>${b.desc}</p>${anka('cheer',90,undefined,'act-dance')}<button class="b3" type="button" id="mok">Harika!</button>`);$('#mok').onclick=closeModal},q.length?5800:2900)}
 }
 
@@ -110,9 +104,3 @@ function appBars(){try{const SB=window.Capacitor&&Capacitor.Plugins&&Capacitor.P
   const dark=document.documentElement.dataset.theme==='dark'||(document.documentElement.dataset.theme!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);
   SB.setOverlaysWebView({overlay:false});SB.setStyle({style:dark?'DARK':'LIGHT'});SB.setBackgroundColor({color:getComputedStyle(document.documentElement).getPropertyValue('--tessera').trim()||(dark?'#1C1A14':'#F4EAD6')})}catch(e){}}
 addEventListener('load',appBars);try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',appBars)}catch(e){}
-
-/* Üst çubuktaki sayılara dokununca kısa açıklama */
-const EXPLAIN={gm:'Mozaik taşı: ders, görev ve sandıklardan kazanılır; yuvada harcanır.',dp:'DP = Deneyim Puanı: her ders ve alıştırmada kazanılır.',ht:'Kalp: yanlış cevapta gider. 5 dakikada 1 kalp yenilenir; ders bitirince +1 kalp.',fl:'Seri: üst üste kaç gün ders yaptığını gösterir.'};
-document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('.stat.gm,.stat.ht,.stat.fl,[data-dp]');if(!t)return;
-  const k=t.matches('[data-dp]')?'dp':t.classList.contains('gm')?'gm':t.classList.contains('ht')?'ht':'fl';toast(EXPLAIN[k],3600)});
-document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('.stat[role="button"],[data-dp][role="button"]')){e.preventDefault();e.target.click()}});
