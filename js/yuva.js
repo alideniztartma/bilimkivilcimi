@@ -12,7 +12,7 @@ function foodIcon(id,s){s=s||40;const v={
 const NEST_SVG=(()=>{SEED=23;let tw='';for(let i=0;i<34;i++){const x=10+srnd()*280,y=34+srnd()*44,l=40+srnd()*60,a=(srnd()-.5)*.5;tw+=`<path d="M${x.toFixed(1)} ${y.toFixed(1)} l${(l*Math.cos(a)).toFixed(1)} ${(l*Math.sin(a)).toFixed(1)}" stroke="${['#6E4824','#A8743F','#C9A26B','#8A5A2B'][i%4]}" stroke-width="${(3+srnd()*3).toFixed(1)}" stroke-linecap="round"/>`}
   return `<svg class="nnest" viewBox="0 0 300 96" aria-hidden="true"><path d="M6 36 Q150 10 294 36 Q290 92 150 94 Q10 92 6 36 Z" fill="#8A5A2B"/>${tw}<path d="M6 36 Q150 58 294 36" stroke="#5C3A1E" stroke-width="5" fill="none" opacity=".5"/></svg>`})();
 
-const YV={tray:null,slot:'head',sleep:false,busy:false,pet:0,music:false,drag:null};
+const YV={sel:null,prevT:0,tray:null,slot:'head',sleep:false,busy:false,pet:0,music:false,drag:null};
 function petTick(){const p=S.pet,now=Date.now(),h=(now-(p.t||now))/3.6e6;if(h>.02){p.food=Math.max(0,p.food-h*4);p.joy=Math.max(0,p.joy-h*3);p.t=now}else if(!p.t)p.t=now}
 function petMood(){const p=S.pet;if(YV.sleep)return'sleep';if(p.food<25||p.joy<20)return'sad';if(p.food>=75&&p.joy>=75)return'love';return'happy'}
 function petLine(){const p=S.pet;if(YV.sleep)return'Zzz… Uyandırmak için pencereye dokun.';
@@ -36,13 +36,13 @@ function renderNest(){
     <button type="button" class="nobj nwin" data-nobj="window" aria-label="${YV.sleep?'Uyandır':'Uyut'}: perdeyi aç ya da kapat"><svg viewBox="0 0 120 120"><defs><clipPath id="nwc"><circle cx="60" cy="60" r="54"/></clipPath></defs><g clip-path="url(#nwc)"><rect width="120" height="120" fill="${night?'#1E2436':'#F2D9A6'}"/>${night?'<circle cx="84" cy="34" r="12" fill="#F1E8D0"/><circle cx="30" cy="26" r="1.5" fill="#F1E8D0"/><circle cx="52" cy="18" r="1.2" fill="#F1E8D0"/>':'<circle cx="84" cy="36" r="14" fill="#F2B451"/>'}<path d="M0 86 L20 66 L38 78 L60 54 L82 74 L100 62 L120 76 V120 H0 Z" fill="${night?'#2F3A28':'#7C8F5A'}"/><path d="M0 96 Q30 84 60 94 T120 92 V120 H0 Z" fill="${night?'#232B1D':'#4B5A3A'}"/><rect class="ncurt" x="0" y="0" width="120" height="120" fill="#6F3420"/></g><circle cx="60" cy="60" r="54" fill="none" stroke="#6E4824" stroke-width="8"/><path d="M60 6 V114 M6 60 H114" stroke="#6E4824" stroke-width="5"/></svg><span class="nlab">${YV.sleep?'Uyandır':'Uyut'}</span></button>
     <div class="nhud">
       <button type="button" class="nround" id="nBack" aria-label="Geri">${ic('rotL',22)}</button>
-      <div class="nmeters"><div class="nmeter" title="Tokluk"><span class="nmi">${foodIcon('elma',22)}</span><div class="nmb"><i id="nFood" style="width:${p.food}%"></i></div></div>
-        <div class="nmeter joy" title="Mutluluk"><span class="nmi">${fi('heart',18)}</span><div class="nmb"><i id="nJoy" style="width:${p.joy}%"></i></div></div></div>
+      <div class="nmeters"><button type="button" class="nmeter" data-nmeter="food" aria-label="Tokluk çubuğu. Dokun, ne olduğunu söyleyeyim."><span class="nmi">${foodIcon('elma',22)}</span><span class="nml">Tok</span><div class="nmb"><i id="nFood" style="width:${p.food}%"></i></div></button>
+        <button type="button" class="nmeter joy" data-nmeter="joy" aria-label="Mutluluk çubuğu. Dokun, ne olduğunu söyleyeyim."><span class="nmi">${fi('heart',18)}</span><span class="nml">Mutlu</span><div class="nmb"><i id="nJoy" style="width:${p.joy}%"></i></div></button></div>
       <div class="nchips"><span class="nchip" title="Dostluk seviyesi">${ic('star',16)}<b id="nLv">${friendLv()}</b></span><span class="nchip gem" title="Mozaik taşı">${fi('gem',16)}<b id="nGem">${S.gems}</b></span></div>
     </div>
     <p class="nsay" id="nSay" aria-live="polite">${esc(petLine())}</p>
     <button type="button" class="nobj nwd" data-nobj="wear" aria-label="Dolap: Anka'yı giydir">${OBJ_SVG.wardrobe}<span class="nlab">Dolap</span></button>
-    <button type="button" class="nobj nrad" data-nobj="music" aria-label="Radyo: müzik aç, Anka dans etsin">${OBJ_SVG.radio}<span class="nlab">Müzik</span><span class="nnotes" aria-hidden="true"></span></button>
+    <button type="button" class="nobj nrad" data-nobj="music" aria-pressed="false" aria-label="Radyo: müzik aç, Anka dans etsin">${OBJ_SVG.radio}<span class="nlab">Müzik</span><span class="nplay" aria-hidden="true"><i class="nled"></i>Çalıyor<small>Durdurmak için dokun</small></span><span class="nnotes" aria-hidden="true"><b>♪</b><b>♫</b><b>♪</b></span></button>
     <div class="nbird" id="nBird" role="button" tabindex="0" aria-label="Anka. Okşamak için dokun ya da parmağını üzerinde gezdir.">${anka(petMood(),260,undefined,'act-enter')}</div>
     ${NEST_SVG}
     <button type="button" class="nobj nbas" data-nobj="food" aria-label="Sepet: Anka'yı besle">${OBJ_SVG.basket}<span class="ncnt" id="nBasketN"></span><span class="nlab">Sepet</span></button>
@@ -110,9 +110,9 @@ function startTune(){if(!S.sound)return false;
     MZ.step=0;MZ.next=AC.currentTime+.08;mzTick();MZ.t=setInterval(mzTick,40);return MZ.song.name}catch(e){return false}}
 function stopTune(now){clearInterval(MZ.t);MZ.t=null;const o=MZ.out;MZ.out=null;if(o&&AC){try{o.gain.cancelScheduledValues(AC.currentTime);o.gain.setValueAtTime(o.gain.value,AC.currentTime);o.gain.linearRampToValueAtTime(0,AC.currentTime+(now?.05:.4));setTimeout(()=>o.disconnect(),now?120:500)}catch(e){}}}
 let musicT=null;
-function stopMusic(){YV.music=false;clearInterval(musicT);stopTune();const r=$('#pgNest .nrad');if(r)r.classList.remove('on')}
+function stopMusic(){YV.music=false;clearInterval(musicT);stopTune();const r=$('#pgNest .nrad');if(r){r.classList.remove('playing');r.setAttribute('aria-pressed','false');r.setAttribute('aria-label','Radyo: müzik aç, Anka dans etsin')}}
 function toggleMusic(){if(YV.sleep){nestSay('Şşş… Anka uyuyor.');return}if(YV.music){stopMusic();nestBird(petMood(),'act-nod');nestSay('Ne güzel danstı!');return}
-  YV.music=true;$('#pgNest .nrad').classList.add('on');closeTray();nestBird('cheer','act-dance');addJoy(5);
+  YV.music=true;{const r=$('#pgNest .nrad');r.classList.add('playing');r.setAttribute('aria-pressed','true');r.setAttribute('aria-label','Radyo çalıyor. Durdurmak için dokun.')}closeTray();nestBird('cheer','act-dance');addJoy(5);
   const name=startTune();nestSay(name?'♪ '+name+' çalıyor. Hadi dans edelim!':'Ses kapalı, Profil\'den açabilirsin. Ben yine de dans ediyorum!');
   const notes=()=>{const r=$('#pgNest .nrad');if(!r||!YV.music){stopMusic();return}const b=r.getBoundingClientRect();heartsAt(b.left+b.width/2,b.top+10,2,'nnote');const s=$('#nBird svg.anka');if(s&&!YV.busy)ankaAct(s,pick(['dance','wiggle','jump','spin']))}
   notes();musicT=setInterval(notes,1300)}
@@ -130,17 +130,28 @@ function feed(id,from){const it=SHOP.find(i=>i.id===id),p=S.pet;if(YV.busy||!it)
   setTimeout(()=>{p.food=Math.min(100,p.food+it.food.t);p.joy=Math.min(100,p.joy+it.food.j);p.fed=(p.fed||0)+1;p.t=p.t||Date.now();save();nestBars();
     nestBird(p.food>=75&&p.joy>=75?'love':'cheer','act-jump');sfx.ok();YV.busy=false;
     const b=$('#nBird');if(b){const r=b.getBoundingClientRect();heartsAt(r.left+r.width/2,r.top+r.height*.3,3)}},reduce?300:1900)}
-function buyItem(id,inNest){const it=SHOP.find(i=>i.id===id);if(!it||S.gems<it.price){if(inNest){nestSay('Bunun için '+(it?it.price:'')+' mozaik taşı lazım. Ders yaparak taş kazanabilirsin!');nestBird('sad');sfx.bad();return false}toast(fi('gem',20)+' Yeterli mozaik taşın yok. Ders yaparak taş kazanabilirsin.');sfx.bad();return false}
+function buyItem(id,inNest){const it=SHOP.find(i=>i.id===id);if(!it||S.gems<it.price){if(inNest){nestSay('Bunun için '+(it?it.price:'')+' mozaik taşı lazım. Ders yaparak mozaik taşı kazanabilirsin!');nestBird('sad');sfx.bad();return false}toast(fi('gem',20)+' Yeterli mozaik taşın yok. Ders yaparak mozaik taşı kazanabilirsin.');sfx.bad();return false}
   S.gems-=it.price;if(it.food)S.pet.inv[id]=(S.pet.inv[id]||0)+1;else if(it.cos){S.owned[id]=1;S.wear[it.slot]=id}save();sfx.coin();renderStats();nestBars();return true}
 function openTray(k){if(YV.sleep){nestSay('Anka uyuyor. Önce pencereye dokunup uyandır.');return}if(YV.tray===k){closeTray();return}YV.tray=k;sfx.tap();trayRender();
   nestSay(k==='food'?'Bir yiyeceği bana sürükle ya da dokun!':'Hangisini giyeyim?')}
-function closeTray(){YV.tray=null;const t=$('#nTray');if(t){t.hidden=true;t.innerHTML=''}$$('#pgNest .nobj').forEach(o=>o.classList.remove('on'))}
+function closeTray(){YV.tray=null;YV.sel=null;const t=$('#nTray');if(t){t.hidden=true;t.innerHTML=''}$$('#pgNest .nobj').forEach(o=>o.classList.remove('on'))}
+const needTxt=pr=>S.gems>=pr?'':`<em class="nneed">${pr} mozaik taşı gerekli</em>`;
+const priceTag=pr=>`<span class="nprice ${S.gems>=pr?'':'no'}">${fi('gem',12)} ${pr}</span>`;
+const trayRow=h=>`<div class="ntwrap"><div class="ntrow">${h}</div><span class="nthint" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></div>`;
 function trayRender(){const t=$('#nTray');if(!t||!YV.tray)return;const p=S.pet;t.hidden=false;
   $$('#pgNest .nobj').forEach(o=>o.classList.toggle('on',o.dataset.nobj===YV.tray));
-  if(YV.tray==='food'){t.innerHTML=`<div class="nth"><b>Sepet</b><span>Sürükle ya da dokun</span><button type="button" class="nx" data-nclose aria-label="Kapat">${ic('x',18)}</button></div><div class="ntrow">${FOODS().map(f=>{const n=p.inv[f.id]||0;
-      return `<button type="button" class="nti ${n?'':'empty'}" ${n?`data-food="${f.id}"`:`data-nbuy="${f.id}"`} aria-label="${f.name}${n?', '+n+' tane':', satın al '+f.price+' taş'}">${foodIcon(f.id,54)}${n?`<span class="ncnt">${n}</span>`:`<span class="nprice">${fi('gem',12)}${f.price}</span>`}<small>${f.name}</small></button>`}).join('')}</div>`}
-  else{t.innerHTML=`<div class="nth"><b>Dolap</b><span class="nslots">${Object.entries(SLOTS).map(([k,n])=>`<button type="button" data-nslot="${k}" aria-pressed="${YV.slot===k}">${n}</button>`).join('')}</span><button type="button" class="nx" data-nclose aria-label="Kapat">${ic('x',18)}</button></div><div class="ntrow">${WEARS().filter(w=>w.slot===YV.slot).map(w=>{const own=S.owned[w.id],on=S.wear[w.slot]===w.id;
-      return `<button type="button" class="nti ${own?'':'empty'} ${on?'on':''}" ${own?`data-wear="${w.id}"`:`data-nbuy="${w.id}"`} aria-pressed="${on}" aria-label="${w.name}${own?(on?', takılı':''):', satın al '+w.price+' taş'}">${anka('happy',58,w.id)}${own?(on?`<span class="ncnt">${ic('check',12)}</span>`:''):`<span class="nprice">${fi('gem',12)}${w.price}</span>`}<small>${w.name}</small></button>`}).join('')}</div>`}}
+  const keep=t.querySelector('.ntrow'),sl=keep?keep.scrollLeft:0;
+  if(YV.tray==='food'){t.innerHTML=`<div class="nth"><b>Sepet</b><span>Sürükle ya da dokun</span><button type="button" class="nx" data-nclose aria-label="Kapat">${ic('x',18)}</button></div>`+trayRow(FOODS().map(f=>{const n=p.inv[f.id]||0;
+      return `<button type="button" class="nti ${n?'':'empty'}" ${n?`data-food="${f.id}"`:`data-nbuy="${f.id}"`} aria-label="${f.name}${n?', '+n+' tane var':', '+(S.gems>=f.price?'satın al '+f.price+' mozaik taşı':f.price+' mozaik taşı gerekli')}">${foodIcon(f.id,54)}${n?`<span class="ncnt">×${n}</span>`:priceTag(f.price)}<small>${f.name}</small>${n?'':needTxt(f.price)}</button>`}).join(''))}
+  else{t.innerHTML=`<div class="nth"><b>Dolap</b><span class="nslots">${Object.entries(SLOTS).map(([k,n])=>`<button type="button" data-nslot="${k}" aria-pressed="${YV.slot===k}">${n}</button>`).join('')}</span><button type="button" class="nx" data-nclose aria-label="Kapat">${ic('x',18)}</button></div>`+trayRow(WEARS().filter(w=>w.slot===YV.slot).map(w=>{const own=S.owned[w.id],on=S.wear[w.slot]===w.id,sel=!own&&YV.sel===w.id,can=S.gems>=w.price;
+      return `<button type="button" class="nti wr ${own?'':'empty'} ${on?'on':''} ${sel?'sel':''}" ${own?`data-wear="${w.id}"`:`data-npre="${w.id}"`} aria-pressed="${on}" aria-label="${w.name}${own?(on?', takılı':', giy'):(sel?(can?', satın al '+w.price+' mozaik taşı':', '+w.price+' mozaik taşı gerekli'):', önizle')}">${anka('happy',58,w.id)}${own?(on?`<span class="ncnt">${ic('check',12)}</span>`:''):priceTag(w.price)}<small>${w.name}</small>${own?'':sel?(can?'<em class="nbuy">Satın al</em>':needTxt(w.price)):'<em class="nneed ok">Önizle</em>'}</button>`}).join(''))}
+  const r=t.querySelector('.ntrow');if(r){r.scrollLeft=sl;nthintUpd(r)}}
+function nthintUpd(r){const w=r&&r.parentElement;if(!w)return;w.classList.toggle('more',r.scrollWidth-r.clientWidth-r.scrollLeft>6)}
+document.addEventListener('scroll',e=>{if(e.target&&e.target.classList&&e.target.classList.contains('ntrow'))nthintUpd(e.target)},true);
+/* Dolap önizleme: Anka seçilen kıyafeti 2-3 saniye giymiş görünür */
+function previewWear(id){const it=SHOP.find(i=>i.id===id);if(!it)return;const b=$('#nBird');if(!b)return;
+  const acc=['neck','face','head'].map(k=>k===it.slot?id:S.wear[k]).filter(Boolean);
+  b.innerHTML=anka('wow',260,acc,'act-spin');clearTimeout(YV.prevT);YV.prevT=setTimeout(()=>{YV.prevT=0;if(!YV.busy&&$('#nBird'))nestBird(petMood())},2800)}
 /* yiyecek sürükleme */
 document.addEventListener('pointerdown',e=>{const f=e.target.closest('#pgNest [data-food]');if(!f||YV.busy)return;YV.drag={id:f.dataset.food,x0:e.clientX,y0:e.clientY,moved:false,el:null}});
 document.addEventListener('pointermove',e=>{const d=YV.drag;if(!d)return;if(!d.moved&&Math.hypot(e.clientX-d.x0,e.clientY-d.y0)>8){d.moved=true;d.el=document.createElement('div');d.el.className='ndrag';d.el.innerHTML=foodIcon(d.id,64);document.body.appendChild(d.el);const b=$('#nBird');if(b)b.classList.add('want')}
@@ -152,7 +163,11 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('#pgNest'))return;
   const o=e.target.closest('[data-nobj]');if(o){const k=o.dataset.nobj;if(k==='window'){sfx.tap();setSleep(!YV.sleep);return}if(k==='music'){toggleMusic();return}openTray(k);return}
   if(e.target.closest('[data-nclose]')){closeTray();return}
-  const sl=e.target.closest('[data-nslot]');if(sl){YV.slot=sl.dataset.nslot;sfx.tap();trayRender();return}
+  const sl=e.target.closest('[data-nslot]');if(sl){YV.slot=sl.dataset.nslot;YV.sel=null;sfx.tap();trayRender();return}
+  const m=e.target.closest('[data-nmeter]');if(m){sfx.tap();nestSay(m.dataset.nmeter==='food'?'Tok: karnımın ne kadar dolu olduğunu gösterir. Sepetten yiyecek verirsen dolar.':'Mutlu: ne kadar neşeli olduğumu gösterir. Beni okşa, oyun oyna ya da müzik aç, dolsun!');return}
+  const pv=e.target.closest('[data-npre]');if(pv){const it=SHOP.find(i=>i.id===pv.dataset.npre);
+    if(YV.sel===it.id){if(buyItem(it.id,true)){YV.sel=null;nestBird('wow','act-spin');nestSay('Yeni bir şey mi? Hemen giyiyorum!');trayRender()}return}
+    YV.sel=it.id;sfx.tap();previewWear(it.id);nestSay(it.name+' böyle görünüyor! '+(S.gems>=it.price?'Almak için tekrar dokun.':it.price+' mozaik taşı gerekli, ders yaparak kazanabilirsin.'));trayRender();return}
   const b=e.target.closest('[data-nbuy]');if(b){const it=SHOP.find(i=>i.id===b.dataset.nbuy);if(buyItem(it.id,true)){if(it.cos){nestBird('wow','act-spin');nestSay('Yeni bir şey mi? Hemen giyiyorum!')}else nestSay(it.name+' sepete eklendi!');trayRender()}return}
   const w=e.target.closest('[data-wear]');if(w){const it=SHOP.find(i=>i.id===w.dataset.wear);S.wear[it.slot]=S.wear[it.slot]===it.id?null:it.id;save();sfx.tap();
     nestBird(S.wear[it.slot]?'wow':'happy','act-spin');nestSay(S.wear[it.slot]?pickL(['Nasıl görünüyorum?','Bu bana çok yakıştı!','Şimdi çok havalıyım!']):'Tamam, onu çıkardım.');trayRender();return}

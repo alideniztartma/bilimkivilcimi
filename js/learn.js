@@ -8,7 +8,7 @@ function ankaMsg(){
   let mood='happy',txt,cta=null;
   const cur=curLesson();
   if(!S.lessons){mood='wave';txt=`Merhaba${S.name?' <b>'+esc(S.name)+'</b>':''}! İlk dersin hazır. Birlikte başlayalım mı?`;cta=cur?['Başla','lesson']:null}
-  else if(S.hearts<=0){mood='sad';txt='Kalplerin bitti. Atölyede <b>karışık tekrar</b> yaparak kalp kazanabilirsin.';cta=['Atölye','#atolye']}
+  else if(S.hearts<=0){mood='sad';txt='Kalplerin bitti. Atölyede <b>alıştırma</b> yaparak kalp kazanabilirsin.';cta=['Atölye','#atolye']}
   else if(S.lastDay!==t&&S.streak>0){mood='sad';txt=`Serin <b>${S.streak} gün</b>! Bugün bir ders yapmazsan söner.`;cta=cur?['Derse başla','lesson']:['Atölye','#atolye']}
   else if(S.day.xp<S.goal){mood='happy';txt=`Bugünkü hedefine <b>${S.goal-S.day.xp} DP</b> kaldı. Hadi devam!`;cta=cur?['Devam et','lesson']:['Atölye','#atolye']}
   else if(!S.dailyDone[t]){mood='think';txt='Günün bulmacasını çözdün mü? <b>15 mozaik taşı</b> seni bekliyor.';cta=['Bulmaca','daily']}
@@ -122,6 +122,26 @@ const mini=(m='happy')=>`<span class="mini">${anka(m,64,undefined,'act-enter')}<
 const qHead=(ex,extra='')=>`${extra}<div class="qh">${mini()}<h2>${esc(ex.q)}</h2>${spkBtn(ex.q)}</div>${ex.code?`<pre class="code">${hl(ex.code)}</pre>`:''}`;
 const DIRS=[[0,-1],[1,0],[0,1],[-1,0]];
 const CMD={f:['İleri git','arrowU'],l:['Sola dön','rotL'],r:['Sağa dön','rotR']};
+/* İpucu: soru başına 1 kez, ücretsiz; kupa sınavında yok */
+function addHint(ex){
+  if(!L||!L.cur||ex.t==='info'||L.mode==='exam'||L.mode==='speed')return;
+  const el=L.cur.el;L.hinted=L.hinted||new Set();
+  el.insertAdjacentHTML('beforeend',`<div class="hintrow"><button class="hintb" type="button" ${L.hinted.has(ex)?'disabled':''}>${ic('bulb',20)}İpucu</button><p class="hintt" role="status"></p></div>`);
+  const b=$('.hintb',el),p=$('.hintt',el);
+  b.addEventListener('click',()=>{if(!L||L.state!=='q'||L.hinted.has(ex))return;L.hinted.add(ex);b.disabled=true;sfx.tap();
+    let msg='';
+    if(ex.t==='mc'||ex.t==='fill'){
+      const sel=ex.t==='mc'?'.opt':'.chip',c=$$(sel,el).filter(x=>+x.dataset.i!==ex.a&&x.getAttribute('aria-pressed')!=='true'&&!x.classList.contains('ghost-spot')&&!x.disabled);
+      const x=c.length?c[Math.floor(Math.random()*c.length)]:null;
+      if(x){x.disabled=true;x.classList.add('hinted');x.setAttribute('aria-disabled','true');msg='Bir yanlış seçeneği çıkardım.'}
+    }
+    if(!msg){
+      const ans=ex.t==='mc'||ex.t==='fill'?ex.opts[ex.a]:ex.t==='type'?ex.a[0]:'';
+      let t=String(ex.tip||'').split(/(?<=[.!?])\s+/)[0]||'';
+      if(!t||(ans&&norm(t).includes(norm(ans))))t=ex.t==='robot'?'Robotun hangi yöne baktığına dikkat et. Komutları tek tek aklından çalıştır.':ex.t==='match'?'Önce bildiğin eşleri seç, kalanlar kolaylaşır.':ex.t==='order'?'İlk adımı bul, sonra sırayla devam et.':'Soruyu bir kez daha yavaşça oku. Cevap sorunun içinde saklı olabilir.';
+      msg=t}
+    p.textContent=msg});
+}
 function buildEx(ex,ch){const o=buildEx0(ex,ch);if(ex.fig&&typeof figHtml==='function'){const at=o.el.querySelector('.say,.qh');if(at)at.insertAdjacentHTML('afterend',figHtml(ex.fig))}return o}
 function buildEx0(ex,ch){
   const el=document.createElement('div');el.className='ex';
@@ -257,7 +277,9 @@ function showEx(){
   const body=$('#lbody');body.innerHTML='';body.appendChild(L.cur.el);body.scrollTop=0;
   btn.textContent=ex.t==='info'?'Anladım':ex.t==='robot'?'Çalıştır':ex.t==='match'?'Eşleri bul':'Kontrol et';
   btn.disabled=!L.cur.ready();
-  if(S.tts&&L.cur.speech)setTimeout(()=>speak(L.cur.speech),250);
+  if(canSpeak)stopSpeak();
+  if(S.tts&&L.cur.speech)setTimeout(()=>{if(L&&L.cur&&L.queue[0]===ex)speak(L.cur.speech)},250);
+  addHint(ex);
 }
 async function mainBtn(){
   const btn=$('#lbtn');if(btn.disabled||!L)return;
@@ -305,15 +327,18 @@ function askQuit(){
   if(!L||L.state==='end'){closeLesson();return}
   openModal(`${anka('sad',100,undefined,'act-shake')}<h2>${ANKA.quit}</h2><p>Şimdi çıkarsan bu turdaki ilerlemen kaybolur.</p><button class="b3" type="button" id="mstay">Devam et</button><button class="b3 ghost" type="button" id="mquit" style="--oc:var(--garnet)">Çık</button>`);
   $('#mstay').onclick=closeModal;$('#mquit').onclick=()=>{closeModal();closeLesson()}}
-function closeLesson(){clearInterval(timerI);if(canSpeak)try{speechSynthesis.cancel()}catch(e){}$('#lesson').hidden=true;document.body.style.overflow='';L=null;renderAll();scrollCur()}
+function closeLesson(){clearInterval(timerI);if(canSpeak)stopSpeak();$('#lesson').hidden=true;document.body.style.overflow='';L=null;renderAll();scrollCur()}
 function heartsOut(inLesson){
-  const can=ALL_LESSONS.some(l=>S.done[l.id]),mins=S.heartAt?Math.max(1,Math.ceil((S.heartAt+600000-Date.now())/60000)):10;
-  openModal(`${anka('sad',100)}<h2>Kalbin kalmadı</h2><p>Yeni bir kalp ${mins} dakika sonra gelir. Beklemek istemezsen:</p>
-    ${can?`<button class="b3 olive" type="button" id="hp">Alıştırma yap (+1 kalp)</button>`:''}
-    <button class="b3 ember" type="button" id="hg" ${S.gems<50?'disabled':''}>Kalpleri doldur · 50 taş</button>
+  const can=ALL_LESSONS.some(l=>S.done[l.id]),mins=S.heartAt?Math.max(1,Math.ceil((S.heartAt+HEART_MS-Date.now())/60000)):5;
+  openModal(`${anka('sad',100)}<h2>Kalbin kalmadı</h2><p>Üzülme! Kalp kazanmanın ücretsiz yolu var. Ya da ${mins} dakika sonra yeni bir kalp gelir.</p>
+    <button class="b3 olive" type="button" id="hp">${can?'Alıştırma yap, kalp kazan':'1 ücretsiz kalp al'}</button>
+    <button class="b3 ember" type="button" id="hg" ${S.gems<50?'disabled':''}>Kalpleri doldur · 50 mozaik taşı</button>
     <button class="b3 ghost" type="button" id="hw">${inLesson?'Dersten çık':'Tamam'}</button>`);
   $('#mbox').dataset.lockbg=inLesson?'1':'';
-  if(can)$('#hp').onclick=()=>{closeModal();if(inLesson)closeLesson();startMode('practice')};
+  $('#hp').onclick=()=>{closeModal();
+    if(can){if(inLesson)closeLesson();startMode('practice')}
+    else{S.hearts=Math.min(5,S.hearts+1);if(S.hearts>=5)S.heartAt=null;save();sfx.coin();renderStats();
+      if(inLesson&&L){L.state='fb';renderHead();toast(fi('heart',20)+' 1 kalp kazandın!')}else toast(fi('heart',20)+' 1 kalp kazandın! Derse başlayabilirsin.')}};
   $('#hg').onclick=()=>{S.gems-=50;S.hearts=5;S.heartAt=null;save();sfx.coin();closeModal();renderStats();
     if(inLesson&&L){L.state='fb';renderHead();toast(fi('heart',20)+' Kalplerin doldu!')}};
   $('#hw').onclick=()=>{closeModal();if(inLesson)closeLesson()};
@@ -327,7 +352,8 @@ function finish(){
   const before=new Set(Object.keys(S.badges)),today=dkey();
   let xp=0,gems=0,title='Ders tamamlandı!',sub='',mood='cheer',extra='';
   if(m==='lesson'){const lid=L.lesson.id,store=S.done,first=!store[lid];xp=(first?10:5)+(perfect?5:0);store[lid]=(store[lid]||0)+1;S.lessons++;S.day.lessons++;
-    title=perfect?'Kusursuz ders!':'Ders tamamlandı!';sub=first?esc(L.lesson.title)+' dersini bitirdin.':'Tekrar yapmak bilgiyi güçlendirir.';
+    title=perfect?'Kusursuz ders!':'Ders tamamlandı!';sub=first?esc(L.lesson.title)+' dersini bitirdin.':'Tekrar yapmak bilgiyi güçlendirir.';sub+=' +1 kalp kazandın.';
+    S.hearts=Math.min(5,S.hearts+1);if(S.hearts>=5)S.heartAt=null;
     gems=(first?5:2)+(perfect?2:0);S.pet.visit={title:L.lesson.title,gems,t:Date.now()}}
   else if(m==='practice'){xp=5;S.hearts=Math.min(5,S.hearts+1);if(S.hearts>=5)S.heartAt=null;S.day.lessons++;title='Alıştırma bitti!';sub='+1 kalp kazandın.'}
   else if(m==='mistakes'){xp=5;S.day.lessons++;const left=Object.keys(S.wrong).length;title='Hatalarını düzelttin!';sub=left?`Defterinde ${left} soru kaldı.`:'Hata defterin tertemiz!'}
@@ -335,8 +361,8 @@ function finish(){
   else if(m==='speed'){xp=Math.min(20,L.score);const rec=L.score>S.speedBest;if(rec)S.speedBest=L.score;title=rec&&L.score>0?'Yeni rekor!':'Süre doldu!';sub=`60 saniyede ${L.score} doğru cevap. En iyi skorun: ${S.speedBest}.`;mood=L.score?'cheer':'wow'}
   else if(m==='exam'){const pass=L.misses<=2;
     if(pass){const fresh=!S.trophies[L.ui];S.trophies[L.ui]=dkey();xp=fresh?20:5;gems=fresh?30:0;title='Kupa senin!';sub=`${U[L.ui].title} ünitesinin kupasını kazandın. Sertifikan profilinde.`;
-      if(L.skip){const f=U[L.ui].field;U.forEach((u,ui)=>{if(u.field===f&&unitOrd(ui)<=unitOrd(L.ui))u.lessons.forEach(x=>{if(!S.done[x.id])S.done[x.id]=1})});title='Üniteyi atladın!';sub=`${U[L.ui].title} ünitesini zaten biliyormuşsun. Dersleri tamamlanmış sayıldı, kupa da senin.`}}
-    else{xp=5;title='Az kaldı!';sub=`${L.misses} hata yaptın. Kupa için en fazla 2 hata olmalı. Dersleri tekrar edip yeniden dene.`;mood='sad'}
+      if(L.skip){const f=U[L.ui].field;U.forEach((u,ui)=>{if(u.field===f&&unitOrd(ui)<=unitOrd(L.ui))u.lessons.forEach(x=>{if(!S.done[x.id])S.done[x.id]=1})});title='Sınavı geçtin! Ünite tamam.';sub=`${U[L.ui].title} ünitesini zaten biliyormuşsun. Dersleri tamamlanmış sayıldı, kupa da senin.`}}
+    else{xp=5;mood='sad';if(L.misses<=3){title='Az kaldı!';sub='3 hata yaptın, kupa için en fazla 2 hata olabilir. Bir kez daha dene, başaracaksın!'}else{title='Biraz daha çalışalım';sub=`${L.misses} hata yaptın. Bu ünite biraz daha çalışma istiyor. Dersleri tekrar et, sonra sınavı yeniden dene.`}}
     extra=pass?`<button class="b3 ghost" type="button" id="openCertNow">${ic('cert',20)} Sertifikayı aç</button>`:''}
   addXP(xp);S.gems+=gems;
   S.day.combo=Math.max(S.day.combo,L.maxCombo);S.day.robot+=L.robotOK;if(perfect&&m==='lesson')S.day.perfect++;
@@ -352,7 +378,7 @@ function finish(){
   const third=m==='speed'?`<div style="--c:var(--terra)"><small>SKOR</small><b>${ic('timer',22)}${L.score}</b></div>`:`<div style="--c:var(--olive)"><small>SÜRE</small><b>${ic('clock',22)}${mm}</b></div>`;
   const steps=[()=>`<div class="done-screen">${anka(mood,150,undefined,mood==='sad'?'act-shake':'act-dance')}<h1>${title}</h1><p>${sub}</p>
     <div class="trio"><div style="--c:var(--ember)"><small>DP</small><b>${fi('bolt',22)}${xp}</b></div>
-    <div style="--c:var(--terra)"><small>DOĞRULUK</small><b>${ic('target2',22)}%${acc}</b></div>${third}</div>${gems?`<div class="stat gm" style="font-size:1.4rem">${fi('gem',28)} +${gems} taş</div>`:''}${extra}</div>`];
+    <div style="--c:var(--terra)"><small>DOĞRULUK</small><b>${ic('target2',22)}%${acc}</b></div>${third}</div>${gems?`<div class="stat gm" style="font-size:1.4rem">${fi('gem',28)} +${gems} mozaik taşı</div>`:''}${extra}</div>`];
   if(firstToday)steps.push(()=>`<div class="done-screen"><div class="bigflame">${fi('flame',190)}<b>${S.streak}</b></div><h1 style="color:var(--ember)">${S.streak} günlük seri!</h1><p>${S.streak===1?'Serin başladı! Yarın da gel, ateşi canlı tut.':'Bugün de geldin. Yarın görüşürüz!'}</p></div>`);
   if(goalHit)steps.push(()=>`<div class="done-screen">${anka('wow',130,undefined,'act-jump')}<h1>Günlük hedefe ulaştın!</h1><p>Bugün ${S.day.xp} DP topladın. Hedefin ${S.goal} DP idi.</p></div>`);
   qDone.forEach(q=>steps.push(()=>`<div class="done-screen"><div style="color:var(--ember)">${ic('chest',120)}</div><h1>Görev tamam!</h1><p>${esc(q.name)}</p><div class="stat gm" style="font-size:1.6rem">${fi('gem',32)} +${q.gems}</div></div>`));
@@ -364,16 +390,15 @@ function finish(){
 }
 
 /* ================= GÖREVLER ================= */
-function questRows(compact){return quests().map(q=>{const v=Math.min(q.n,S.day[q.f]||0),done=!!S.day.claimed[q.id];
+function questRows(compact,noGoal){return quests().filter(q=>!(noGoal&&q.id==='xp')).map(q=>{const v=Math.min(q.n,S.day[q.f]||0),done=!!S.day.claimed[q.id];
   if(compact)return `<div><span>${esc(q.name)}</span><div class="bar"><i style="width:${v/q.n*100}%"></i><span>${v} / ${q.n}</span></div></div>`;
-  return `<div class="q ${done?'done':''}"><div class="qi">${ic(q.icon,24)}</div><div><b>${esc(q.name)}</b><div class="bar"><i style="width:${v/q.n*100}%;${done?'background:var(--olive)':''}"></i><span>${v} / ${q.n}</span></div></div><span class="rw">${done?ic('check',22):fi('gem',18)+q.gems}</span></div>`}).join('')}
+  return `<div class="q ${done?'done':''}"><div class="qi">${ic(q.icon,24)}</div><div ${q.f==='xp'?'data-dp role="button" tabindex="0"':''}><b>${esc(q.name)}</b><div class="bar"><i style="width:${v/q.n*100}%;${done?'background:var(--olive)':''}"></i><span>${v} / ${q.n}</span></div></div><span class="rw">${done?ic('check',22):fi('gem',18)+q.gems}</span></div>`}).join('')}
 function hoursLeft(){const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);const h=Math.floor((m-n)/36e5),mi=Math.floor((m-n)%36e5/6e4);return h>0?h+' saat':mi+' dakika'}
 function renderQuests(){
   $('#pgQuests').innerHTML=`<div class="frame"><div class="hero-q"><div><span class="lbl">GÜNLÜK GÖREVLER</span><h2>Bugün neler yapacaksın?</h2><p>Görevleri bitir, mozaik taşı kazan. Görevler her gece yenilenir.</p></div>${anka('cheer',80)}</div></div>
   <div class="sec-h">Bugünün görevleri <small>${hoursLeft()} kaldı</small></div>
   <div class="qlist">${questRows()}</div>
-  <div class="sec-h">Günlük hedef</div>
-  <div class="card"><div class="bar"><i style="width:${Math.min(1,S.day.xp/S.goal)*100}%"></i><span>${Math.min(S.day.xp,S.goal)} / ${S.goal} DP</span></div><p style="color:var(--muted);margin-top:10px;font-size:.92rem">Hedefini profilden değiştirebilirsin.</p></div>`;
+  <p style="color:var(--muted);margin-top:14px;font-size:.92rem">İlk görev günlük hedefindir. Hedefini profilden değiştirebilirsin.</p>`;
 }
 
 /* ================= ATÖLYE ================= */
@@ -383,7 +408,7 @@ function renderHub(){
   const drawn=Object.keys(S.draw).length;
   $('#pgHub').innerHTML=`<h1>Atölye</h1><p class="sub">Derslerin dışında oyna, çiz ve tekrar et.</p>
   <div class="hub">
-   <div class="card hubc wide"><div class="hi" style="background:var(--ember);color:#2F2E24">${ic('puzzle',26)}</div><div><span class="tag">${dDone?'Bugün çözüldü':'+15 taş · +10 DP'}</span><h3 style="margin-top:6px">Günün bulmacası</h3><p>Her gün yeni bir robot bulmacası. Yarın başka biri gelir.</p></div><button class="b3 ${dDone?'ghost':'ember'}" type="button" id="hDaily">${dDone?'Tekrar oyna':'Çöz'}</button></div>
+   <div class="card hubc wide"><div class="hi" style="background:var(--ember);color:#2F2E24">${ic('puzzle',26)}</div><div><span class="tag">${dDone?'Bugün çözüldü':'+15 mozaik taşı · +10 DP'}</span><h3 style="margin-top:6px">Günün bulmacası</h3><p>Her gün yeni bir robot bulmacası. Yarın yeni bir bulmaca gelecek!</p></div><button class="b3 ${dDone?'ghost':'ember'}" type="button" id="hDaily">${dDone?'Tekrar oyna':'Çöz'}</button></div>
    <a class="card hubc" href="#cizim"><div class="hi" style="background:var(--terra)">${ic('pen',26)}</div><span class="tag">${drawn} / ${CHAL.length} çizim</span><h3>Çizim atölyesi</h3><p>Kalemli robota komut ver: kare, üçgen, yıldız çiz ya da serbest çalış.</p></a>
    <button class="card hubc" type="button" id="hSpeed" ${anyDone?'':'disabled'}><div class="hi" style="background:var(--olive)">${ic('timer',26)}</div><span class="tag">Rekor: ${S.speedBest}</span><h3>Hızlı tur</h3><p>60 saniyede bildiğin kadar soruyu cevapla.${anyDone?'':' Önce bir ders bitir.'}</p></button>
    <button class="card hubc" type="button" id="hWrong" ${nWrong?'':'disabled'}><div class="hi" style="background:var(--garnet)">${ic('bug',26)}</div><span class="tag">${nWrong} soru</span><h3>Hata defterim</h3><p>${nWrong?'Yanlış yaptığın soruları yeniden çöz. Doğru yaptıkça defterden silinir.':'Henüz yanlış yaptığın soru yok.'}</p></button>
@@ -581,7 +606,7 @@ function renderProfile(){
   <div class="sec-h">İstatistikler</div>
   <div class="tiles">
     <div class="card tile"><span style="color:var(--ember)">${fi('flame',30)}</span><div><b>${S.streak}</b><span>Günlük seri</span></div></div>
-    <div class="card tile"><span style="color:var(--ember)">${fi('bolt',30)}</span><div><b>${S.xp}</b><span>Toplam deneyim puanı (DP)</span></div></div>
+    <div class="card tile"><span style="color:var(--ember)">${fi('bolt',30)}</span><div data-dp role="button" tabindex="0"><b>${S.xp}</b><span>Toplam deneyim puanı (DP)</span></div></div>
     <div class="card tile"><span style="color:var(--olive)">${ic('book',30)}</span><div><b>${Object.keys(S.done).length}/${ALL_LESSONS.length}</b><span>Bitirilen ders</span></div></div>
     <div class="card tile"><span style="color:var(--terra)">${ic('trophy',30)}</span><div><b>${Object.keys(S.trophies).length}/${U.length}</b><span>Kupa</span></div></div>
     <div class="card tile"><span style="color:var(--olive)">${ic('flask',30)}</span><div><b>${labDoneCount()}/${labTotal()}</b><span>Deney bölümü</span></div></div>
@@ -619,7 +644,7 @@ function renderProfile(){
 /* ================= DURUM ÇUBUĞU, YAN KARTLAR ================= */
 function renderStats(){
   const today=S.lastDay===dkey();
-  const h=fieldBtn()+`<span class="stat fl ${today?'':'off'}" title="Günlük seri">${fi('flame',24)}${S.streak}</span><span class="stat gm" title="Mozaik taşı">${fi('gem',22)}${S.gems}</span><span class="stat ht" title="Kalp">${fi('heart',24)}${S.hearts}</span>`;
+  const h=fieldBtn()+`<span class="stat fl ${today?'':'off'}" title="Günlük seri" role="button" tabindex="0" aria-label="Günlük seri: açıklama">${fi('flame',24)}${S.streak}</span><span class="stat gm" title="Mozaik taşı" role="button" tabindex="0" aria-label="Mozaik taşı: açıklama">${fi('gem',22)}${S.gems}</span><span class="stat ht" title="Kalp" role="button" tabindex="0" aria-label="Kalp: açıklama">${fi('heart',24)}${S.hearts}</span>`;
   $$('.stats-slot').forEach(s=>{if(s.classList.contains('stats'))s.innerHTML=h;else{s.style.display='flex';s.innerHTML=h}});
   const prev=renderStats.prev,cur={fl:S.streak,gm:S.gems,ht:S.hearts};if(prev&&!reduce)Object.keys(cur).forEach(k=>{if(cur[k]>prev[k])$$('.stat.'+k).forEach(e=>e.classList.add('up'));else if(cur[k]<prev[k])$$('.stat.'+k).forEach(e=>e.classList.add('down'))});renderStats.prev=cur;
   const t=dkey(),days=['Pt','Sa','Ça','Pe','Cu','Ct','Pz'],now=new Date(),wd=(now.getDay()+6)%7;
@@ -627,11 +652,11 @@ function renderStats(){
     <p style="color:var(--muted);font-size:.9rem;margin-top:8px">${today?'Bugünkü dersini yaptın. Harika!':'Serini sürdürmek için bugün bir ders yap.'}</p>
     <div class="week">${days.map((d,i)=>{const dt=new Date(now);dt.setDate(now.getDate()-wd+i);const k=dkey(dt),on=S.days.includes(k);return `<div><i class="${on?'on':''} ${k===t?'today':''}">${on?`<span>${fi('flame',14)}</span>`:''}</i>${d}</div>`}).join('')}</div>`;
   const p=Math.min(1,S.day.xp/S.goal);
-  $('#rcGoal').innerHTML=`<h3>Günlük hedef</h3><div style="display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center"><span style="color:var(--ember)">${fi('bolt',32)}</span><div class="bar"><i style="width:${p*100}%"></i><span>${Math.min(S.day.xp,S.goal)} / ${S.goal} DP</span></div></div>`;
+  $('#rcGoal').innerHTML=`<h3>Günlük hedef</h3><div style="display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center"><span style="color:var(--ember)">${fi('bolt',32)}</span><div class="bar" data-dp role="button" tabindex="0" aria-label="DP: açıklama"><i style="width:${p*100}%"></i><span>${Math.min(S.day.xp,S.goal)} / ${S.goal} DP</span></div></div>`;
   const dd=!!S.dailyDone[dkey()];
-  $('#rcDaily').innerHTML=`<h3>Günün bulmacası</h3><p style="color:var(--muted);font-size:.9rem;margin-bottom:12px">${dd?'Bugünkü bulmacayı çözdün. Yarın yenisi gelir.':esc(dailyPuzzle().q)}</p><button class="b3 sm ${dd?'ghost':'ember'}" type="button" id="rDaily" style="width:100%">${dd?'Tekrar oyna':'Çöz · +15 taş'}</button>`;
+  $('#rcDaily').innerHTML=`<h3>Günün bulmacası</h3><p style="color:var(--muted);font-size:.9rem;margin-bottom:12px">${dd?'Bugünkü bulmacayı çözdün. Yarın yeni bir bulmaca gelecek!':esc(dailyPuzzle().q)}</p><button class="b3 sm ${dd?'ghost':'ember'}" type="button" id="rDaily" style="width:100%">${dd?'Tekrar oyna':'Çöz · +15 mozaik taşı'}</button>`;
   $('#rDaily').onclick=()=>startMode('daily');
-  $('#rcQuests').innerHTML=`<h3 style="display:flex;justify-content:space-between">Günlük görevler <a href="#gorevler" class="lbl" style="text-decoration:none;align-self:center">TÜMÜ</a></h3><div class="minique">${questRows(true)}</div>`;
+  $('#rcQuests').innerHTML=`<h3 style="display:flex;justify-content:space-between">Günlük görevler <a href="#gorevler" class="lbl" style="text-decoration:none;align-self:center">TÜMÜ</a></h3><div class="minique">${questRows(true,true)}</div>`;
 }
 
 /* ================= TANIŞMA ================= */

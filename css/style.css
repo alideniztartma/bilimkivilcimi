@@ -1052,3 +1052,16 @@ section.pg-in>*:nth-child(2){animation-delay:.03s}section.pg-in>*:nth-child(3){a
 @media (max-width:640px){.trow{grid-template-columns:1fr}.trow .b3{justify-self:start}}
 .tadd input[type=email]{width:100%;max-width:420px;font:600 1rem/1.2 var(--body);padding:12px 14px;border:1px solid var(--line);border-radius:4px;background:var(--tessera);color:var(--ink)}
 .admgate input[type=email],.admgate input[type=password]{font:600 1rem/1.2 var(--body);padding:12px 14px;border:1px solid var(--line);border-radius:4px;background:var(--tessera);color:var(--ink)}.tres.info{color:var(--muted)}
+
+/* --- Ders akışı: ipucu, konfeti katmanı, dokunulabilir sayılar --- */
+.hintrow{margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.hintb{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border:2px solid var(--line);border-bottom-width:4px;border-radius:8px;background:var(--tessera);color:var(--ink);font:700 .95rem/1 var(--sans,inherit);cursor:pointer}
+.hintb:disabled{opacity:.5;cursor:default}
+.hintt{flex:1 1 200px;margin:0;color:var(--muted);font-size:.95rem}
+.hintt:empty{display:none}
+.ex.lock-ui .hintb{display:none}
+.opt.hinted,.chip.hinted{opacity:.3;text-decoration:line-through;pointer-events:none}
+#fx.fx-in{position:fixed;z-index:0}
+.lesson .lbody{position:relative;z-index:1}
+.lesson .lfoot{position:relative;z-index:1}
+.stat[role="button"],[data-dp][role="button"]{cursor:pointer;min-height:44px}

@@ -157,14 +157,14 @@ function pickAsk(j){const x=GM.x,k=lvKey(x.id,GM.lv),a=x.levels[GM.lv].ask;if(S.
   const first=S.lab.ask[k]==null;S.lab.ask[k]=j;const ok=j===a.a;
   $$('#gOv [data-pk]').forEach(b=>{b.disabled=true;if(+b.dataset.pk===j)b.classList.add(ok?'ok':'no')});
   $('#gAskRes').className='tres '+(ok?'good':'bad');$('#gAskRes').textContent=ok?'Güzel tahmin! Şimdi deneyerek kontrol et.':'Bakalım deney ne gösterecek. Dikkatle gözle!';
-  if(ok&&first){S.gems+=2;renderStats();sfx.coin();toast(fi('gem',20)+' Doğru tahmin · +2 taş')}else if(!ok)sfx.tap();
+  if(ok&&first){S.gems+=2;renderStats();sfx.coin();toast(fi('gem',20)+' Doğru tahmin · +2 mozaik taşı')}else if(!ok)sfx.tap();
   save();$('#gAskGo').hidden=false;$('#gAskGo').focus({preventScroll:true});GM.G.tip('think',x.levels[GM.lv].tip||x.hint)}
 function gWin(stars,msg){
   if(!GM||GM.over)return;GM.over=true;
   const x=GM.x,i=GM.lv,k=lvKey(x.id,i),first=!S.lab.tasks[k],prev=lvStars(x.id,i),L=x.levels[i];stars=clamp(Math.round(stars),1,3);
   if(stars>(S.lab.st[k]||0))S.lab.st[k]=stars;
   if(first){S.lab.tasks[k]=dkey();S.day.lab=(S.day.lab||0)+1;smallReward(10,5,x.title+' · '+(i+1)+'. bölüm')}
-  else if(stars===3&&prev<3){S.gems+=3;save();renderStats();toast(fi('gem',20)+' Üç yıldız! +3 taş')}else save();
+  else if(stars===3&&prev<3){S.gems+=3;save();renderStats();toast(fi('gem',20)+' Üç yıldız! +3 mozaik taşı')}else save();
   GM.G.tip('cheer',stars===3?'Üç yıldız! Tam bir bilim insanı gibi!':pickL(ANKA.ok));
   const last=i>=x.levels.length-1,a=L.ask;
   gLater(()=>{sfx.win();if(first||stars===3)confetti();
