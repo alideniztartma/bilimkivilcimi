@@ -66,6 +66,10 @@ function setSleep(on){YV.sleep=on;const n=$('#pgNest .nest');if(n)n.classList.to
 function wake(){setSleep(false)}
 /* Radyo: Web Audio ile çalan küçük, özgün şarkılar. Her basışta sıradaki şarkı çalar. */
 const SONGS=[
+  {name:'Antioch Rising Marşı',bpm:112,lead:'sawtooth',
+   mel:'G4 . C5 . E5 . G5 . A5 - G5 E5 F5 - D5 . E5 . G5 . C6 - B5 A5 G5 - - - . . . . C6 - C6 . B5 - A5 . G5 - E5 . G5 - - . A5 - A5 . G5 - F5 . E5 - D5 . C5 - - .',
+   bass:'C3 G2 C3 G2 F2 C3 G2 D3 C3 G2 A2 E3 G2 D3 G2 B2 C3 G2 C3 E3 C3 G2 C3 G2 F2 C3 F2 C3 G2 D3 C3 C3',
+   drum:'K.H.S.H.K.H.S.H.K.H.S.H.K.S.SSSS',vox:{24:'ar',30:'hey',56:'ar',62:'hey'},harm:true},
   {name:'Kıvılcım Dansı',bpm:122,lead:'triangle',
    mel:'C5 E5 G5 E5 A5 - G5 . F5 A5 G5 E5 D5 - C5 . E5 G5 C6 B5 A5 - G5 . F5 E5 D5 E5 C5 - - .',
    bass:'C3 G3 C3 G3 F3 C4 G3 D3 A2 E3 A2 E3 G2 D3 C3 G2',drum:'K.H.S.H.K.H.S.HK'},
@@ -76,8 +80,12 @@ const SONGS=[
    mel:'A4 . C5 E5 A5 . G5 E5 F5 . E5 D5 E5 - . . A4 . C5 E5 A5 . B5 C6 B5 A5 G5 E5 A5 - - .',
    bass:'A2 A2 E3 A2 F2 F2 C3 F2 A2 A2 E3 A2 G2 G2 E2 A2',drum:'K.HSK.HSKKHSK.HS'}];
 const NOTE={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+/* Do majörde bir üçlü aşağısı (marşın ikinci sesi) */
+function third(n){const L='CDEFGAB',i=L.indexOf(n[0]),o=+n.slice(-1);return L[(i+5)%7]+(i<2?o-1:o)}
 function nfreq(n){const m=/^([A-G])([#b]?)(\d)$/.exec(n);if(!m)return 0;const k=NOTE[m[1]]+(m[2]==='#'?1:m[2]==='b'?-1:0)+12*(+m[3]+1);return 440*Math.pow(2,(k-69)/12)}
-const MZ={songI:-1,t:null,out:null,next:0,step:0,song:null,noise:null};
+const MZ={songI:-1,t:null,out:null,next:0,step:0,song:null,noise:null,vox:{}};
+/* Marştaki 'Antioch Rising!' ve 'Hey!' sesleri (robot korosu) */
+function mzLoadVox(){if(!AC||MZ.voxL)return;MZ.voxL=1;[['ar','audio/antioch-rising.mp3'],['hey','audio/hey.mp3']].forEach(([k,u])=>fetch(u).then(r=>r.arrayBuffer()).then(a=>AC.decodeAudioData(a)).then(b=>{MZ.vox[k]=b}).catch(()=>{MZ.voxL=0}))}
 function mzVoice(f,t,d,type,vol){const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.012);g.gain.setValueAtTime(vol*.8,t+Math.max(.03,d-.06));g.gain.linearRampToValueAtTime(0,t+d);
   o.connect(g);g.connect(MZ.out);o.start(t);o.stop(t+d+.02)}
@@ -90,13 +98,14 @@ function mzDrum(k,t){
   g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);s.connect(f);f.connect(g);g.connect(MZ.out);s.start(t);s.stop(t+d+.02)}
 function mzTick(){const s=MZ.song,mel=s.mel.split(' '),bass=s.bass.split(' '),e=60/s.bpm/2;
   while(MZ.next<AC.currentTime+.2){const i=MZ.step%mel.length,t=MZ.next;
-    const n=mel[i];if(n!=='.'&&n!=='-'){let len=1;while(mel[(i+len)%mel.length]==='-'&&len<8)len++;mzVoice(nfreq(n),t,e*len*.95,s.lead,s.lead==='triangle'?.22:.09)}
+    const n=mel[i];if(n!=='.'&&n!=='-'){let len=1;while(mel[(i+len)%mel.length]==='-'&&len<8)len++;mzVoice(nfreq(n),t,e*len*.95,s.lead,s.lead==='triangle'?.22:.09);if(s.harm)mzVoice(nfreq(third(n)),t,e*len*.95,'triangle',.11)}
     if(i%2===0){const b=bass[(i/2)%bass.length];mzVoice(nfreq(b),t,e*1.8,'triangle',.26)}
     const dk=s.drum[i%s.drum.length];if(dk&&dk!=='.')mzDrum(dk,t);
+    if(s.vox&&s.vox[i]){const b=MZ.vox[s.vox[i]];if(b){const src=AC.createBufferSource(),g=AC.createGain();src.buffer=b;g.gain.value=1.5;src.connect(g);g.connect(MZ.out);src.start(t)}}
     MZ.step++;MZ.next+=e}}
 function startTune(){if(!S.sound)return false;
   try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
-    stopTune(true);MZ.songI=(MZ.songI+1)%SONGS.length;MZ.song=SONGS[MZ.songI];
+    mzLoadVox();stopTune(true);MZ.songI=(MZ.songI+1)%SONGS.length;MZ.song=SONGS[MZ.songI];
     MZ.out=AC.createGain();MZ.out.gain.value=0;MZ.out.gain.linearRampToValueAtTime(.55,AC.currentTime+.3);MZ.out.connect(AC.destination);
     MZ.step=0;MZ.next=AC.currentTime+.08;mzTick();MZ.t=setInterval(mzTick,40);return MZ.song.name}catch(e){return false}}
 function stopTune(now){clearInterval(MZ.t);MZ.t=null;const o=MZ.out;MZ.out=null;if(o&&AC){try{o.gain.cancelScheduledValues(AC.currentTime);o.gain.setValueAtTime(o.gain.value,AC.currentTime);o.gain.linearRampToValueAtTime(0,AC.currentTime+(now?.05:.4));setTimeout(()=>o.disconnect(),now?120:500)}catch(e){}}}

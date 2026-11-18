@@ -59,3 +59,26 @@ setInterval(()=>{const h=S.hearts;dayCheck();if(S.hearts!==h)renderStats()},3000
   const b=document.getElementById('boot');if(!b)return;
   const go=()=>{b.classList.add('out');document.documentElement.style.background='';setTimeout(()=>{b.remove();if(typeof appBars==='function')appBars()},400)};
   setTimeout(go,Math.max(300,1100-(Date.now()-(window.__bootT||Date.now()))))})();
+
+/* Otomatik güncelleme (yalnızca Android uygulamasında):
+   Her açılışta GitHub'daki son sürüme bakar. Yeni bir sürüm varsa web dosyalarını arka planda indirir;
+   uygulama bir sonraki açılışında ya da arka plana alınıp dönünce yeni sürümle başlar. APK indirmek gerekmez. */
+(function(){
+  const U=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.CapacitorUpdater;
+  if(!U)return;
+  try{U.notifyAppReady()}catch(e){}
+  const check=async()=>{
+    try{
+      const r=await fetch('https://api.github.com/repos/alideniztartma/bilimkivilcimi/releases/tags/apk-latest',{cache:'no-store'});if(!r.ok)return;
+      const j=await r.json(),m=/build:([\w.-]+)/.exec(j.body||'');if(!m)return;const id=m[1];
+      if(id===window.BK_BUILD||localStorage.getItem('bk-upd')===id)return;
+      const a=(j.assets||[]).find(x=>x.name==='www.zip');if(!a)return;
+      const b=await U.download({url:a.browser_download_url,version:id});
+      await U.next({id:b.id});localStorage.setItem('bk-upd',id);
+      toast(`${fi('bolt',18)} Yeni sürüm indi. <button type="button" class="tbtn" id="updNow">Şimdi yenile</button>`,9000);
+      const n=document.getElementById('updNow');if(n)n.onclick=()=>U.set({id:b.id});
+    }catch(e){}
+  };
+  setTimeout(()=>{check.t=Date.now();check()},4000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-(check.t||0)>36e5){check.t=Date.now();check()}});
+})();

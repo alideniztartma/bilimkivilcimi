@@ -320,7 +320,8 @@ function finish(){
   const before=new Set(Object.keys(S.badges)),today=dkey();
   let xp=0,gems=0,title='Ders tamamlandı!',sub='',mood='cheer',extra='';
   if(m==='lesson'){const lid=L.lesson.id,store=S.done,first=!store[lid];xp=(first?10:5)+(perfect?5:0);store[lid]=(store[lid]||0)+1;S.lessons++;S.day.lessons++;
-    title=perfect?'Kusursuz ders!':'Ders tamamlandı!';sub=first?esc(L.lesson.title)+' dersini bitirdin.':'Tekrar yapmak bilgiyi güçlendirir.'}
+    title=perfect?'Kusursuz ders!':'Ders tamamlandı!';sub=first?esc(L.lesson.title)+' dersini bitirdin.':'Tekrar yapmak bilgiyi güçlendirir.';
+    gems=(first?5:2)+(perfect?2:0);S.pet.visit={title:L.lesson.title,gems,t:Date.now()}}
   else if(m==='practice'){xp=5;S.hearts=Math.min(5,S.hearts+1);if(S.hearts>=5)S.heartAt=null;S.day.lessons++;title='Alıştırma bitti!';sub='+1 kalp kazandın.'}
   else if(m==='mistakes'){xp=5;S.day.lessons++;const left=Object.keys(S.wrong).length;title='Hatalarını düzelttin!';sub=left?`Defterinde ${left} soru kaldı.`:'Hata defterin tertemiz!'}
   else if(m==='daily'){const fresh=!S.dailyDone[today];if(fresh){xp=10;gems=15;S.dailyDone={[today]:1}}title='Günün bulmacası çözüldü!';sub=fresh?'Yarın yeni bir bulmaca gelecek.':'Bugünün ödülünü daha önce almıştın.'}
@@ -350,7 +351,7 @@ function finish(){
   newB.forEach(id=>{const b=BADGES.find(x=>x.id===id);steps.push(()=>`<div class="done-screen"><div class="medal" style="width:120px;height:120px">${ic(b.icon,60)}</div><h1>Yeni rozet!</h1><h2>${b.name}</h2><p>${b.desc}</p></div>`)});
   let k=0;
   const show=()=>{$('#lbody').innerHTML=steps[k]();sfx.win();if(k===0&&mood!=='sad')confetti();const c=$('#openCertNow');if(c)c.onclick=()=>openCert(L.ui)};
-  L.endStep=()=>{k++;if(k<steps.length)show();else closeLesson()};
+  L.endStep=()=>{k++;if(k<steps.length)show();else{const v=m==='lesson'&&S.pet.visit;closeLesson();if(v)location.hash='#yuva'}};
   show();
 }
 

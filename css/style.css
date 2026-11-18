@@ -998,3 +998,41 @@ section.pg-in>*:nth-child(2){animation-delay:.03s}section.pg-in>*:nth-child(3){a
 .buddy .anka,.udeco .anka{pointer-events:auto}
 @media (max-width:374px){.mtop .brand img{display:none}}
 @media (max-width:330px){.mtop .brand span{font-size:.82rem}.mtop .fbi{width:22px;height:22px}}
+
+/* ===== Yuva ekleri: oyunlar, ziyaret, fotoğraf ===== */
+.ntoy{right:5%;bottom:5%;width:clamp(96px,min(18cqh,28cqw),210px)}
+.ncam{width:40px;height:40px}
+.nchip.bump,.nbas.nbump svg{animation:bump .35s}
+.ngemfly{position:absolute;z-index:7;color:#4B5A3A;pointer-events:none;transition:transform .8s cubic-bezier(.4,-0.2,.6,1),opacity .8s ease-in;filter:drop-shadow(0 2px 0 rgba(47,46,36,.3))}
+.nti.ngi{flex:1 1 0;min-width:92px;cursor:pointer;touch-action:manipulation}
+.nbest{position:absolute;top:-8px;right:-6px;display:inline-flex;align-items:center;gap:2px;padding:3px 6px;border-radius:999px;background:#E8B53A;color:#2F2E24;font:800 .68rem/1 var(--body)}
+.ngame{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;background:#F7E7C6;animation:ngIn .28s ease-out}
+.nghud{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#FBF6EA;border-bottom:3px solid #2F2E24}
+.nghud .nround{width:40px;height:40px}
+.ngname{margin-right:auto;font:700 1.15rem/1.1 var(--display);color:#2F2E24}
+.ngplay{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none}
+.ngplay canvas{display:block;touch-action:none}
+.nghint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);margin:0;max-width:86%;padding:8px 14px;border-radius:12px;background:rgba(251,246,234,.95);color:#2F2E24;font-weight:700;font-size:.9rem;text-align:center;pointer-events:none;box-shadow:0 3px 0 rgba(47,46,36,.2)}
+.nghint:empty{display:none}
+.ngend{position:absolute;inset:0;z-index:3;display:grid;place-items:center;padding:16px;background:rgba(47,46,36,.45)}
+.ngcard{width:min(340px,100%);display:grid;justify-items:center;gap:6px;padding:18px 18px 16px;border-radius:20px;border:3px solid #2F2E24;background:#FBF6EA;color:#2F2E24;text-align:center;box-shadow:0 8px 0 rgba(47,46,36,.3);animation:ngIn .3s cubic-bezier(.2,1.4,.4,1)}
+.ngcard h3{margin:0;font:700 1.6rem/1.1 var(--display)}
+.ngcard p{margin:0}
+.ngjoy{display:inline-flex;align-items:center;gap:6px;color:#B7372A;font-weight:800}
+.ngbtns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:8px}
+.ngbtns .b3{min-height:46px;padding:10px 16px;text-decoration:none}
+.nsimon{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:12px 16px 70px}
+.nsbird .anka{width:min(150px,30cqh);height:auto}
+.nspad{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:min(320px,82%)}
+.nsb{aspect-ratio:1;border-radius:18px;border:3px solid #2F2E24;border-bottom-width:8px;background:var(--c);cursor:pointer;opacity:.82;transition:transform .08s,opacity .08s,filter .08s;touch-action:manipulation}
+.nsb:active{transform:translateY(3px)}
+.nsb.lit{opacity:1;filter:brightness(1.35) saturate(1.2);transform:scale(1.05);box-shadow:0 0 0 6px rgba(251,246,234,.9),0 0 28px var(--c)}
+.nflash{position:absolute;inset:0;z-index:20;background:#fff;pointer-events:none;animation:nflash .55s ease-out forwards}
+@keyframes nflash{from{opacity:.95}to{opacity:0}}
+.nphoto{position:absolute;inset:0;z-index:15;display:grid;place-items:center;padding:14px;background:rgba(47,46,36,.55);animation:ngIn .3s ease-out}
+.npcard{width:min(420px,100%);max-height:100%;display:grid;gap:10px;padding:12px;border-radius:18px;background:#FBF6EA;border:3px solid #2F2E24;box-shadow:0 8px 0 rgba(47,46,36,.3)}
+.npcard img{width:100%;max-height:calc(100cqh - 150px);object-fit:contain;border-radius:8px;transform:rotate(-1.5deg);box-shadow:0 6px 16px rgba(47,46,36,.25)}
+@media (max-width:640px){.ntoy{right:4%;bottom:4%}.nghud{padding:8px 10px}}
+@media (prefers-reduced-motion:reduce){.ngame,.ngcard,.nphoto,.nflash,.ngemfly{animation:none;transition:none}}
+@keyframes ngIn{from{transform:translateY(30px);opacity:0}}
+.tbtn{margin-left:8px;padding:5px 10px;border:0;border-radius:999px;background:#FBF6EA;color:#2F2E24;font:800 .8rem/1 var(--body);cursor:pointer}

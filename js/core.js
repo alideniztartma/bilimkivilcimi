@@ -70,7 +70,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-say]');if(
 
 /* Bildirim, pencere, konfeti */
 let toastT;
-function toast(h){const t=$('#toast');t.innerHTML=h;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800)}
+function toast(h,ms){const t=$('#toast');t.innerHTML=h;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),ms||2800)}
 /* Bildirime dokununca hemen kapanır */
 document.addEventListener('click',e=>{if(e.target.closest('#toast')){clearTimeout(toastT);$('#toast').classList.remove('show')}});
 function openModal(html,wide){$('#mbox').className='mbox'+(wide?' wide':'');$('#mbox').innerHTML=html;$('#modal').hidden=false;const f=$('#mbox button,#mbox input');if(f)setTimeout(()=>f.focus(),30)}

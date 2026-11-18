@@ -1,6 +1,5 @@
-# Bu dosyayı GitHub'da .github/workflows/apk.yml konumuna taşıyın.
-# Sonra her main gönderiminde APK kendiliğinden derlenir ve
-# "Releases" altındaki "apk-latest" sürümüne konur.
+# Her main gönderiminde APK ve otomatik güncelleme paketi (www.zip)
+# derlenip "Releases" altındaki "apk-latest" sürümüne konur.
 name: Android APK
 
 on:
@@ -36,16 +35,19 @@ jobs:
       - name: Web dosyalarını uygulamaya kopyala
         run: |
           mkdir -p app/www app/assets
-          cp -r index.html css js img fonts app/www/
+          cp -r index.html css js img fonts audio app/www/
           cp assets/*.png app/assets/
+          echo "window.BK_BUILD='${GITHUB_SHA::7}.${GITHUB_RUN_NUMBER}';" > app/www/js/build.js
+          echo "BUILD_ID=${GITHUB_SHA::7}.${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+          (cd app/www && zip -qr ../../www.zip .)
 
       - name: Capacitor ile Android projesi oluştur
         working-directory: app
         run: |
           npm init -y
-          npm i @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/haptics@7 @capacitor/status-bar@7 @capacitor/splash-screen@7 @capacitor/assets@3
+          npm i @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/haptics@7 @capacitor/status-bar@7 @capacitor/splash-screen@7 @capacitor/share@7 @capacitor/filesystem@7 @capgo/capacitor-updater@7 @capacitor/assets@3
           npx cap init "Anka #BilimKıvılcımı" org.antiochrising.bilimkivilcimi --web-dir www
-          node -e "const f='capacitor.config.json',fs=require('fs'),c=JSON.parse(fs.readFileSync(f));c.android=Object.assign({},c.android,{adjustMarginsForEdgeToEdge:'force'});c.backgroundColor='#D9822B';c.plugins=Object.assign({},c.plugins,{StatusBar:{overlaysWebView:false,style:'DARK',backgroundColor:'#D9822B'},SplashScreen:{launchAutoHide:false,launchShowDuration:0,launchFadeOutDuration:150,backgroundColor:'#D9822B',showSpinner:false}});fs.writeFileSync(f,JSON.stringify(c,null,2));console.log(c)"
+          node -e "const f='capacitor.config.json',fs=require('fs'),c=JSON.parse(fs.readFileSync(f));c.android=Object.assign({},c.android,{adjustMarginsForEdgeToEdge:'force'});c.backgroundColor='#D9822B';c.plugins=Object.assign({},c.plugins,{StatusBar:{overlaysWebView:false,style:'DARK',backgroundColor:'#D9822B'},SplashScreen:{launchAutoHide:false,launchShowDuration:0,launchFadeOutDuration:150,backgroundColor:'#D9822B',showSpinner:false},CapacitorUpdater:{autoUpdate:false,statsUrl:'',updateUrl:'',channelUrl:'',appReadyTimeout:15000}});fs.writeFileSync(f,JSON.stringify(c,null,2));console.log(c)"
           npx cap add android
           npx capacitor-assets generate --android --iconBackgroundColor '#C4602F' --splashBackgroundColor '#D9822B' --splashBackgroundColorDark '#D9822B'
           cp ../android/MainActivity.java android/app/src/main/java/org/antiochrising/bilimkivilcimi/MainActivity.java
@@ -74,6 +76,12 @@ jobs:
         with:
           tag_name: apk-latest
           name: BilimKıvılcımı Android uygulaması
-          body: En son sürüm. BilimKivilcimi.apk dosyasını telefona indirip açın. Telefon izin isterse "Bilinmeyen kaynaklardan yüklemeye izin ver" seçeneğini açın.
-          files: BilimKivilcimi.apk
+          body: |
+            En son sürüm. BilimKivilcimi.apk dosyasını telefona indirip açın. Telefon izin isterse "Bilinmeyen kaynaklardan yüklemeye izin ver" seçeneğini açın.
+            Uygulama kuruluysa yeni sürümü kendisi indirir (www.zip).
+
+            build:${{ env.BUILD_ID }}
+          files: |
+            BilimKivilcimi.apk
+            www.zip
           make_latest: true
