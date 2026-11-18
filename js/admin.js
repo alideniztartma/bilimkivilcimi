@@ -39,7 +39,8 @@ async function sbSignup(email,password){
   const r=await sbFetch('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password})});
   const j=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(/registered|exists/i.test(j.msg||j.error_description||j.error_code||'')?'Bu e-postayla zaten hesap var. Giriş yap.':/password/i.test(j.msg||j.error_code||'')?'Şifre en az 6 karakter olmalı.':'Hesap oluşturulamadı: '+(j.msg||j.error_description||r.status));
-  if(j.access_token){await sbLogin(email,password);return 'in'}
+  /* Supabase onay e-postası istese bile ekip üyeleri veritabanında otomatik onaylanır (supabase/onaysiz.sql): hemen girmeyi dene */
+  try{await sbLogin(email,password);return 'in'}catch(e){if(/liste/.test(e.message))throw e}
   return 'confirm';
 }
 /* Ekip (yalnızca ana yönetici) */
