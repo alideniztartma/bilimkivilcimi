@@ -23,7 +23,7 @@ async function sbLogin(email,password){
   sbsSave();
 }
 /* Rol ve yetkiler. supabase/ekip.sql henüz çalıştırılmadıysa eski düzen geçerli: listedeki herkes her şeyi görür. */
-const PERMS=[['istatistik','İstatistikler','Genel sayılar ve grafikler'],['ogrenciler','Öğrenci listesi','Öğrenci tablosu ve CSV indirme'],['veri','Veri ekleme','Kodla ve dosyayla veri ekleme']];
+const PERMS=[['istatistik','İstatistikler','Genel sayılar ve grafikler'],['ogrenciler','Öğrenci listesi','Öğrenci tablosu ve CSV indirme'],['veri','Veri ekleme','Kodla ve dosyayla veri ekleme'],['icerik','İçerik düzenleme','Ders yazılarını düzenleyip yayınlama']];
 async function sbRole(){
   const r=await sbFetch('/rest/v1/rpc/bk_me',{method:'POST',body:'{}'},SBS.at);
   if(r.ok){const m=await r.json();if(!m)return false;SBS.role=m.role;SBS.perms=m.perms||[];return true}
@@ -172,7 +172,7 @@ function renderAdmin(){
   const src=SBS?(LIVE.err?`<span class="srcbad">${ic('info',14)} ${esc(LIVE.err)}</span>`:LIVE.loading&&!LIVE.rows?'Canlı veriler yükleniyor…':`<span class="srcok">● Canlı</span> ${hm(LIVE.at)} itibarıyla sitede ${fmt(Object.keys(LIVE.rows||{}).length)} öğrenci var.`):'Çevrimdışı mod: yalnızca bu cihaza eklenen kodlar';
   el.innerHTML=`<div class="admhead"><div><p class="eyebrow">${SBS?(isOwner()?'ANA YÖNETİCİ':SBS.role==='legacy'?'YÖNETİCİ':'EKİP ÜYESİ')+' · '+esc(SBS.email):'YÖNETİCİ · ÇEVRİMDIŞI'}</p><h1 class="ph1" style="margin:4px 0">İstatistik paneli</h1><p class="sub" style="margin:0">${src}</p>${empty&&!LIVE.loading?'<p class="muted" style="margin-top:4px;font-size:.92rem">Henüz veri yok. Öğrenciler ders bitirdikçe sayılar burada görünür.</p>':''}</div>
     <div class="abtns" style="margin:0">${SBS?`<button class="b3 ghost sm" type="button" id="admRef" ${LIVE.loading?'disabled':''}>${ic('reset',16)} ${LIVE.loading?'Yenileniyor…':'Yenile'}</button>`:''}<button class="b3 ghost sm" type="button" id="admLock">${ic('lock',16)} Çıkış</button></div></div>
-  ${!can('istatistik')&&!can('ogrenciler')&&!can('veri')?`<div class="card apanel"><h3>Henüz bir yetkin yok</h3><p class="muted">Ana yönetici sana panelde bir bölüm açınca burada görünecek.</p></div>`:''}
+  ${!can('istatistik')&&!can('ogrenciler')&&!can('veri')&&!can('icerik')?`<div class="card apanel"><h3>Henüz bir yetkin yok</h3><p class="muted">Ana yönetici sana panelde bir bölüm açınca burada görünecek.</p></div>`:''}
   ${can('istatistik')?`<div class="atiles">
     ${tile(fmt(st.tot),'Toplam kayıtlı kullanıcı','user')}
     ${tile(fmt(st.a7),'Aktif kullanıcı (son 7 gün)','bolt',st.tot?'%'+Math.round(st.a7/st.tot*100):'')}
@@ -197,6 +197,7 @@ function renderAdmin(){
     <div class="tscroll" style="max-height:420px;margin-top:10px"><table class="dtable"><thead><tr><th>Ad</th><th>DP</th><th>Ders</th><th>Deney görevi</th><th>Son etkinlik</th><th>Durum</th></tr></thead><tbody>
     ${rows.slice(0,300).map(u=>{const s=st.since(u);return `<tr><td><b>${esc(u.n||('Öğrenci '+(u.i||'').slice(0,5)))}</b></td><td>${fmt(u.x)}</td><td>${u.l+(u.v===2?u.C.filter(id=>!u.L.includes(id)).length:0)}</td><td>${u.e}</td><td>${u.a?u.a.split('-').reverse().join('.'):'–'}</td><td>${s==null?'Bilinmiyor':s<7?'<span class="pill-ok">Aktif</span>':s<30?'Son 30 gün':'Pasif'}</td></tr>`}).join('')||'<tr><td colspan="6" class="muted">Öğrenci yok.</td></tr>'}
     </tbody></table></div></div>`:''}
+  ${canEditContent()?`<div class="card apanel icentry"><div><h3>Ders içerikleri <small>${ICV?'yayındaki sürüm: '+ICV.v:'orijinal içerik'}</small></h3><p class="muted" style="font-size:.92rem;margin:4px 0 0">Ünite ve ders adlarını, alıştırmaların yazılarını değiştir, yeni soru ekle, sonra yayınla. Yeni APK gerekmez.</p></div><button class="b3 sm" type="button" id="admIc">${ic('pen',16)} Düzenleyiciyi aç</button></div>`:''}
   ${teamHtml()}
   <div class="agrid">
     ${can('veri')?`<div class="card apanel"><h3>Kodla veri ekle <small>internetsiz sınıflar için</small></h3>
@@ -218,6 +219,7 @@ function renderAdmin(){
   const after=(r,bad)=>{renderAdmin();msg(`${r.ok} yeni öğrenci eklendi${r.newer?`, ${r.newer} öğrenci güncellendi`:''}${bad?`, ${bad} kod okunamadı`:''}.`)};
   $a('#admLock').onclick=()=>{admOpen=false;SBS=null;sbsSave();LIVE.rows=null;LIVE.err='';try{sessionStorage.removeItem('bk-yon-acik')}catch(e){}renderAdmin()};
   teamBind();
+  const icb=$('#admIc');if(icb)icb.onclick=openContentEditor;
   const rf=$a('#admRef');if(rf)rf.onclick=()=>admLoadLive();
   $a('#admQ').oninput=e=>{admQuery=e.target.value.trim().toLocaleLowerCase('tr');const p=e.target.selectionStart;renderAdmin();const q=$a('#admQ');q.focus();try{q.setSelectionRange(p,p)}catch(_){}};
   $a('#admAddBtn').onclick=()=>{const {out,bad}=admParseText($a('#admIn').value);after(admAdd(out),bad)};

@@ -244,14 +244,14 @@ function buildEx0(ex,ch){
 /* ================= DERS AKIŞI (bütün modlar) ================= */
 let L=null,timerI=null;
 const MODES={
- lesson:{hearts:true,requeue:true},practice:{requeue:true},mistakes:{requeue:true},daily:{requeue:true},speed:{},exam:{}
+ lesson:{hearts:true,requeue:true},preview:{requeue:true},practice:{requeue:true},mistakes:{requeue:true},daily:{requeue:true},speed:{},exam:{}
 };
 function gradables(ex){return ex.filter(e=>e.t!=='info')}
 function startMode(mode,o={}){
   dayCheck();
   if(mode==='lesson'&&S.hearts<=0)return heartsOut(false);
   let ex;
-  if(mode==='lesson')ex=o.lesson.ex.slice();
+  if(mode==='lesson'||mode==='preview')ex=o.lesson.ex.slice();
   else if(mode==='practice')ex=shuffle(gradables(ALL_LESSONS.filter(l=>S.done[l.id]).flatMap(l=>l.ex))).slice(0,6);
   else if(mode==='mistakes')ex=shuffle(Object.keys(S.wrong).map(id=>EXBYID[id]).filter(Boolean)).slice(0,8);
   else if(mode==='daily')ex=[Object.assign({t:'robot',id:'daily'},dailyPuzzle())];
@@ -331,7 +331,7 @@ document.addEventListener('keydown',e=>{
 });
 $('#lclose').addEventListener('click',askQuit);
 function askQuit(){
-  if(!L||L.state==='end'){closeLesson();return}
+  if(!L||L.state==='end'||L.mode==='preview'){closeLesson();return}
   openModal(`${anka('sad',100,undefined,'act-shake')}<h2>${ANKA.quit}</h2><p>Şimdi çıkarsan bu turdaki ilerlemen kaybolur.</p><button class="b3" type="button" id="mstay">Devam et</button><button class="b3 ghost" type="button" id="mquit" style="--oc:var(--garnet)">Çık</button>`);
   $('#mstay').onclick=closeModal;$('#mquit').onclick=()=>{closeModal();closeLesson()}}
 function closeLesson(){clearInterval(timerI);if(canSpeak)stopSpeak();$('#lesson').hidden=true;document.body.style.overflow='';L=null;renderAll();scrollCur()}
@@ -358,6 +358,10 @@ function finish(){
   const perfect=L.gradable>0&&L.first.size===0;
   const before=new Set(Object.keys(S.badges)),today=dkey();
   let xp=0,gems=0,title='Ders tamamlandı!',sub='',mood='cheer',extra='';
+  /* Düzenleyicideki önizleme: ödül, seri ve ilerleme yok */
+  if(m==='preview'){L.state='end';renderHead();$('#lfoot').className='lfoot';$('#fb').innerHTML='';const btn=$('#lbtn');btn.className='b3';btn.textContent='Düzenleyiciye dön';btn.disabled=false;
+    $('#lbody').innerHTML=`<div class="done-screen">${anka('cheer',130)}<h1>Önizleme bitti</h1><p>Ders öğrencilere böyle görünecek. ${L.gradable} sorudan ${L.gradable-L.first.size} tanesini ilk denemede bildin.</p></div>`;
+    L.endStep=()=>closeLesson();return}
   if(m==='lesson'){const lid=L.lesson.id,store=S.done,first=!store[lid];xp=(first?10:5)+(perfect?5:0);store[lid]=(store[lid]||0)+1;S.lessons++;S.day.lessons++;
     title=perfect?'Kusursuz ders!':'Ders tamamlandı!';sub=first?esc(L.lesson.title)+' dersini bitirdin.':'Tekrar yapmak bilgiyi güçlendirir.';sub+=' +1 kalp kazandın.';
     S.hearts=Math.min(5,S.hearts+1);if(S.hearts>=5)S.heartAt=null;

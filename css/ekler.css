@@ -34,3 +34,47 @@
 @media (max-width:440px){#pgNest .nchips{gap:4px}#pgNest .nchips .nchip{padding-left:7px;padding-right:7px}#pgNest .ncam{width:36px;height:36px}#pgNest .nhud{gap:6px}}
 /* Kamera: üst çubuğu taşırmasın diye geri düğmesinin altında */
 #pgNest .ncam{position:absolute;z-index:6;left:clamp(10px,2.4cqw,22px);top:calc(clamp(10px,2.4cqw,22px) + 66px);width:46px;height:46px}
+
+/* ===== Ders düzenleyici (yönetici) ===== */
+.icentry{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.icentry h3{margin:0}
+#icEd{position:fixed;inset:0;z-index:45;background:var(--tessera);display:grid;grid-template-rows:auto 1fr auto;padding-top:env(safe-area-inset-top)}
+#icEd[hidden]{display:none}
+.iched{display:flex;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--raised)}
+.iched b{display:block;font:800 1.15rem/1.2 var(--display)}
+.iched small{display:block;color:var(--muted);font-size:.82rem;font-weight:700}
+.icbody{overflow:auto;padding:14px;display:grid;gap:12px;align-content:start;max-width:760px;width:100%;margin:0 auto;box-sizing:border-box}
+#icEd label{display:grid;gap:4px;font-weight:800;font-size:.9rem}
+#icEd label small{font-weight:600;color:var(--muted)}
+#icEd input,#icEd textarea,#icEd select{width:100%;box-sizing:border-box;font:600 1rem/1.4 var(--body);padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--raised);color:var(--ink)}
+#icEd textarea{resize:vertical}
+#icEd textarea.mono{font:500 .92rem/1.4 var(--mono)}
+#icEd input:focus,#icEd textarea:focus,#icEd select:focus{outline:2px solid var(--focus);outline-offset:1px}
+.icsel{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:640px){.icsel{grid-template-columns:1fr 1.4fr 1.4fr}}
+.icunit{padding:12px 14px}
+.icunit summary{cursor:pointer;font-weight:800}
+.icunit summary em,.ictag{font-style:normal}
+.icunit summary em{color:var(--terra);font-size:.82rem;margin-left:6px}
+.icunit label{margin-top:10px}
+.icex{padding:12px 14px;display:grid;gap:10px;border-left:4px solid var(--olive)}
+.icex.bad{border-left-color:var(--garnet)}
+.icexh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ictag{font:800 .82rem/1 var(--body);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.icexh button{min-width:38px;height:36px;margin-left:4px;border:1px solid var(--line);border-radius:4px;background:var(--raised);color:var(--ink);font:800 .85rem var(--body);cursor:pointer;display:inline-grid;place-items:center;padding:0 8px}
+.icexh button:disabled{opacity:.35;cursor:default}
+.icbadmsg{margin:0;color:var(--garnet);font-weight:700;font-size:.86rem;display:flex;gap:6px;align-items:center}
+.icadd{padding:12px 14px;display:grid;gap:8px}
+.icadd div{display:flex;gap:8px}
+.icpub{padding:14px;display:grid;gap:10px}
+.icpub h3{margin:0;font-size:1.15rem}
+.icpub p{margin:0}
+.icwarn{margin:0;padding:10px 12px;border-radius:4px;background:var(--terra-soft);color:var(--ink);font-weight:700;font-size:.9rem;display:flex;gap:8px}
+.icver{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.icver small{display:block;color:var(--muted);font-size:.82rem}
+.icver p{font-size:.9rem;margin-top:2px}
+.icver.on b{color:var(--olive)}
+.icfoot{display:flex;gap:8px;justify-content:space-between;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--raised)}
+#toast button{pointer-events:auto}
+.icadd select{flex:1}
+.icadd button,.icfoot button,.icver button{white-space:nowrap}
