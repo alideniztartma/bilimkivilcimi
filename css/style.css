@@ -173,7 +173,7 @@ a{color:var(--terra)}
 
 /* Ders yolu */
 .unit{margin-top:22px}
-.uhead{position:relative;z-index:4}
+.uhead{position:relative}
 .uin{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--c);color:#FBF6EA}
 .uin h2{font-size:1.75rem;margin:4px 0 2px}
 .uin p{font-weight:600;opacity:.92;font-size:.95rem}
