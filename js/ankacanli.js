@@ -1,37 +1,51 @@
 /* #BilimKıvılcımı · Anka canlı
-   1) Boşta küçük davranışlar: çift göz kırpma, etrafa bakma, gerinme, tüy düzeltme, minik zıplama.
-   2) Gözler parmağı / fareyi izler.
+   1) Boşta küçük davranışlar (ruh hâline göre): göz kırpma, etrafa bakınma, merakla bakma, gerinme, tüy düzeltme,
+      minik zıplama, tüy silkeleme; üzgünken iç çekme, uykuda horlama, düşünürken kafa yatırma. (css/anka3d.css)
+   2) Parmağı / fareyi izler: gözler önden, kafa (yüz katmanları) arkadan döner, gövde hafifçe eğilir (--lx, --ly, --tl).
    3) Ders içinde Duolingo'daki gibi ara anlar: 5 ve 8 doğru üst üste, dersin yarısı.
    anka.js ve learn.js'ten SONRA yüklenir. */
 'use strict';
 (function(){
   if(typeof reduce!=='undefined'&&reduce)return;
-  const MICRO=['mi-blink','mi-look','mi-stretch','mi-preen','mi-hop','mi-blink','mi-look'];
+  /* süreler (ms) anka3d.css'teki animasyonlarla aynı */
+  const DUR={'mi-blink':750,'mi-look':1850,'mi-peek':1650,'mi-stretch':1550,'mi-preen':1450,'mi-hop':950,'mi-fluff':1150,'mi-sigh':2050,'mi-snore':2450,'mi-ponder':1850};
+  const POOL={
+    def:['mi-blink','mi-look','mi-peek','mi-stretch','mi-preen','mi-hop','mi-fluff','mi-blink','mi-look'],
+    nolid:['mi-look','mi-peek','mi-stretch','mi-preen','mi-hop','mi-fluff','mi-look'],
+    cheer:['mi-hop','mi-look','mi-fluff','mi-peek'],
+    sad:['mi-blink','mi-sigh','mi-look','mi-sigh'],
+    sleep:['mi-snore'],
+    think:['mi-blink','mi-ponder','mi-peek','mi-look','mi-ponder']};
+  const poolOf=a=>{const c=a.classList;
+    if(c.contains('sleep'))return POOL.sleep;if(c.contains('sad'))return POOL.sad;if(c.contains('think'))return POOL.think;
+    if(c.contains('cheer'))return POOL.cheer;return a.querySelector('.lid')?POOL.def:POOL.nolid};
   const vis=a=>{const r=a.getBoundingClientRect();return r.width>30&&r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth&&!a.closest('[hidden]')};
   const busy=a=>[...a.classList].some(c=>c.startsWith('act-')||c.startsWith('mi-'));
   function life(){
     if(document.visibilityState==='visible'){
       const all=[...document.querySelectorAll('svg.anka')].filter(a=>vis(a)&&!busy(a)&&!a.closest('.wm'));
-      if(all.length){const a=all[Math.random()*all.length|0];
-        const sleepy=a.classList.contains('sleep')||a.classList.contains('sad');
-        const m=sleepy?'mi-blink':MICRO[Math.random()*MICRO.length|0];
-        a.classList.add(m);setTimeout(()=>a.classList.remove(m),1700)}}
+      if(all.length){const a=all[Math.random()*all.length|0],P=poolOf(a),m=P[Math.random()*P.length|0];
+        a.classList.add(m);clearTimeout(a._miT);a._miT=setTimeout(()=>a.classList.remove(m),DUR[m]||1700)}}
     setTimeout(life,2600+Math.random()*3800);
   }
   setTimeout(life,3000);
 
-  /* Gözler parmağı izler (göz bebeği en fazla ~3 birim kayar) */
+  /* Parmağı izler. --lx/--ly: -1..1 bakış yönü (anka3d.css'te yüz +4, yanak +3, tepe −1.4, kuyruk −2.2 birim kayar),
+     --tl: gövde eğimi (derece). Telefonda (kaba işaretçi) eğim hafif kalır. */
+  const TILT=matchMedia('(pointer:coarse)').matches?1.6:3;
   let raf=0,px=-1,py=-1;
   function track(){raf=0;
     document.querySelectorAll('svg.anka').forEach(a=>{
       if(a.closest('.wm'))return;const r=a.getBoundingClientRect();if(r.width<30||r.bottom<0||r.top>innerHeight)return;
       const cx=r.left+r.width/2,cy=r.top+r.height*.42,dx=px-cx,dy=py-cy,d=Math.hypot(dx,dy)||1,k=Math.min(1,d/260);
-      const tx=(dx/d)*3.2*k,ty=(dy/d)*2.6*k;
-      a.querySelectorAll('.pup').forEach(p=>p.style.translate=`${tx.toFixed(2)}px ${ty.toFixed(2)}px`)})}
+      const lx=(dx/d)*k,ly=(dy/d)*k*.85,tl=(dx/d)*k*TILT;
+      if(Math.abs((a._lx||0)-lx)+Math.abs((a._ly||0)-ly)<.02)return;a._lx=lx;a._ly=ly;
+      a.style.setProperty('--lx',lx.toFixed(3));a.style.setProperty('--ly',ly.toFixed(3));a.style.setProperty('--tl',tl.toFixed(2))})}
   const mv=e=>{const t=e.touches?e.touches[0]:e;if(!t)return;px=t.clientX;py=t.clientY;if(!raf)raf=requestAnimationFrame(track)};
   addEventListener('pointermove',mv,{passive:true});addEventListener('touchstart',mv,{passive:true});
-  /* Bir süre dokunulmazsa bakış ortaya döner */
-  let idleT;addEventListener('pointermove',()=>{clearTimeout(idleT);idleT=setTimeout(()=>document.querySelectorAll('svg.anka .pup').forEach(p=>p.style.translate=''),2500)},{passive:true});
+  /* Bir süre dokunulmazsa bakış yumuşakça ortaya döner (geçişler anka3d.css'te) */
+  let idleT;const rest=()=>{clearTimeout(idleT);idleT=setTimeout(()=>document.querySelectorAll('svg.anka').forEach(a=>{a._lx=a._ly=0;['--lx','--ly','--tl'].forEach(v=>a.style.removeProperty(v))}),2500)};
+  addEventListener('pointermove',rest,{passive:true});addEventListener('touchstart',rest,{passive:true});
 })();
 
 /* ===== Ders içi ara anlar ===== */

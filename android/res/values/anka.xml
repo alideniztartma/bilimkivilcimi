@@ -3,5 +3,5 @@
     <string name="anka_widget_desc">Anka ve serin (büyük)</string>
     <string name="anka_widget_desc_m">Anka ve serin (yatay)</string>
     <string name="anka_widget_desc_s">Anka ve serin (küçük)</string>
-    <color name="ic_dead_bg">#B98A63</color>
+    <color name="ic_dead_bg">#7D6A5E</color>
 </resources>

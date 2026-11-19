@@ -271,7 +271,7 @@ function renderHead(){
   else{h.className='lhearts inf';h.innerHTML=fi('inf',28)}
   const bar=$('#lbar');
   if(L.mode==='speed'){bar.innerHTML=`<i class="on" style="background:var(--terra);width:${Math.max(0,(L.end-Date.now())/600)}%"></i>`;bar.style.display='block';$('i',bar).style.height='16px'}
-  else{bar.style.display='';bar.innerHTML=Array.from({length:L.total},(_,i)=>`<i class="${i<L.done?'on':''} ${i===L.done&&L.state!=='end'?'now':''}"></i>`).join('')}
+  else{bar.style.display='';if(L._pd!=null&&L.done>L._pd)L._ft=Date.now();L._pd=L.done;const fr=L._ft&&Date.now()-L._ft<900;bar.innerHTML=Array.from({length:L.total},(_,i)=>`<i class="${i<L.done?'on':''} ${i===L.done&&L.state!=='end'?'now':''}${fr&&i===L.done-1?' fresh':''}"></i>`).join('')}
 }
 function tickTimer(){if(!L||L.mode!=='speed'){clearInterval(timerI);return}
   const s=Math.ceil((L.end-Date.now())/1000);renderHead();if(s<=5&&s>0&&L.lastTick!==s){L.lastTick=s;sfx.tick()}

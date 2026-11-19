@@ -81,15 +81,30 @@ let toastT;
 function toast(h,ms){const t=$('#toast');t.innerHTML=h;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),ms||1800)}
 /* Bildirime dokununca hemen kapanır */
 document.addEventListener('click',e=>{if(e.target.closest('#toast')){clearTimeout(toastT);$('#toast').classList.remove('show')}});
-function openModal(html,wide){$('#mbox').className='mbox'+(wide?' wide':'');$('#mbox').innerHTML=html;$('#modal').hidden=false;const f=$('#mbox button,#mbox input');if(f)setTimeout(()=>f.focus(),30)}
-function closeModal(){$('#modal').hidden=true;delete $('#mbox').dataset.lockbg}
+function openModal(html,wide){$('#mbox').className='mbox'+(wide?' wide':'');$('#mbox').innerHTML=html;{const m=$('#modal');clearTimeout(m._ct);m.classList.remove('closing')}$('#modal').hidden=false;const f=$('#mbox button,#mbox input');if(f)setTimeout(()=>f.focus(),30)}
+function closeModal(){const m=$('#modal');delete $('#mbox').dataset.lockbg;
+  if(m.hidden||reduce){m.hidden=true;return}
+  /* Kapanış animasyonu: kısa süre sonra gerçekten gizlenir; bu arada yeniden açılırsa openModal iptal eder */
+  m.classList.add('closing');clearTimeout(m._ct);m._ct=setTimeout(()=>{if(m.classList.contains('closing')){m.hidden=true;m.classList.remove('closing')}},170)}
 document.addEventListener('DOMContentLoaded',()=>{$('#modal').addEventListener('click',e=>{if(e.target.id==='modal'&&!$('#mbox').dataset.lockbg)closeModal()})});
 function confetti(){
   if(reduce)return;const c=$('#fx'),x=c.getContext('2d');const ls=$('#lesson'),host=ls&&!ls.hidden?ls:document.body;if(c.parentNode!==host)host.appendChild(c);c.classList.toggle('fx-in',host===ls);c.width=innerWidth;c.height=innerHeight;
-  const cols=['#A3461F','#D9822B','#4B5A3A','#DCC190','#8E2B22','#EBC27A'];
-  const P=Array.from({length:150},()=>({x:innerWidth/2+(Math.random()-.5)*220,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,s:7+Math.random()*7,r:Math.random()*6,vr:(Math.random()-.5)*.3,c:pick(cols)}));
-  let n=0;(function f(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.vy+=.38;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/2,p.s,p.s);x.restore()});
-    if(++n<170)requestAnimationFrame(f);else x.clearRect(0,0,c.width,c.height)})();
+  const cols=['#E58A2C','#F2B451','#A3461F','#4B5A3A','#C2412D','#F7DDA6'],W=innerWidth,H=innerHeight;
+  /* Üç patlama: sol ve sağ köşeden yukarı çapraz, ortadan yelpaze. Şekiller: kare, şerit, daire, üçgen */
+  const mk=(x0,y0,ang,spread,pw,n)=>Array.from({length:n},()=>{const a=ang+(Math.random()-.5)*spread,v=(.55+Math.random()*.6)*pw;
+    return{x:x0,y:y0,vx:Math.cos(a)*v,vy:Math.sin(a)*v,s:6+Math.random()*7,sh:(Math.random()*4)|0,r:Math.random()*6.3,vr:(Math.random()-.5)*.35,ph:Math.random()*6.3,fl:.1+Math.random()*.2,c:pick(cols),d:Math.random()*8|0}});
+  const pw=Math.min(20,Math.max(13,H/42));
+  const P=[].concat(mk(W*.08,H*.78,-1.15,.9,pw,45),mk(W*.92,H*.78,-Math.PI+1.15,.9,pw,45),mk(W/2,H*.45,-Math.PI/2,1.6,pw*.8,40));
+  let n=0;const T=190;(function f(){x.clearRect(0,0,c.width,c.height);
+    P.forEach(p=>{if(p.d>0){p.d--;return}p.vy+=.34;p.vx*=.985;p.vy*=.99;p.x+=p.vx+Math.sin(p.ph+n*.08)*.5;p.y+=p.vy;p.r+=p.vr;p.ph+=p.fl;
+      const a=n>T-40?Math.max(0,(T-n)/40):1;x.globalAlpha=a;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;
+      const k=Math.cos(p.ph*2.2),s=p.s;/* k: şeklin havada dönerken yassılması (3B his) */
+      if(p.sh===0){x.scale(1,k);x.fillRect(-s/2,-s/2,s,s)}
+      else if(p.sh===1){x.scale(1,k);x.fillRect(-s*.9,-s*.22,s*1.8,s*.44)}
+      else if(p.sh===2){x.beginPath();x.arc(0,0,s*.45,0,6.3);x.fill()}
+      else{x.scale(1,k);x.beginPath();x.moveTo(0,-s*.6);x.lineTo(s*.55,s*.45);x.lineTo(-s*.55,s*.45);x.closePath();x.fill()}
+      x.restore()});
+    x.globalAlpha=1;if(++n<T)requestAnimationFrame(f);else x.clearRect(0,0,c.width,c.height)})();
 }
 let framed=true;try{framed=window.self!==window.top}catch(e){}
 

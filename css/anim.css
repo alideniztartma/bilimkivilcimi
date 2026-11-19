@@ -1,0 +1,118 @@
+/* #BilimKıvılcımı · Arayüz animasyonları (Duolingo tarzı yaylanan hareket)
+   Yalnızca transform / opacity / scale / translate. Anka (.anka) bu dosyada hiç ele alınmaz. */
+:root{--spring:cubic-bezier(.3,1.6,.5,1);--spring2:cubic-bezier(.2,1.35,.4,1);--out:cubic-bezier(.22,.8,.3,1)}
+
+/* ---------- Düğmeler: alt kenarlı bas-kalk, bırakınca yay ---------- */
+.b3,.obtn,.opt,.chip,.goals button{transition:transform .22s var(--spring),box-shadow .22s var(--spring),filter .15s,background-color .2s,border-color .2s}
+.b3:active,.obtn:active:not(:disabled),.opt:active,.chip:active,.goals button:active{transition-duration:.05s}
+.b3:active:not(:disabled){transform:translateY(4px);box-shadow:0 0 0 var(--cd)}
+.opt:active,.chip:active,.goals button:active{transform:translateY(3px)}
+.opt,.chip{will-change:transform}
+
+/* ---------- Ders: seçenekler ---------- */
+.lbody .ex{animation:exIn2 .42s var(--out) both}
+@keyframes exIn2{from{opacity:0;translate:42px 0}60%{opacity:1}to{opacity:1;translate:0 0}}
+.ex .opts>.opt,.ex .chips>.chip{animation:optIn .42s var(--spring2) both}
+.ex .opts>.opt:nth-child(1){animation-delay:.06s}.ex .opts>.opt:nth-child(2){animation-delay:.11s}
+.ex .opts>.opt:nth-child(3){animation-delay:.16s}.ex .opts>.opt:nth-child(n+4){animation-delay:.21s}
+.ex .chips>.chip:nth-child(-n+8){animation-delay:calc(var(--k,0) * 1ms)}
+@keyframes optIn{from{opacity:0;translate:0 16px;scale:.96}}
+.opt[aria-pressed="true"],.chip[aria-pressed="true"]{animation:optPick .38s var(--spring) both}
+@keyframes optPick{0%{scale:1}35%{scale:1.035;translate:0 -3px}100%{scale:1;translate:0 0}}
+.opt.hinted,.chip.hinted{transition:opacity .3s}
+
+/* ---------- Ders: geri bildirim paneli (yaylanarak gelir) ---------- */
+.lfoot.ok,.lfoot.bad{animation:footIn .5s var(--spring2) both}
+@keyframes footIn{from{translate:0 100%}to{translate:0 0}}
+.lfoot.ok .fb>div:not(.fa),.lfoot.bad .fb>div:not(.fa){animation:fbText .45s .12s var(--out) both}
+@keyframes fbText{from{opacity:0;translate:0 10px}}
+.lfoot.ok #lbtn,.lfoot.bad #lbtn{animation:btnPop .45s .18s var(--spring) both}
+@keyframes btnPop{from{scale:.85;opacity:0}to{scale:1;opacity:1}}
+/* Yanlışta sorunun kendisi hafifçe sarsılır */
+.lesson:has(#lfoot.bad) .lbody .ex{animation:exShake .46s ease-out both}
+@keyframes exShake{0%,100%{translate:0 0}15%{translate:-9px 0}35%{translate:8px 0}55%{translate:-5px 0}75%{translate:3px 0}}
+/* Doğruda seçilen seçenek hafifçe zıplar */
+.lesson:has(#lfoot.ok) .lbody .opt[aria-pressed="true"]{animation:optHop .5s var(--spring) both}
+@keyframes optHop{0%{translate:0 0}30%{translate:0 -6px;scale:1.03}100%{translate:0 0;scale:1}}
+
+/* ---------- Ders: ilerleme çubuğu ---------- */
+.lbar i{position:relative;overflow:hidden;transition:background-color .3s}
+.lbar i.on::before{content:"";position:absolute;left:12%;right:12%;top:3px;height:4px;border-radius:2px;background:rgba(255,255,255,.34)}
+.lbar i.fresh{animation:segPop .6s var(--spring) both}
+.lbar i.fresh::after{content:"";position:absolute;top:0;bottom:0;left:0;width:55%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);translate:-120% 0;animation:segShine .7s .12s ease-out both}
+@keyframes segPop{0%{scale:.6 1}45%{scale:1.12 1.25}100%{scale:1 1}}
+@keyframes segShine{to{translate:260% 0}}
+.lbar i.now{transform-origin:50% 50%}
+
+/* Kombo rozeti */
+.combo{animation:comboIn .55s .2s var(--spring) both}
+.combo svg{transform-origin:50% 90%;animation:flameWag 1.1s ease-in-out infinite}
+@keyframes comboIn{from{scale:.4;opacity:0;translate:-10px 0}}
+@keyframes flameWag{0%,100%{scale:1 1;rotate:0deg}30%{scale:1.1 .94;rotate:-5deg}65%{scale:.94 1.08;rotate:4deg}}
+
+/* Kalp sayacı (ders ekranı) yanlışta sarsılır */
+.lhearts{transform-origin:50% 50%}
+
+/* ---------- Yol sayfası ---------- */
+.path-in .nw{animation:nwIn2 .6s var(--spring2) both;animation-delay:calc(min(var(--i),26) * 38ms)}
+@keyframes nwIn2{from{opacity:0;scale:.35;translate:0 26px}}
+.path-in .uhead{animation:uhIn .45s var(--out) both}
+@keyframes uhIn{from{opacity:0;translate:0 10px}}
+.node{transition:transform .22s var(--spring),box-shadow .22s var(--spring),filter .15s}
+.node:active{transition-duration:.05s}
+.node.k-chest,.node.k-trophy{transition:none}
+/* Aktif düğüm: nefes alır + dışa yayılan halka */
+.node.cur{animation:curBeat 1.9s ease-in-out infinite}
+.node.cur::after{content:"";position:absolute;inset:-2px;border-radius:9px;border:3px solid var(--ember);pointer-events:none;animation:curRing 1.9s ease-out infinite}
+@keyframes curBeat{0%,100%{scale:1}50%{scale:1.07}}
+@keyframes curRing{0%{opacity:.7;scale:1}100%{opacity:0;scale:1.45}}
+.node.k-trophy.ready{animation:curBeat 1.9s ease-in-out infinite}
+/* Açılır pencere yaylanarak açılır */
+.pop{transform-origin:50% -12px;animation:popOpen .42s var(--spring2) both}
+@keyframes popOpen{from{opacity:0;scale:.82;translate:0 -12px}60%{opacity:1}to{opacity:1;scale:1;translate:0 0}}
+.pop .b3{animation:popBtn .4s .12s var(--spring) both}
+@keyframes popBtn{from{opacity:0;scale:.9}}
+.tipstart{transition:none}
+
+/* ---------- Modal: ölçek + saydamlık, yalnızca karartma ---------- */
+.modal{background:rgba(20,18,12,.6)}
+.modal:not([hidden]){animation:mdBg .22s ease-out both}
+.modal:not([hidden]) .mbox{animation:mdBox .42s var(--spring2) both}
+@keyframes mdBg{from{opacity:0}}
+@keyframes mdBox{from{opacity:0;scale:.86;translate:0 18px}50%{opacity:1}}
+.modal.closing{animation:mdBgOut .17s ease-in both!important;pointer-events:none}
+.modal.closing .mbox{animation:mdBoxOut .17s ease-in both!important}
+@keyframes mdBgOut{to{opacity:0}}
+@keyframes mdBoxOut{to{opacity:0;scale:.94;translate:0 8px}}
+
+/* ---------- Bildirim (toast): yaylanarak gelir ---------- */
+#toast{transform:translate(-50%,30px) scale(.88);transition:transform .45s var(--spring),opacity .22s,visibility 0s .45s}
+#toast.show{transform:translate(-50%,0) scale(1);transition:transform .45s var(--spring),opacity .2s,visibility 0s}
+
+/* ---------- Sekme çubuğu: seçilince ikon zıplar ---------- */
+.nav .ni{display:inline-grid;transform-origin:50% 100%}
+.nav[aria-current="page"] .ni{animation:tabHop .55s var(--spring) both}
+@keyframes tabHop{0%{translate:0 0;scale:1}30%{translate:0 -6px;scale:1.2 .9}60%{translate:0 1px;scale:.94 1.06}100%{translate:0 0;scale:1}}
+.mtab .nav,.side .nav{transition:background-color .2s,box-shadow .2s,color .2s}
+.mtab .nav:active .ni{scale:.88;transition:scale .05s}
+
+/* ---------- Üst sayaçlar: değişince pop ---------- */
+.stat.up{animation:statUp2 .65s var(--spring) both}
+.stat.down{animation:statDown2 .5s ease-in-out both}
+@keyframes statUp2{0%{scale:1}30%{scale:1.38;translate:0 -4px;rotate:-4deg}60%{scale:.95;rotate:3deg}100%{scale:1;translate:0 0;rotate:0deg}}
+@keyframes statDown2{20%{translate:-4px 0;scale:.94}40%{translate:4px 0}60%{translate:-3px 0}80%{translate:2px 0}100%{translate:0 0;scale:1}}
+
+/* ---------- Genel: kartlar ---------- */
+.card.xcard,.card.hubc,.card.item,.nfc{animation:cardIn .45s var(--out) both}
+@keyframes cardIn{from{opacity:0;translate:0 14px}}
+.card.xcard:active,.card.hubc:active,.card.item:active{scale:.985;transition:scale .06s}
+
+/* ---------- Hareketi azalt ---------- */
+@media (prefers-reduced-motion:reduce){
+  .lbody .ex,.ex .opts>.opt,.ex .chips>.chip,.opt[aria-pressed="true"],.chip[aria-pressed="true"],.lfoot.ok,.lfoot.bad,.lfoot .fb>div,.lfoot #lbtn,
+  .lesson:has(#lfoot.bad) .lbody .ex,.lesson:has(#lfoot.ok) .lbody .opt,.lbar i.fresh,.lbar i.fresh::after,.combo,.combo svg,
+  .path-in .nw,.path-in .uhead,.node.cur,.node.cur::after,.node.k-trophy.ready,.pop,.pop .b3,.modal:not([hidden]),.modal:not([hidden]) .mbox,
+  .modal.closing,.modal.closing .mbox,.nav[aria-current="page"] .ni,.stat.up,.stat.down,.card.xcard,.card.hubc,.card.item,.nfc{animation:none!important}
+  #toast,#toast.show{transition:opacity .2s,visibility 0s}
+  .b3,.obtn,.opt,.chip,.node{transition:none}
+}

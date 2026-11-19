@@ -129,31 +129,7 @@
 @media (prefers-reduced-motion:reduce){.onotif,.ogain,.onotif .obell,.onbtns .onarrow{animation:none}}
 .ostart .oopt .otag{color:#fff;font-size:.74rem;font-weight:800;text-align:center}
 
-/* ===== Anka canlı: boşta küçük davranışlar ===== */
-.anka.mi-blink .lid{animation:akBlink2 .7s ease both}
-@keyframes akBlink2{0%,100%{transform:scaleY(0)}18%,30%{transform:scaleY(1)}45%{transform:scaleY(0)}60%,70%{transform:scaleY(1)}85%{transform:scaleY(0)}}
-.anka.mi-look .ak-face{transform-box:fill-box;animation:akGlance 1.6s ease-in-out both}
-.anka.mi-look .ak-bd{animation:akGlanceB 1.6s ease-in-out both}
-@keyframes akGlance{0%,100%{transform:none}20%,42%{transform:translate(-5px,1px)}58%,80%{transform:translate(5px,-1px)}}
-@keyframes akGlanceB{0%,100%{transform:none}20%,42%{transform:rotate(-3deg)}58%,80%{transform:rotate(3deg)}}
-.anka.mi-stretch .wgl{animation:akStrL 1.4s cubic-bezier(.4,0,.3,1) both}
-.anka.mi-stretch .wgr{animation:akStrR 1.4s cubic-bezier(.4,0,.3,1) both}
-.anka.mi-stretch .ak-bd{animation:akStrB 1.4s ease-in-out both}
-@keyframes akStrL{0%,100%{transform:none}35%,60%{transform:rotate(38deg)}70%{transform:rotate(-6deg)}}
-@keyframes akStrR{0%,100%{transform:none}35%,60%{transform:rotate(-38deg)}70%{transform:rotate(6deg)}}
-@keyframes akStrB{0%,100%{transform:none}35%,60%{transform:scale(.97,1.06)}75%{transform:scale(1.03,.96)}}
-.anka.mi-preen .crest{animation:akPreen 1.3s ease-in-out both}
-.anka.mi-preen .ak-bd{animation:akPreenB 1.3s ease-in-out both}
-@keyframes akPreen{0%,100%{transform:none}15%{transform:rotate(-14deg)}30%{transform:rotate(12deg)}45%{transform:rotate(-9deg)}60%{transform:rotate(6deg)}75%{transform:rotate(-3deg)}}
-@keyframes akPreenB{0%,100%{transform:none}20%,70%{transform:rotate(-4deg) translateX(-2px)}}
-.anka.mi-hop .ak-all{animation:akHop2 .9s cubic-bezier(.3,.6,.4,1) both}
-@keyframes akHop2{0%,100%{transform:none}18%{transform:scale(1.08,.9)}42%{transform:translateY(-12%) scale(.95,1.06)}66%{transform:translateY(0) scale(1.07,.93)}82%{transform:scale(.98,1.02)}}
-/* hareketlerde tepe ve kuyruk geriden gelir (takip hareketi) */
-.anka[class*="act-"] .crest{animation:akCrestWob 1s .15s ease-out both}
-.anka[class*="act-"] .ak-tail{animation:akTailWob 1.1s .1s ease-out both}
-@keyframes akCrestWob{0%{transform:none}20%{transform:rotate(16deg) scaleY(.88)}40%{transform:rotate(-12deg) scaleY(1.08)}60%{transform:rotate(7deg)}80%{transform:rotate(-3deg)}100%{transform:none}}
-@keyframes akTailWob{0%{transform:none}25%{transform:rotate(-8deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-3deg)}100%{transform:none}}
-.anka .pup{transition:translate .25s ease-out}
+/* ===== Anka canlı: boşta küçük davranışlar (mi-*) ve takip hareketi → css/anka3d.css ===== */
 
 /* ===== Ders içi ara an (Duolingo tarzı) ===== */
 .moment{display:grid;justify-items:center;text-align:center;gap:6px;padding-top:5vh;animation:moIn .3s ease both}
