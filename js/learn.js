@@ -698,8 +698,8 @@ function typeBubbles(root){const tok=++typeTok;
     b.innerHTML=[...txt].map(ch=>`<span class="tch" aria-hidden="true">${esc(ch)}</span>`).join('');
     const sp=$$('.tch',b);let i=0;
     const step=()=>{if(tok!==typeTok||!b.isConnected)return;if(i>=sp.length)return;const ch=sp[i].textContent;sp[i].classList.add('on');i++;
-      if(/[^\s.,!?'"…:;-]/.test(ch))haptic('type');setTimeout(step,/[.!?]/.test(ch)?220:/[,:]/.test(ch)?120:42)};
-    setTimeout(step,bi===0?280:500)})}
+      if(/[^\s.,!?'"…:;-]/.test(ch))haptic('type');setTimeout(step,/[.!?]/.test(ch)?130:/[,:]/.test(ch)?70:24)};
+    setTimeout(step,bi===0?160:300)})}
 function onboard(){
   if($('#onb'))return;
   const st={i:0,goal:0,field:null,dir:1};

@@ -11,4 +11,10 @@ public class AnkaWidgetSmall extends AppWidgetProvider {
     AnkaCore.updateWidgets(c);
     AnkaCore.schedule(c);
   }
+
+  /* Widget büyütülüp küçültülünce uygun düzeni yeniden seç */
+  @Override
+  public void onAppWidgetOptionsChanged(Context c, AppWidgetManager wm, int id, android.os.Bundle o) {
+    AnkaCore.updateWidgets(c);
+  }
 }

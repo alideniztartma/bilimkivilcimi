@@ -105,29 +105,50 @@ public final class AnkaCore {
     int s = streak(c);
     /* Durum: 0 bugün tamam, 1 bekliyor, 2 henüz seri yok, 3 bayıldı */
     int st = dead(c) ? 3 : doneToday(c) ? 0 : s > 0 ? 1 : 2;
-    int[] imgs = { R.drawable.anka_w_happy, R.drawable.anka_w_sad, R.drawable.anka_w_wave, R.drawable.anka_w_dead };
-    int[] bgs = { R.drawable.w_bg_done, R.drawable.w_bg_wait, R.drawable.w_bg_new, R.drawable.w_bg_dead };
     String sub = st == 0 ? "Bugün tamam!" : st == 1 ? (lastChance(c) ? "Serini kurtar!" : "Ders zamanı!") : st == 2 ? "Hadi başlayalım!" : "Anka bayıldı!";
     int ink = st == 2 ? 0xFF7A2E16 : 0xFFFFFFFF;
     for (int k = 0; k < WIDGETS.length; k++) {
       try {
         int[] ids = wm.getAppWidgetIds(new ComponentName(c, WIDGETS[k]));
-        if (ids == null || ids.length == 0) continue;
-        RemoteViews rv = new RemoteViews(c.getPackageName(), LAYOUTS[k]);
-        rv.setImageViewResource(R.id.w_img, imgs[st]);
-        rv.setImageViewResource(R.id.w_flame, st == 0 ? R.drawable.w_flame_on : R.drawable.w_flame_off);
-        rv.setTextViewText(R.id.w_num, String.valueOf(st == 3 ? 0 : s));
-        rv.setInt(R.id.w_root, "setBackgroundResource", bgs[st]);
-        if (k != 2) {
-          rv.setTextViewText(R.id.w_sub, sub);
-          rv.setTextColor(R.id.w_sub, ink);
-          rv.setTextColor(R.id.w_num, ink);
-          if (k == 0) rv.setInt(R.id.w_sub, "setBackgroundResource", st == 2 ? R.drawable.w_pill_dark : R.drawable.w_pill);
+        if (ids == null) continue;
+        for (int id : ids) {
+          RemoteViews rv;
+          if (Build.VERSION.SDK_INT >= 31) {
+            /* Android 12+: telefon, widget'ın o anki boyutuna en uygun düzeni kendisi seçer (büyütüp küçültünce de) */
+            java.util.Map<android.util.SizeF, RemoteViews> m = new java.util.HashMap<>();
+            m.put(new android.util.SizeF(40f, 40f), build(c, 2, st, s, sub, ink, id));
+            m.put(new android.util.SizeF(140f, 40f), build(c, 1, st, s, sub, ink, id));
+            m.put(new android.util.SizeF(110f, 110f), build(c, 0, st, s, sub, ink, id));
+            rv = new RemoteViews(m);
+          } else {
+            /* Eski Android: boyuta bakıp düzeni biz seçeriz */
+            android.os.Bundle o = wm.getAppWidgetOptions(id);
+            int w = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0), h = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0);
+            int lay = w == 0 ? k : (h >= 100 && w >= 100 ? 0 : w >= 140 ? 1 : 2);
+            rv = build(c, lay, st, s, sub, ink, id);
+          }
+          wm.updateAppWidget(id, rv);
         }
-        rv.setOnClickPendingIntent(R.id.w_root, openApp(c, 10 + k));
-        wm.updateAppWidget(ids, rv);
       } catch (Exception e) { }
     }
+  }
+
+  static RemoteViews build(Context c, int k, int st, int s, String sub, int ink, int id) {
+    int[] imgs = { R.drawable.anka_w_happy, R.drawable.anka_w_sad, R.drawable.anka_w_wave, R.drawable.anka_w_dead };
+    int[] bgs = { R.drawable.w_bg_done, R.drawable.w_bg_wait, R.drawable.w_bg_new, R.drawable.w_bg_dead };
+    RemoteViews rv = new RemoteViews(c.getPackageName(), LAYOUTS[k]);
+    rv.setImageViewResource(R.id.w_img, imgs[st]);
+    rv.setImageViewResource(R.id.w_flame, st == 0 ? R.drawable.w_flame_on : R.drawable.w_flame_off);
+    rv.setTextViewText(R.id.w_num, String.valueOf(st == 3 ? 0 : s));
+    rv.setInt(R.id.w_root, "setBackgroundResource", bgs[st]);
+    if (k != 2) {
+      rv.setTextViewText(R.id.w_sub, sub);
+      rv.setTextColor(R.id.w_sub, ink);
+      rv.setTextColor(R.id.w_num, ink);
+      if (k == 0) rv.setInt(R.id.w_sub, "setBackgroundResource", st == 2 ? R.drawable.w_pill_dark : R.drawable.w_pill);
+    }
+    rv.setOnClickPendingIntent(R.id.w_root, openApp(c, 10 + k));
+    return rv;
   }
 
   /* Ayarlar'dan "ana ekrana ekle" (Android 8+, başlatıcı destekliyorsa) */
