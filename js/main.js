@@ -113,7 +113,6 @@ setInterval(()=>{const h=S.hearts;dayCheck();if(S.hearts!==h)renderStats()},3000
     A.minimizeApp()})})();
 
 /* Anka'nın telefon tarafı (widget, hatırlatma bildirimleri, seri bitince bayılan simge). Yalnızca yeni APK'da vardır. */
-const ANKA_N=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.Anka||null;
 const remHour=()=>S.remH==null?19:S.remH;
 function ankaSync(){if(!ANKA_N)return;try{const h=remHour();
   ANKA_N.sync({streak:S.streak|0,last:S.lastDay||'',freeze:S.freeze|0,name:S.name||'',on:h>=0,hour:h>=0?h:19,min:0}).catch(()=>{})}catch(e){}}

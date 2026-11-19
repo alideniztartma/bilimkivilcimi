@@ -103,3 +103,28 @@
 .ws .wak{margin-top:-10px}
 .ws .wbadge{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:1px;background:#fff;color:#7A2E16;border-radius:99px;padding:1px 6px 1px 5px}
 .ws .wnum{font-size:.78rem}
+
+/* ===== Tanışma: bildirim, kazanımlar, başlangıç ===== */
+.onotif{margin:18px auto 0;max-width:420px;border:2px solid var(--line);border-radius:22px;padding:22px 18px 18px;text-align:center;display:grid;justify-items:center;gap:12px;position:relative;animation:onPop .5s .15s cubic-bezier(.3,1.5,.5,1) both}
+.onotif .obell{animation:onRing 1.6s .7s ease-in-out infinite;transform-origin:50% 10%}
+.onotif p{margin:0;font-size:1.12rem;font-weight:600;line-height:1.4}
+.onbtns{display:grid;gap:3px;width:100%;position:relative;border-radius:14px;overflow:hidden}
+.onbtns span{display:block;padding:14px;background:var(--sand);font-weight:800;font-size:1.05rem}
+.onyes{color:#2F7DB8}.onno{color:var(--muted);opacity:.7}
+.onbtns .onarrow{position:absolute;right:-6px;top:6px;background:none;color:#2F9BE0;font-size:2rem;line-height:1;padding:0;animation:onPoint .9s ease-in-out infinite}
+.onotif{overflow:visible}
+@keyframes onPop{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+@keyframes onRing{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(14deg)}20%{transform:rotate(-12deg)}30%{transform:rotate(9deg)}40%{transform:rotate(-6deg)}50%{transform:rotate(3deg)}}
+@keyframes onPoint{0%,100%{transform:translateX(0)}50%{transform:translateX(-8px)}}
+.oskip{margin-top:10px;width:100%;background:none;border:0;color:var(--muted);font:800 .95rem var(--body);letter-spacing:.05em;padding:10px;cursor:pointer}
+.ogains{display:grid;gap:22px;margin-top:8px}
+.ogain{display:flex;gap:16px;align-items:center;animation:onSlide .45s var(--d,0s) cubic-bezier(.3,1.3,.5,1) both}
+.ogain b{display:block;font-size:1.15rem;margin-bottom:3px}.ogain small{color:var(--muted);font-size:.98rem;font-weight:600;line-height:1.35}
+.ogic{flex:none;width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:var(--c);color:#fff;box-shadow:0 4px 0 color-mix(in srgb,var(--c) 70%,#000)}
+@keyframes onSlide{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
+.ostart .oopt{position:relative;min-height:110px;gap:16px}
+.ostart .oill{flex:none;display:grid;place-items:center;width:64px}
+.ostart .otx b{font-size:1.1rem;line-height:1.3}
+.otag{position:absolute;right:-6px;top:-13px;background:#2F9BE0;color:#fff;font:800 .74rem/1 var(--body);letter-spacing:.06em;padding:6px 10px;border-radius:8px;max-width:none!important}
+@media (prefers-reduced-motion:reduce){.onotif,.ogain,.onotif .obell,.onbtns .onarrow{animation:none}}
+.ostart .oopt .otag{color:#fff;font-size:.74rem;font-weight:800;text-align:center}

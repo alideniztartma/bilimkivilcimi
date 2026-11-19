@@ -1,5 +1,7 @@
 /* #BilimKıvılcımı · Durum, ses, bildirim, ödüller */
 'use strict';
+/* Anka'nın telefon tarafı (yalnızca APK'da): widget, bildirim, simge. Bkz. main.js */
+var ANKA_N=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.Anka||null;
 
 const KEY='bk-duo-v1',OLDLAB='bilimkivilcimi-v1';
 const dkey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
