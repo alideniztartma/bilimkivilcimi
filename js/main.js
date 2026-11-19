@@ -36,7 +36,7 @@ function doRoute(){
   if(h==='lab')renderLab();if(h==='defter')renderNotebook();if(h==='ogretmen')renderTeacher();if(h==='hakkinda')renderAbout();
   if(h.startsWith('lab-'))renderExp(h.slice(4));if(h==='yonetici')renderAdmin();if(h==='yuva')renderNest();
   document.title=(h==='ogren'?'':(h.startsWith('lab-')?EXPS.find(x=>'lab-'+x.id===h).title:(PAGES.find(p=>p[0]===h)||[0,{cizim:'Çizim atölyesi',sozluk:'Sözlük',defter:'Deney defterim',ogretmen:'Öğretmenler için',hakkinda:'Proje hakkında',yonetici:'Yönetici paneli',yuva:'Anka\'nın yuvası'}[h]])[1])+' · ')+'#BilimKıvılcımı';
-  window.scrollTo(0,0);if(h==='ogren')scrollCur();
+  window.scrollTo(0,0);if(h==='ogren'){scrollCur();setTimeout(()=>uStickSet(true),30)}
   if(!S.onb&&h==='ogren'&&$('#modal').hidden)onboard();
 }
 addEventListener('hashchange',route);
