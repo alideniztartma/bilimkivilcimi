@@ -49,7 +49,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('.fmenu'))closeFm
 addEventListener('resize',closeFmenu);
 let PATH_ANIM=true;
 function renderPath(){if(typeof petTick==='function')petTick();
-  const ns=allNodes(),cf=curField(),F=fieldOf(cf);let h=ankaMsg()+mobileQuests()+'<div class="ustick" id="uStick"></div>',gi=0;
+  const ns=allNodes(),cf=curField(),F=fieldOf(cf);let h=ankaMsg()+mobileQuests(),gi=0;
   fieldUnits(cf).forEach(({u,ui},fi_)=>{
     const un=ns.filter(n=>n.ui===ui),k=fi_+1;
     h+=`<section class="unit" style="--c:var(--u${ui+1});--cd:var(--u${ui+1}d)">
@@ -72,21 +72,8 @@ function renderPath(){if(typeof petTick==='function')petTick();
   const nU=fieldUnits(cf).length;
   h+=F.soon.map((t,i)=>`<section class="unit soonunit"><div class="uhead frame"><div class="uin"><div><span class="lbl">${F.title.toLocaleUpperCase('tr')} · ${nU+i+1}. ÜNİTE · YAKINDA</span><h2>${esc(t)}</h2><p>Bu ünite hazırlanıyor.</p></div><span class="guide" aria-hidden="true">${ic('lock',22)}</span></div></div></section>`).join('');
   h+=`<div class="pathend">${anka('wow',90)}<h3>Yeni üniteler yolda!</h3><p>Diğer alanlara da göz at, atölyede çizim yap, laboratuvarda deney dene.</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">${FIELDS.filter(f=>f.id!==cf).map(f=>`<button class="b3 ghost" type="button" data-field="${f.id}">${ic(f.icon,18)} ${f.title}</button>`).join('')}<a class="b3 ghost" href="#lab">Laboratuvar</a></div></div>`;
-  $('#path').innerHTML=h;uStickSet(true);if(PATH_ANIM&&!reduce){const P=$('#path');P.classList.remove('path-in');void P.offsetWidth;P.classList.add('path-in');clearTimeout(P._pa);P._pa=setTimeout(()=>P.classList.remove('path-in'),1800)}PATH_ANIM=false;
+  $('#path').innerHTML=h;if(PATH_ANIM&&!reduce){const P=$('#path');P.classList.remove('path-in');void P.offsetWidth;P.classList.add('path-in');clearTimeout(P._pa);P._pa=setTimeout(()=>P.classList.remove('path-in'),1800)}PATH_ANIM=false;
 }
-/* Tek, sabit ünite başlığı: yol kaydıkça ekrandaki ünitenin başlığına dönüşür (Duolingo gibi).
-   Ünitelerin kendi başlıkları yerinde görünmez; sadece içerikleri buradan kopyalanır. */
-let uStickI=-1,uStickRaf=0;
-function uStickSet(force){const st=$('#uStick');if(!st||page!=='ogren')return;
-  const mt=$('.mtop'),top=mt&&getComputedStyle(mt).display!=='none'?mt.offsetHeight:0;st.style.top=top+'px';
-  const secs=$$('#path section.unit');if(!secs.length)return;
-  const line=top+st.offsetHeight+24;let i=0;secs.forEach((x,k)=>{if(x.getBoundingClientRect().top<=line)i=k});
-  if(i===uStickI&&!force)return;const changed=uStickI!==-1&&i!==uStickI;uStickI=i;
-  const sec=secs[i],hd=sec.querySelector('.uhead');st.setAttribute('style',(sec.getAttribute('style')||'')+';top:'+top+'px');
-  st.classList.toggle('soon',sec.classList.contains('soonunit'));
-  st.innerHTML=hd?hd.outerHTML:'';if(changed&&!reduce){const f=st.firstElementChild;if(f){f.classList.add('uswap')}}}
-addEventListener('scroll',()=>{if(uStickRaf)return;uStickRaf=requestAnimationFrame(()=>{uStickRaf=0;uStickSet(false)})},{passive:true});
-addEventListener('resize',()=>uStickSet(true));
 function mobileQuests(){const n=Object.keys(S.day.claimed).length;
   return `<a class="card mquest" href="#gorevler"><span class="mq-i">${ic('target',22)}</span><span><b>Günlük görevler</b><small>${n} / 3 tamamlandı</small></span><span class="mq-go">${ic('arrowU',18)}</span></a>`}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-field]');if(!b||b.closest('#mbox'))return;const changed=S.field!==b.dataset.field;S.field=b.dataset.field;save();closeFmenu();sfx.tap();BUDDY_LINE=pickL(ANKA.path);PATH_ANIM=changed;renderStats();renderPath();

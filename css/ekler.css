@@ -210,15 +210,3 @@
 .slot.ok{background:color-mix(in srgb,var(--olive) 35%,transparent);outline:2px solid var(--olive)}
 .slot.bad{background:color-mix(in srgb,var(--garnet) 30%,transparent);outline:2px solid var(--garnet)}
 @keyframes optBad{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
-
-/* ===== Sabit ünite başlığı ===== */
-#path section.unit>.uhead{display:none}
-#path section.unit{margin-top:34px}
-#path section.unit:first-of-type{margin-top:6px}
-.ustick{position:sticky;z-index:4;margin:0 -2px;padding:6px 2px 4px;background:var(--tessera)}
-.ustick:empty{display:none}
-.ustick.soon .uhead{filter:grayscale(.55)}
-.ustick .uhead{animation:none}
-.ustick .uhead.uswap .uin{animation:uSwap .35s cubic-bezier(.3,1.4,.5,1)}
-@keyframes uSwap{from{transform:translateY(-10px);opacity:.3}to{transform:none;opacity:1}}
-@media (prefers-reduced-motion:reduce){.ustick .uhead.uswap .uin{animation:none}}
