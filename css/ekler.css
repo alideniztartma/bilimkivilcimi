@@ -212,3 +212,6 @@
 @keyframes optBad{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
 .lr.ok{border-color:var(--olive)!important;background:color-mix(in srgb,var(--olive) 22%,var(--raised))!important}
 .lr.bad{border-color:var(--garnet)!important;background:color-mix(in srgb,var(--garnet) 20%,var(--raised))!important;animation:optBad .4s ease}
+
+/* Doğru/yanlış rengi geçişsiz, anında görünür */
+.opt.ok,.opt.bad,.lr.ok,.lr.bad,.slot.ok,.slot.bad{transition:none!important}

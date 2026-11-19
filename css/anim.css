@@ -24,9 +24,9 @@
 /* ---------- Ders: geri bildirim paneli (yaylanarak gelir) ---------- */
 .lfoot.ok,.lfoot.bad{animation:footIn .5s var(--spring2) both}
 @keyframes footIn{from{translate:0 100%}to{translate:0 0}}
-.lfoot.ok .fb>div:not(.fa),.lfoot.bad .fb>div:not(.fa){animation:fbText .45s .12s var(--out) both}
+.lfoot.ok .fb>div:not(.fa),.lfoot.bad .fb>div:not(.fa){animation:fbText .4s .03s var(--out) both}
 @keyframes fbText{from{opacity:0;translate:0 10px}}
-.lfoot.ok #lbtn,.lfoot.bad #lbtn{animation:btnPop .45s .18s var(--spring) both}
+.lfoot.ok #lbtn,.lfoot.bad #lbtn{animation:btnPop .4s .06s var(--spring) both}
 @keyframes btnPop{from{scale:.85;opacity:0}to{scale:1;opacity:1}}
 /* Yanlışta sorunun kendisi hafifçe sarsılır */
 .lesson:has(#lfoot.bad) .lbody .ex{animation:exShake .46s ease-out both}
