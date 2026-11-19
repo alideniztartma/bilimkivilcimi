@@ -21,19 +21,22 @@ function anka(mood='happy',size=100,acc,cls){
   const st=(o,c,a)=>`<stop offset="${o}" stop-color="${c}"${a!=null?` stop-opacity="${a}"`:''}/>`;
   const lin=(k,x1,y1,x2,y2,stops)=>`<linearGradient id="${u}${k}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${stops}</linearGradient>`;
   const rad=(k,cx,cy,r,stops,us)=>`<radialGradient id="${u}${k}" cx="${cx}" cy="${cy}" r="${r}"${us?' gradientUnits="userSpaceOnUse"':''}>${stops}</radialGradient>`;
-  const defs=`<defs>${rad('b',50,46,96,st(0,'#F7B868')+st(.3,'#EC983C')+st(.58,body)+st(.84,'#CC6C28')+st(1,'#B0522A'),1)}
-    ${rad('y',.42,.28,.85,st(0,'#FFF4DA')+st(.5,belly)+st(1,'#E5BE82'))}
-    ${lin('w',0,0,.35,1,st(0,'#C65D2A')+st(.5,dark)+st(1,'#80321A'))}
-    ${lin('l',0,0,0,1,st(0,'#F09D44')+st(1,'#CF7328'))}
-    ${rad('e',.42,.36,.7,st(0,'#FFFFFF')+st(.62,'#FFFDF8')+st(1,'#E4D9C8'))}
-    ${rad('p',.38,.32,.75,st(0,'#56523F')+st(.55,ink)+st(1,'#1A1913'))}
-    ${lin('k',0,0,0,1,st(0,'#C9493B')+st(.5,beak)+st(1,'#681C17'))}
-    ${lin('c1',0,1,0,0,st(0,'#C26826')+st(1,'#F0A848'))}
-    ${lin('c2',0,1,0,0,st(0,'#E39A3E')+st(1,'#FFD889'))}
-    ${lin('c3',0,1,0,0,st(0,'#86331A')+st(1,'#CC6230'))}
-    ${rad('c',.5,.5,.5,st(0,'#E8776A',1)+st(.55,'#E8776A',.75)+st(1,'#E8776A',0))}
-    ${rad('g',.5,.5,.5,st(0,'#FFFFFF',.75)+st(1,'#FFFFFF',0))}
-    ${rad('s',.5,.5,.5,st(0,ink,.34)+st(.6,ink,.16)+st(1,ink,0))}</defs>`;
+  /* Duolingo tarzı "cel shading": yumuşak geçiş yok; her parça sert kenarlı ışık / ana renk / gölge bantlarından oluşur.
+     Şekiller aynı; yalnızca boyama düz renk bloklarına dönüştü. hb: sert bant (aynı noktada iki durak). */
+  const hb=(...p)=>p.map(([c,a,b2],i)=>st(a,c)+st(b2,c)).join('');
+  const defs=`<defs>${rad('b',46,44,100,hb(['#F5A957',0,.36],[body,.36,.78],['#C9672A',.78,1]),1)}
+    ${rad('y',.4,.26,.9,hb(['#FFF0CF',0,.4],[belly,.4,.8],['#EAC48A',.8,1]))}
+    ${lin('w',0,0,.35,1,hb(['#BE5428',0,.42],[dark,.42,.8],['#86361B',.8,1]))}
+    ${lin('l',0,0,0,1,hb(['#F09D44',0,.5],['#D67A2B',.5,1]))}
+    ${rad('e',.42,.34,.72,hb(['#FFFFFF',0,.8],['#E8DFD0',.8,1]))}
+    ${rad('p',.38,.32,.75,hb(['#4A4637',0,.32],[ink,.32,1]))}
+    ${lin('k',0,0,0,1,hb(['#C94A36',0,.38],[beak,.38,.8],['#6E1E18',.8,1]))}
+    ${lin('c1',0,1,0,0,hb(['#C9702A',0,.45],['#EFA445',.45,1]))}
+    ${lin('c2',0,1,0,0,hb(['#E9A43F',0,.45],['#FFD27A',.45,1]))}
+    ${lin('c3',0,1,0,0,hb(['#8A3519',0,.5],['#C35A2B',.5,1]))}
+    ${rad('c',.5,.5,.5,st(0,'#E8776A',.62)+st(1,'#E8776A',.62))}
+    ${rad('g',.5,.5,.5,st(0,'#FFFFFF',.6)+st(1,'#FFFFFF',.6))}
+    ${rad('s',.5,.5,.5,st(0,ink,.22)+st(1,ink,.22))}</defs>`;
   /* kuyruk alevleri (arkada) */
   const tail=`<path d="M46 126 C 26 134 12 126 8 110 C 18 118 30 116 40 108 Z" fill="${U('c3')}"/>
     <path d="M94 126 C 114 134 128 126 132 110 C 122 118 110 116 100 108 Z" fill="${U('c3')}"/>
