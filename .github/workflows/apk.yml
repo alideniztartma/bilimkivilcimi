@@ -55,6 +55,9 @@ jobs:
           mkdir -p android/app/src/main/res/drawable-nodpi
           cp ../android/splash_icon.png android/app/src/main/res/drawable-nodpi/splash_icon.png
           cp ../android/MainActivity.java android/app/src/main/java/org/antiochrising/bilimkivilcimi/MainActivity.java
+          cp ../android/java/*.java android/app/src/main/java/org/antiochrising/bilimkivilcimi/
+          cp -r ../android/res/. android/app/src/main/res/
+          node ../android/patch-manifest.js
           node -e "const fs=require('fs');for(const f of ['android/app/src/main/res/values/styles.xml','android/app/src/main/res/values-v31/styles.xml']){if(!fs.existsSync(f))continue;let s=fs.readFileSync(f,'utf8');s=s.replace(/(<style name=\"AppTheme.NoActionBarLaunch\"[^>]*>)/,'\$1<item name=\"windowSplashScreenBackground\">#D9822B</item><item name=\"windowSplashScreenAnimatedIcon\">@drawable/splash_icon</item><item name=\"android:windowBackground\">#D9822B</item>');fs.writeFileSync(f,s);console.log(f,s)}"
           npx cap sync android
 

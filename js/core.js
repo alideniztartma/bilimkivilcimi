@@ -11,7 +11,7 @@ const DEF=()=>({v:1,name:'',goal:20,xp:0,gems:50,hearts:5,heartAt:null,streak:0,
   lab:{tasks:{},notes:{},found:{},seen:{},st:{},ask:{}},cat:{},field:'yazilim',wear:{head:null,face:null,neck:null},pet:{food:70,joy:70,t:Date.now(),inv:{misir:3},fed:0,pets:0},uid:newUid(),tok:newUid()+newUid()+newUid(),share:true,syncH:'',day:newDay()});
 let S=DEF();
 try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===1){S=Object.assign(DEF(),r);if(!r.uid||!r.tok){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(_){}}S.lab=Object.assign({tasks:{},notes:{},found:{},seen:{},st:{},ask:{}},r.lab||{})}}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(typeof scheduleSync==='function')scheduleSync()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(typeof scheduleSync==='function')scheduleSync();if(typeof ankaSoon==='function')ankaSoon()}
 
 /* Eski laboratuvar kayıtlarını yeni sisteme taşı */
 /* Alan dersleri artık yol haritasında: eski ayrı kayıtları ders kayıtlarına taşı */

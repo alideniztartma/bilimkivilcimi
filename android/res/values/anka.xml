@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="anka_widget_desc">Anka ve serin</string>
+    <color name="ic_dead_bg">#6F6259</color>
+</resources>

@@ -111,3 +111,17 @@ setInterval(()=>{const h=S.hearts;dayCheck();if(S.hearts!==h)renderStats()},3000
     if(page.startsWith('lab-')){location.hash='#lab';return}
     if(page!=='ogren'){location.hash='#ogren';return}
     A.minimizeApp()})})();
+
+/* Anka'nın telefon tarafı (widget, hatırlatma bildirimleri, seri bitince bayılan simge). Yalnızca yeni APK'da vardır. */
+const ANKA_N=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.Anka||null;
+const remHour=()=>S.remH==null?19:S.remH;
+function ankaSync(){if(!ANKA_N)return;try{const h=remHour();
+  ANKA_N.sync({streak:S.streak|0,last:S.lastDay||'',freeze:S.freeze|0,name:S.name||'',on:h>=0,hour:h>=0?h:19,min:0}).catch(()=>{})}catch(e){}}
+var ankaT;function ankaSoon(){clearTimeout(ankaT);ankaT=setTimeout(ankaSync,800)}
+if(ANKA_N){setTimeout(ankaSync,600);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')ankaSync();else{dayCheck();ankaSync()}})}
+/* İlk ders bitince bir kez sor: Anka hatırlatsın mı? */
+function ankaAfterLesson(){if(!ANKA_N||S.notifAsked||!S.lastDay)return;
+  {setTimeout(()=>{if(!$('#modal').hidden||$('#lesson').hidden===false)return;S.notifAsked=true;save();
+      openModal(`${anka('happy',110,undefined,'act-jump')}<h2>Seni her gün hatırlatayım mı?</h2><p>Serin bozulmasın diye her akşam ${remHour()}:00'da kısa bir hatırlatma gönderirim. Saatini Profil'den değiştirebilirsin.</p><button class="b3" type="button" id="nYes">Evet, hatırlat</button><button class="b3 ghost" type="button" id="nNo">Şimdi değil</button>`);
+      $('#nYes').onclick=()=>{closeModal();ANKA_N.askNotif().then(r=>{if(r&&r.granted){if(S.remH==null||S.remH<0)S.remH=19;save();ankaSync();toast('Tamam! Her gün hatırlatacağım.')}else toast('Bildirim izni verilmedi. İstersen telefon ayarlarından açabilirsin.')}).catch(()=>{})};
+      $('#nNo').onclick=()=>{closeModal();S.remH=-1;save();toast('Tamam. İstersen Profil > Ayarlar\'dan açabilirsin.')}},700)}}

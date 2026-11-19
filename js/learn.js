@@ -396,7 +396,7 @@ function finish(){
   newB.forEach(id=>{const b=BADGES.find(x=>x.id===id);steps.push(()=>`<div class="done-screen"><div class="medal" style="width:120px;height:120px">${ic(b.icon,60)}</div><h1>Yeni rozet!</h1><h2>${b.name}</h2><p>${b.desc}</p></div>`)});
   let k=0;
   const show=()=>{$('#lbody').innerHTML=steps[k]();sfx.win();if(k===0&&mood!=='sad')confetti();const c=$('#openCertNow');if(c)c.onclick=()=>openCert(L.ui)};
-  L.endStep=()=>{k++;if(k<steps.length)show();else{const v=m==='lesson'&&S.pet.visit;closeLesson();if(v)location.hash='#yuva'}};
+  L.endStep=()=>{k++;if(k<steps.length)show();else{const v=m==='lesson'&&S.pet.visit;closeLesson();if(v)location.hash='#yuva';if(typeof ankaAfterLesson==='function')ankaAfterLesson()}};
   show();
 }
 
@@ -637,6 +637,7 @@ function renderProfile(){
     ${canSpeak?`<div><b>Soruları sesli oku</b><div class="seg" id="sTts"><button type="button" data-v="1" aria-pressed="${S.tts}">Açık</button><button type="button" data-v="0" aria-pressed="${!S.tts}">Kapalı</button></div></div>`:''}
     <div><b>Görünüm</b><div class="seg" id="sTheme">${[['auto','Otomatik'],['light','Gündüz'],['dark','Gece']].map(t=>`<button type="button" data-v="${t[0]}" aria-pressed="${S.theme===t[0]}">${t[1]}</button>`).join('')}</div></div>
     <div><b>Anonim istatistik</b><div class="seg" id="sShare"><button type="button" data-v="1" aria-pressed="${S.share}">Açık</button><button type="button" data-v="0" aria-pressed="${!S.share}">Kapalı</button></div><p class="muted" style="font-size:.82rem;flex-basis:100%">Açıkken bitirdiğin ders ve deney sayıları adın olmadan, rastgele bir kimlikle proje ekibine gönderilir. Böylece sitenin kaç çocuğa ulaştığını görürüz.</p></div>
+    ${typeof ANKA_N!=='undefined'&&ANKA_N?`<div><b>Günlük hatırlatma</b><div class="seg" id="sRem">${[[-1,'Kapalı'],[17,'17:00'],[19,'19:00'],[21,'21:00']].map(([v,t])=>`<button type="button" data-v="${v}" aria-pressed="${remHour()===v}">${t}</button>`).join('')}</div></div>`:''}
     <div><b>Günlük hedef</b><div class="seg" id="sGoal">${[10,20,30,50].map(g=>`<button type="button" data-v="${g}" aria-pressed="${S.goal===g}">${g} DP</button>`).join('')}</div></div>
     ${window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.CapacitorUpdater?`<div><b>Uygulama sürümü</b><span class="upd"><code>${esc(window.BK_BUILD)}</code><button class="b3 sm ghost" type="button" id="sUpd">Güncellemeleri denetle</button></span></div>`:''}
     <div><b>İlerlemeyi sıfırla</b><button class="b3 sm ghost" type="button" id="sReset" style="--oc:var(--garnet)">Sıfırla</button></div>
@@ -647,7 +648,7 @@ function renderProfile(){
   $('#pcopy').onclick=async()=>{try{await navigator.clipboard.writeText(code);toast(ic('check',20)+' Kod kopyalandı')}catch(e){const r=document.createRange();r.selectNodeContents($('#pcode'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Kodu seçtim, kopyalayabilirsin')}};
   $$('[data-cert]').forEach(b=>b.onclick=()=>openCert(+b.dataset.cert));
   const segH=(id,fn)=>{const el=$(id);if(el)el.onclick=e=>{const b=e.target.closest('button');if(!b)return;fn(b.dataset.v);save();renderAll()}};
-  segH('#sSound',v=>S.sound=v==='1');segH('#sVib',v=>{S.vib=v==='1';if(S.vib)haptic('heavy')});segH('#sTts',v=>{S.tts=v==='1';if(S.tts)speak('Sesli okuma açık.')});segH('#sTheme',v=>{S.theme=v;applyTheme()});segH('#sGoal',v=>S.goal=+v);segH('#sShare',v=>{S.share=v==='1'});
+  segH('#sSound',v=>S.sound=v==='1');segH('#sVib',v=>{S.vib=v==='1';if(S.vib)haptic('heavy')});segH('#sTts',v=>{S.tts=v==='1';if(S.tts)speak('Sesli okuma açık.')});segH('#sTheme',v=>{S.theme=v;applyTheme()});segH('#sGoal',v=>S.goal=+v);segH('#sRem',v=>{S.remH=+v;if(S.remH>=0&&ANKA_N)ANKA_N.askNotif().then(r=>{if(r&&!r.granted)toast('Bildirim izni kapalı. Telefon ayarlarından açabilirsin.')}).catch(()=>{})});segH('#sShare',v=>{S.share=v==='1'});
   let armed=false;$('#sReset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Emin misin? Tekrar bas';setTimeout(()=>{armed=false;if(e.target.isConnected)e.target.textContent='Sıfırla'},4000);return}
     try{localStorage.removeItem(KEY)}catch(_){ }S=DEF();S.lab.migrated=1;save();applyTheme();location.hash='#ogren';renderAll();onboard()};
 }
