@@ -48,14 +48,7 @@ function touchStreak(){const today=dkey();if(S.lastDay===today)return false;
   S.streak=(S.lastDay&&dayNum(today)-dayNum(S.lastDay)===1&&S.streak>0)?S.streak+1:1;S.lastDay=today;S.best=Math.max(S.best,S.streak);
   if(!S.days.includes(today))S.days=S.days.concat(today).slice(-21);return true}
 
-/* Ses efektleri */
-let AC=null;
-function tone(seq,type='sine',vol=.12){if(!S.sound)return;
-  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();let t=AC.currentTime;
-    seq.forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d);t+=d*.8})}catch(e){}}
-const sfx={ok:()=>tone([[660,.09],[990,.16]]),bad:()=>tone([[196,.14],[147,.22]],'triangle',.16),tap:()=>tone([[520,.04]],'sine',.05),
-  win:()=>tone([[523,.12],[659,.12],[784,.12],[1047,.3]],'triangle',.12),coin:()=>tone([[1200,.06],[1600,.12]],'square',.05),tick:()=>tone([[880,.03]],'square',.03),chirp:()=>tone([[1180,.05],[1560,.06],[1320,.07]],'sine',.06),
-  whoosh:()=>tone([[300,.08],[500,.08],[800,.12]],'sawtooth',.04),splash:()=>tone([[180,.06],[120,.18]],'triangle',.1),thud:()=>tone([[90,.15]],'square',.12)};
+/* Ses efektleri: js/ses.js (tone, sfx, AC) */
 /* Titreşim: uygulamada Capacitor Haptics, tarayıcıda navigator.vibrate */
 function haptic(k){if(!S||S.vib===false)return;try{const d=k==='bad'?[18,40,18]:k==='ok'||k==='win'?[10,30,12]:k==='heavy'?14:k==='type'?4:5;
   const H=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.Haptics;
