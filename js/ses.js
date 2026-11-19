@@ -127,11 +127,16 @@ const sfx={
   tick(){if(!seGate('tick',30)||!seReady())return;const t=AC.currentTime,bus=seBus(.05);
     seNoise({f:seVary(5200,.08),q:6,t,v:.08,d:.018,a:.0008,bus});
     seNote({f:seVary(2100,.04),t,v:.04,d:.02,a:.0008,type:'triangle',bus})},
-  /* Anka cıvıltısı: perdesi kayan, titreşimli 2-3 kısa kuş sesi */
-  chirp(){if(!seGate('chirp',120)||!seReady())return;let t=AC.currentTime+.005;const n=2+(Math.random()*2|0),bus=seBus(.2,.15);
-    for(let i=0;i<n;i++){const base=seVary(2300+i*180,.08),d=seVary(.075,.2);
-      seNote({f:base*.7,to:base*1.35,glide:d*.6,t,v:.15,d,a:.006,vib:[seVary(38,.15),120],bus});
-      t+=d+seVary(.035,.3)}},
+  /* Anka cıvıltısı: temiz, yumuşak, perdesi yukarı kayan 2-3 kısa kuş sesi (cızırtısız) */
+  chirp(){if(!seGate('chirp',120)||!seReady())return;let t=AC.currentTime+.005;const n=2+(Math.random()*2|0),bus=seBus(.18,.15);
+    for(let i=0;i<n;i++){const base=seVary(seScale(9+i),.02),d=seVary(.07,.15);
+      seNote({f:base*.82,to:base*1.12,glide:d*.7,t,v:.11,d,a:.01,vib:[11,base*.012],bus});
+      t+=d+seVary(.04,.25)}},
+  /* Seçim: buton seçilince yumuşak "bloop" + tatlı küçük çan */
+  pick(){if(!seGate('pick',60)||!seReady())return;const t=AC.currentTime+.005,bus=seBus(.16);
+    seNote({f:seMidi(67),to:seMidi(79),glide:.06,t,v:.13,d:.1,a:.004,bus});
+    seNote({f:seMidi(55),to:seMidi(67),glide:.06,t,v:.05,d:.08,a:.004,type:'triangle',lp:1600,bus});
+    seBell(seMidi(84),t+.045,.045,.28,bus)},
   /* Rüzgâr: süzgeci tize doğru süpüren hışırtı */
   whoosh(){if(!seGate('whoosh',80)||!seReady())return;const t=AC.currentTime;
     seNoise({f:350,to:3200,q:1.6,t,v:.34,d:.32,a:.06,swell:.45,rev:.15,pan:-.2});

@@ -754,7 +754,7 @@ function onboard(){
     if(e.target.closest('[data-oback]')){if(steps[st.i]==='name')S.name=($('#oname').value||'').trim();st.i=Math.max(0,st.i-1);while(st.i>0&&PASS.has(steps[st.i]))st.i--;st.dir=-1;view();return}
     if(e.target.closest('[data-onext]')){next();return}
     if(e.target.closest('[data-onskip]')){S.notifAsked=true;S.remH=-1;save();st.i++;st.dir=1;view();return}
-    const pickOpt=b=>{el.querySelectorAll('.oopt').forEach(x=>x.setAttribute('aria-pressed',x===b));const n=el.querySelector('[data-onext]');if(n)n.disabled=false;sfx.chirp();
+    const pickOpt=b=>{el.querySelectorAll('.oopt').forEach(x=>x.setAttribute('aria-pressed',x===b));const n=el.querySelector('[data-onext]');if(n)n.disabled=false;sfx.pick();
       const a=el.querySelector('.ohead .anka');if(a&&typeof ankaAct==='function')ankaAct(a,'jump')};
     const f=e.target.closest('[data-of]');if(f){const ch=st.field!==f.dataset.of;st.field=f.dataset.of;S.field=st.field;pickOpt(f);
       const hb=el.querySelector('.ohead .obub');if(hb&&ch&&FIELD_LINE[st.field]){hb.textContent=FIELD_LINE[st.field];typeBubbles(el.querySelector('.ohead'))}return}
