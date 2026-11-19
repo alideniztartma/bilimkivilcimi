@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="anka_widget_desc">Anka ve serin</string>
-    <color name="ic_dead_bg">#6F6259</color>
+    <string name="anka_widget_desc">Anka ve serin (büyük)</string>
+    <string name="anka_widget_desc_m">Anka ve serin (yatay)</string>
+    <string name="anka_widget_desc_s">Anka ve serin (küçük)</string>
+    <color name="ic_dead_bg">#B98A63</color>
 </resources>

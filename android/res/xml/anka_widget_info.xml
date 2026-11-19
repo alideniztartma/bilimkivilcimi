@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="110dp"
-    android:minHeight="110dp"
-    android:minResizeWidth="80dp"
-    android:minResizeHeight="80dp"
-    android:targetCellWidth="2"
-    android:targetCellHeight="2"
-    android:updatePeriodMillis="0"
-    android:initialLayout="@layout/anka_widget"
-    android:previewImage="@drawable/anka_w_happy"
-    android:description="@string/anka_widget_desc"
-    android:resizeMode="horizontal|vertical"
-    android:widgetCategory="home_screen" />
+    android:minWidth="110dp" android:minHeight="110dp" android:minResizeWidth="40dp" android:minResizeHeight="40dp"
+    android:targetCellWidth="2" android:targetCellHeight="2" android:updatePeriodMillis="0"
+    android:initialLayout="@layout/anka_widget" android:previewImage="@drawable/w_prev_l" android:description="@string/anka_widget_desc"
+    android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen" />

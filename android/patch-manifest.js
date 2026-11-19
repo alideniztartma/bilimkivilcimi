@@ -21,13 +21,13 @@ const extra = alias('AnkaAlive', true, 'ic_launcher') + alias('AnkaDead', false,
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".AnkaWidget" android:exported="true" android:label="Anka">
+` + [['AnkaWidget', 'anka_widget_info', 'Anka (büyük)'], ['AnkaWidgetWide', 'anka_widget_wide_info', 'Anka (yatay)'], ['AnkaWidgetSmall', 'anka_widget_small_info', 'Anka (küçük)']].map(([n, x, l]) => `
+        <receiver android:name=".${n}" android:exported="true" android:label="${l}">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/anka_widget_info" />
-        </receiver>
-`;
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/${x}" />
+        </receiver>`).join('') + '\n';
 s = s.replace('</application>', extra + '    </application>');
 s = s.replace('<application', `<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />

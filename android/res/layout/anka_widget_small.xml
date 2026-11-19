@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 1x1: Anka ve köşede seri rozeti -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/w_root" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/w_bg_done">
+    <ImageView android:id="@+id/w_img" android:layout_width="match_parent" android:layout_height="match_parent" android:padding="6dp" android:layout_marginBottom="8dp"
+        android:scaleType="fitCenter" android:src="@drawable/anka_w_happy" android:contentDescription="Anka" />
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|center_horizontal" android:layout_marginBottom="5dp"
+        android:background="@drawable/w_badge" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="6dp" android:paddingEnd="7dp" android:paddingTop="1dp" android:paddingBottom="1dp">
+        <ImageView android:id="@+id/w_flame" android:layout_width="13dp" android:layout_height="13dp" android:src="@drawable/w_flame_on" android:contentDescription="Seri" />
+        <TextView android:id="@+id/w_num" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="2dp"
+            android:text="0" android:textColor="#7A2E16" android:textSize="13sp" android:fontFamily="sans-serif-black" />
+    </LinearLayout>
+</FrameLayout>

@@ -50,7 +50,7 @@ jobs:
           npx cap init "Anka #BilimKıvılcımı" org.antiochrising.bilimkivilcimi --web-dir www
           node -e "const f='capacitor.config.json',fs=require('fs'),c=JSON.parse(fs.readFileSync(f));c.android=Object.assign({},c.android,{adjustMarginsForEdgeToEdge:'force'});c.backgroundColor='#D9822B';c.plugins=Object.assign({},c.plugins,{StatusBar:{overlaysWebView:false,style:'DARK',backgroundColor:'#D9822B'},SplashScreen:{launchAutoHide:false,launchShowDuration:0,launchFadeOutDuration:150,backgroundColor:'#D9822B',showSpinner:false},CapacitorUpdater:{autoUpdate:false,statsUrl:'',updateUrl:'',channelUrl:'',appReadyTimeout:15000}});fs.writeFileSync(f,JSON.stringify(c,null,2));console.log(c)"
           npx cap add android
-          npx capacitor-assets generate --android --iconBackgroundColor '#C4602F' --splashBackgroundColor '#D9822B' --splashBackgroundColorDark '#D9822B'
+          npx capacitor-assets generate --android --iconBackgroundColor '#E58A2C' --splashBackgroundColor '#D9822B' --splashBackgroundColorDark '#D9822B'
           cp ../android/MainActivity.java android/app/src/main/java/org/antiochrising/bilimkivilcimi/MainActivity.java
           mkdir -p android/app/src/main/res/drawable-nodpi
           cp ../android/splash_icon.png android/app/src/main/res/drawable-nodpi/splash_icon.png

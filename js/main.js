@@ -125,3 +125,12 @@ function ankaAfterLesson(){if(!ANKA_N||S.notifAsked||!S.lastDay)return;
       openModal(`${anka('happy',110,undefined,'act-jump')}<h2>Seni her gün hatırlatayım mı?</h2><p>Serin bozulmasın diye her akşam ${remHour()}:00'da kısa bir hatırlatma gönderirim. Saatini Profil'den değiştirebilirsin.</p><button class="b3" type="button" id="nYes">Evet, hatırlat</button><button class="b3 ghost" type="button" id="nNo">Şimdi değil</button>`);
       $('#nYes').onclick=()=>{closeModal();ANKA_N.askNotif().then(r=>{if(r&&r.granted){if(S.remH==null||S.remH<0)S.remH=19;save();ankaSync();toast('Tamam! Her gün hatırlatacağım.')}else toast('Bildirim izni verilmedi. İstersen telefon ayarlarından açabilirsin.')}).catch(()=>{})};
       $('#nNo').onclick=()=>{closeModal();S.remH=-1;save();toast('Tamam. İstersen Profil > Ayarlar\'dan açabilirsin.')}},700)}}
+
+/* Widget önizlemesi (Ayarlar'da). Telefondaki widget'ın aynısı: durum, Anka ve seri. */
+function wState(){const t=dkey();const done=S.lastDay===t;return done?0:S.streak>0?1:2}
+function wMock(k){const st=wState(),mood=['cheer','sad','wave'][st],sub=['Bugün tamam!','Ders zamanı!','Hadi başlayalım!'][st];
+  const fl=`<span class="wfl ${st===0?'on':''}">${fi('flame',k==='s'?12:20)}</span>`,num=`<b class="wnum">${S.streak|0}</b>`;
+  const ak=`<span class="wak">${anka(mood,k==='s'?56:k==='m'?62:92,null)}</span>`;
+  if(k==='s')return `<span class="wm ws st${st}">${ak}<span class="wbadge">${fl}${num}</span></span>`;
+  if(k==='m')return `<span class="wm wmid st${st}">${ak}<span class="wtx"><span class="wst">${fl}${num}</span><small>${sub}</small></span></span>`;
+  return `<span class="wm wl st${st}"><span class="wst">${fl}${num}</span>${ak}<small class="wpill">${sub}</small></span>`}

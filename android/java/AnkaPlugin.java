@@ -49,6 +49,13 @@ public class AnkaPlugin extends Plugin {
     requestPermissionForAlias("notif", call, "notifCb");
   }
 
+  @PluginMethod
+  public void pinWidget(PluginCall call) {
+    JSObject r = new JSObject();
+    r.put("ok", AnkaCore.pinWidget(getContext(), call.getInt("size", 0)));
+    call.resolve(r);
+  }
+
   @PermissionCallback
   private void notifCb(PluginCall call) { notifState(call); }
 }

@@ -630,6 +630,9 @@ function renderProfile(){
   <div class="sec-h">Öğretmenine göster</div>
   <div class="card" style="display:grid;gap:10px"><p>Bu kod ilerlemeni özetler. Öğretmenin sınıf tablosuna yapıştırınca kaç ders ve deney bitirdiğini görür. Kodda yalnızca adın ve puanların var.</p>
   <div class="codebox"><code id="pcode">${code}</code><button class="b3 sm" type="button" id="pcopy">${ic('copy',16)}Kopyala</button></div></div>
+  ${typeof ANKA_N!=='undefined'&&ANKA_N?`<div class="sec-h">Ana ekran widget'ı</div>
+  <div class="card wpick"><p class="muted" style="margin:0 0 12px;font-size:.92rem">Anka ve serin ana ekranında dursun. Birine dokun, telefon nereye koyacağını sorar.</p>
+  <div class="wrow">${['l','m','s'].map((k,i)=>`<button type="button" class="wadd" data-w="${i}" aria-label="${['Büyük','Yatay','Küçük'][i]} widget ekle">${wMock(k)}<span>${['Büyük · 2×2','Yatay · 2×1','Küçük · 1×1'][i]}</span></button>`).join('')}</div></div>`:''}
   <div class="sec-h">Ayarlar</div>
   <div class="card set">
     <div><b>Titreşim</b><div class="seg" id="sVib"><button type="button" data-v="1" aria-pressed="${S.vib!==false}">Açık</button><button type="button" data-v="0" aria-pressed="${S.vib===false}">Kapalı</button></div></div>
@@ -648,7 +651,7 @@ function renderProfile(){
   $('#pcopy').onclick=async()=>{try{await navigator.clipboard.writeText(code);toast(ic('check',20)+' Kod kopyalandı')}catch(e){const r=document.createRange();r.selectNodeContents($('#pcode'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Kodu seçtim, kopyalayabilirsin')}};
   $$('[data-cert]').forEach(b=>b.onclick=()=>openCert(+b.dataset.cert));
   const segH=(id,fn)=>{const el=$(id);if(el)el.onclick=e=>{const b=e.target.closest('button');if(!b)return;fn(b.dataset.v);save();renderAll()}};
-  segH('#sSound',v=>S.sound=v==='1');segH('#sVib',v=>{S.vib=v==='1';if(S.vib)haptic('heavy')});segH('#sTts',v=>{S.tts=v==='1';if(S.tts)speak('Sesli okuma açık.')});segH('#sTheme',v=>{S.theme=v;applyTheme()});segH('#sGoal',v=>S.goal=+v);segH('#sRem',v=>{S.remH=+v;if(S.remH>=0&&ANKA_N)ANKA_N.askNotif().then(r=>{if(r&&!r.granted)toast('Bildirim izni kapalı. Telefon ayarlarından açabilirsin.')}).catch(()=>{})});segH('#sShare',v=>{S.share=v==='1'});
+  segH('#sSound',v=>S.sound=v==='1');segH('#sVib',v=>{S.vib=v==='1';if(S.vib)haptic('heavy')});segH('#sTts',v=>{S.tts=v==='1';if(S.tts)speak('Sesli okuma açık.')});segH('#sTheme',v=>{S.theme=v;applyTheme()});segH('#sGoal',v=>S.goal=+v);$$('.wadd').forEach(b=>b.onclick=()=>{ANKA_N.pinWidget({size:+b.dataset.w}).then(r=>{if(!r||!r.ok)openModal(`${anka('think',100)}<h2>Kendin ekleyebilirsin</h2><p>Ana ekranda boş bir yere parmağını basılı tut, <b>Widget'lar</b>'a dokun ve listeden <b>Anka #BilimKıvılcımı</b>'nı bul.</p><button class="b3" type="button" onclick="closeModal()">Tamam</button>`)}).catch(()=>{})});segH('#sRem',v=>{S.remH=+v;if(S.remH>=0&&ANKA_N)ANKA_N.askNotif().then(r=>{if(r&&!r.granted)toast('Bildirim izni kapalı. Telefon ayarlarından açabilirsin.')}).catch(()=>{})});segH('#sShare',v=>{S.share=v==='1'});
   let armed=false;$('#sReset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Emin misin? Tekrar bas';setTimeout(()=>{armed=false;if(e.target.isConnected)e.target.textContent='Sıfırla'},4000);return}
     try{localStorage.removeItem(KEY)}catch(_){ }S=DEF();S.lab.migrated=1;save();applyTheme();location.hash='#ogren';renderAll();onboard()};
 }

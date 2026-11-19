@@ -1,38 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 2x2: seri sayısı, büyük Anka, mesaj -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/w_root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="10dp"
-    android:background="@drawable/anka_widget_bg">
-    <ImageView
-        android:id="@+id/w_img"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:src="@drawable/anka_w_happy"
-        android:contentDescription="Anka" />
-    <TextView
-        android:id="@+id/w_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="Merhaba!"
-        android:textColor="#FBF3E2"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        android:maxLines="1" />
-    <TextView
-        android:id="@+id/w_sub"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hadi bir ders yapalım"
-        android:textColor="#FBF3E2"
-        android:textSize="12sp"
-        android:gravity="center"
-        android:maxLines="2" />
+    android:id="@+id/w_root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="12dp" android:background="@drawable/w_bg_done">
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+        <ImageView android:id="@+id/w_flame" android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/w_flame_on" android:contentDescription="Seri" />
+        <TextView android:id="@+id/w_num" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="4dp"
+            android:text="0" android:textColor="#FFFFFF" android:textSize="22sp" android:fontFamily="sans-serif-black" />
+    </LinearLayout>
+    <ImageView android:id="@+id/w_img" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:layout_marginTop="2dp" android:adjustViewBounds="true" android:scaleType="fitCenter" android:src="@drawable/anka_w_happy" android:contentDescription="Anka" />
+    <TextView android:id="@+id/w_sub" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp"
+        android:background="@drawable/w_pill" android:gravity="center" android:paddingTop="5dp" android:paddingBottom="5dp" android:paddingStart="8dp" android:paddingEnd="8dp"
+        android:text="Bugün tamam!" android:textColor="#FFFFFF" android:textSize="12sp" android:fontFamily="sans-serif-medium" android:maxLines="1" android:ellipsize="end" />
 </LinearLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 2x1: solda Anka, sağda seri ve mesaj -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/w_root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="8dp" android:paddingEnd="12dp" android:paddingTop="6dp" android:paddingBottom="6dp"
+    android:background="@drawable/w_bg_done">
+    <ImageView android:id="@+id/w_img" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.9"
+        android:adjustViewBounds="true" android:scaleType="fitCenter" android:src="@drawable/anka_w_happy" android:contentDescription="Anka" />
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.4" android:layout_marginStart="6dp" android:orientation="vertical">
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+            <ImageView android:id="@+id/w_flame" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/w_flame_on" android:contentDescription="Seri" />
+            <TextView android:id="@+id/w_num" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="4dp"
+                android:text="0" android:textColor="#FFFFFF" android:textSize="26sp" android:fontFamily="sans-serif-black" />
+        </LinearLayout>
+        <TextView android:id="@+id/w_sub" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp"
+            android:text="Bugün tamam!" android:textColor="#FFFFFF" android:textSize="12sp" android:fontFamily="sans-serif-medium" android:maxLines="2" />
+    </LinearLayout>
+</LinearLayout>

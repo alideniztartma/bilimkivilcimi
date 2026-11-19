@@ -97,26 +97,47 @@ public final class AnkaCore {
   }
 
   /* ---------- Widget ---------- */
+  static final Class<?>[] WIDGETS = { AnkaWidget.class, AnkaWidgetWide.class, AnkaWidgetSmall.class };
+  static final int[] LAYOUTS = { R.layout.anka_widget, R.layout.anka_widget_wide, R.layout.anka_widget_small };
+
   static void updateWidgets(Context c) {
+    AppWidgetManager wm = AppWidgetManager.getInstance(c);
+    int s = streak(c);
+    /* Durum: 0 bugün tamam, 1 bekliyor, 2 henüz seri yok, 3 bayıldı */
+    int st = dead(c) ? 3 : doneToday(c) ? 0 : s > 0 ? 1 : 2;
+    int[] imgs = { R.drawable.anka_w_happy, R.drawable.anka_w_sad, R.drawable.anka_w_wave, R.drawable.anka_w_dead };
+    int[] bgs = { R.drawable.w_bg_done, R.drawable.w_bg_wait, R.drawable.w_bg_new, R.drawable.w_bg_dead };
+    String sub = st == 0 ? "Bugün tamam!" : st == 1 ? (lastChance(c) ? "Serini kurtar!" : "Ders zamanı!") : st == 2 ? "Hadi başlayalım!" : "Anka bayıldı!";
+    int ink = st == 2 ? 0xFF7A2E16 : 0xFFFFFFFF;
+    for (int k = 0; k < WIDGETS.length; k++) {
+      try {
+        int[] ids = wm.getAppWidgetIds(new ComponentName(c, WIDGETS[k]));
+        if (ids == null || ids.length == 0) continue;
+        RemoteViews rv = new RemoteViews(c.getPackageName(), LAYOUTS[k]);
+        rv.setImageViewResource(R.id.w_img, imgs[st]);
+        rv.setImageViewResource(R.id.w_flame, st == 0 ? R.drawable.w_flame_on : R.drawable.w_flame_off);
+        rv.setTextViewText(R.id.w_num, String.valueOf(st == 3 ? 0 : s));
+        rv.setInt(R.id.w_root, "setBackgroundResource", bgs[st]);
+        if (k != 2) {
+          rv.setTextViewText(R.id.w_sub, sub);
+          rv.setTextColor(R.id.w_sub, ink);
+          rv.setTextColor(R.id.w_num, ink);
+          if (k == 0) rv.setInt(R.id.w_sub, "setBackgroundResource", st == 2 ? R.drawable.w_pill_dark : R.drawable.w_pill);
+        }
+        rv.setOnClickPendingIntent(R.id.w_root, openApp(c, 10 + k));
+        wm.updateAppWidget(ids, rv);
+      } catch (Exception e) { }
+    }
+  }
+
+  /* Ayarlar'dan "ana ekrana ekle" (Android 8+, başlatıcı destekliyorsa) */
+  static boolean pinWidget(Context c, int k) {
     try {
-      AppWidgetManager wm = AppWidgetManager.getInstance(c);
-      int[] ids = wm.getAppWidgetIds(new ComponentName(c, AnkaWidget.class));
-      if (ids == null || ids.length == 0) return;
-      RemoteViews rv = new RemoteViews(c.getPackageName(), R.layout.anka_widget);
-      int s = streak(c);
-      int img, bg = R.drawable.anka_widget_bg;
-      String t, sub;
-      if (dead(c)) { img = R.drawable.anka_w_dead; bg = R.drawable.anka_widget_bg_dead; t = "Anka bayıldı!"; sub = "Bir ders yap, canlansın"; }
-      else if (doneToday(c)) { img = R.drawable.anka_w_happy; t = "🔥 " + s + " gün"; sub = "Bugünkü ders tamam!"; }
-      else if (s > 0) { img = R.drawable.anka_w_sad; t = "🔥 " + s + " gün"; sub = lastChance(c) ? "Serini kaybetme!" : "Bugün ders yapalım"; }
-      else { img = R.drawable.anka_w_happy; t = "Merhaba!"; sub = "Hadi bir ders yapalım"; }
-      rv.setImageViewResource(R.id.w_img, img);
-      rv.setTextViewText(R.id.w_title, t);
-      rv.setTextViewText(R.id.w_sub, sub);
-      rv.setInt(R.id.w_root, "setBackgroundResource", bg);
-      rv.setOnClickPendingIntent(R.id.w_root, openApp(c, 10));
-      wm.updateAppWidget(ids, rv);
-    } catch (Exception e) { }
+      if (Build.VERSION.SDK_INT < 26) return false;
+      AppWidgetManager wm = c.getSystemService(AppWidgetManager.class);
+      if (wm == null || !wm.isRequestPinAppWidgetSupported()) return false;
+      return wm.requestPinAppWidget(new ComponentName(c, WIDGETS[Math.max(0, Math.min(2, k))]), null, null);
+    } catch (Exception e) { return false; }
   }
 
   static PendingIntent openApp(Context c, int code) {
