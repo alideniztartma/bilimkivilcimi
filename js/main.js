@@ -97,3 +97,17 @@ setInterval(()=>{const h=S.hearts;dayCheck();if(S.hearts!==h)renderStats()},3000
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-last>6e4)check(false)});
   document.addEventListener('click',e=>{if(e.target.closest('#sUpd'))check(true)});
 })();
+
+/* Android geri tuşu: önce açık olan pencereyi kapat, sonra bir önceki sayfaya dön; ana sayfadaysa uygulamayı arka plana al */
+(function(){const A=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.App;if(!A)return;
+  const vis=el=>!!el&&!el.hidden&&el.isConnected&&!el.closest('[hidden]')&&el.getClientRects().length>0;
+  A.addListener('backButton',()=>{
+    if($('.fmenu')){closeFmenu();return}
+    if(!$('#modal').hidden){if(!$('#mbox').dataset.lockbg)closeModal();return}
+    if(vis($('#lesson'))){askQuit();return}
+    const ed=$('#icEd');if(vis(ed)){closeContentEditor();return}
+    const onb=$('#onb');if(onb){const b=onb.querySelector('[data-oback]');if(vis(b))b.click();else A.minimizeApp();return}
+    for(const id of ['#npX','#ngX','#galX']){const b=$(id);if(vis(b)){b.click();return}}
+    if(page.startsWith('lab-')){location.hash='#lab';return}
+    if(page!=='ogren'){location.hash='#ogren';return}
+    A.minimizeApp()})})();
