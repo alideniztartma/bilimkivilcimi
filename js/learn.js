@@ -710,7 +710,7 @@ function onboard(){
   const qs=['field','name','goal'].concat(canSpeak?['tts']:[]).concat(typeof ANKA_N!=='undefined'&&ANKA_N?['notif']:[]).concat(['gains','start']);
   const steps=['hi','intro',...qs.flatMap(q=>q==='field'?['field','load']:q==='name'?['name','hello']:[q]),'end'];
   const PASS=new Set(['load','hello']);
-  const FIELD_LINE={yazilim:'Harika seçim! Algoritmaları, kod yazmayı ve robot yazılımını birlikte öğreneceğiz.',mekanik:'Süper! Dişlileri, kaldıraçları ve robotun iskeletini birlikte keşfedeceğiz.',elektronik:'Muhteşem! Devreleri, motorları ve sensörleri birlikte keşfedeceğiz.'};
+  const FIELD_LINE={yazilim:'Harika seçim! Algoritmaları, kod yazmayı ve robot yazılımını öğreneceğiz.',mekanik:'Süper seçim! Dişlileri, kaldıraçları ve robotun iskeletini keşfedeceğiz.',elektronik:'Muhteşem seçim! Devreleri, motorları ve sensörleri birlikte tanıyacağız.'};
   let passT=null;
   const el=document.createElement('div');el.id='onb';el.className='onb';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Tanışma');document.body.appendChild(el);
   const bubble=(t,cls)=>`<div class="obub ${cls||''}">${t}</div>`;
@@ -739,6 +739,8 @@ function onboard(){
         <button type="button" class="oopt wide" data-os="place" aria-pressed="${st.start==='place'}"><span class="oill"><svg viewBox="0 0 48 48" width="54" height="54"><circle cx="24" cy="24" r="20" fill="#2F7DB8"/><circle cx="24" cy="24" r="15" fill="#fff"/><path d="M31 15l-4.5 11.5L17 33l4.5-11.5z" fill="#C2412D"/><path d="M17 33l4.5-11.5 5 5z" fill="#B9B0A8"/></svg></span><span class="otx"><b>Zaten biraz biliyor musun?</b><small>Kısa bir sınavla başlayacağın yeri bulalım!</small></span></button></div>`}
       if(k==='end'){btn=st.start==='place'?'SINAVA BAŞLA':'İLK DERSİME BAŞLA';body=`<div class="ocenter">${bubble(st.start==='place'?`Harika${S.name?', '+esc(S.name):''}! 8 soruluk kısa bir sınav yapalım. Geçersen ilk üniteyi atlarsın.`:`Harika${S.name?', '+esc(S.name):''}! Hadi ilk dersine başlayalım.`)}<div class="oank">${anka('cheer',190,undefined,'act-dance')}</div></div>`}}
     el.innerHTML=`${top}<div class="obody ${st.dir<0?'back':''}">${body}</div><div class="ofoot">${btn?`<button type="button" class="obtn" data-onext ${ok?'':'disabled'}>${btn}</button>`:''}${k==='notif'?'<button type="button" class="oskip" data-onskip>Şimdi değil</button>':''}</div>`;
+    if(k==='field'){const hb=el.querySelector('.ohead .obub');if(hb){const m=document.createElement('div');m.className=hb.className;m.style.cssText=`position:absolute;visibility:hidden;left:-9999px;width:${hb.getBoundingClientRect().width}px`;el.appendChild(m);
+      let h=0;['Ne öğrenmek istersin?',...Object.values(FIELD_LINE)].forEach(t=>{m.textContent=t;h=Math.max(h,m.offsetHeight)});m.remove();hb.style.minHeight=h+'px';hb.classList.add('ofix')}}
     typeBubbles(el);
     const n=$('#oname');if(n){n.addEventListener('keydown',e=>{if(e.key==='Enter')next()});setTimeout(()=>n.focus(),300)}
     else setTimeout(()=>{const b=el.querySelector('.obtn:not([disabled])');if(b)b.focus({preventScroll:true})},60)}

@@ -1078,3 +1078,6 @@ section.pg-in>*:nth-child(2){animation-delay:.03s}section.pg-in>*:nth-child(3){a
 @keyframes oldBob{50%{transform:translateY(-6px)}}
 @keyframes oldFill{to{width:100%}}
 @media (prefers-reduced-motion:reduce){.oldic,.oldbar i{animation:none}.oldbar i{width:100%}}
+
+/* Alan sorusu: balon sabit yükseklikte, butonlar kaymaz */
+.obub.ofix{box-sizing:border-box}
