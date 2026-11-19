@@ -674,7 +674,9 @@ function renderStats(){
 /* Anka'nın konuşma balonu harf harf yazılır; her harfte telefon çok hafif titrer.
    Harfler baştan yerini alır (görünmez), böylece balonun boyu yazarken değişmez. */
 let typeTok=0;
+const bootOn=()=>{const b=document.getElementById('boot');return !!b&&!b.classList.contains('out')};
 function typeBubbles(root){const tok=++typeTok;
+  if(bootOn())return;
   $$('.obub',root).forEach((b,bi)=>{const txt=b.textContent;b.setAttribute('aria-label',txt);
     if(reduce)return;
     b.innerHTML=[...txt].map(ch=>`<span class="tch" aria-hidden="true">${esc(ch)}</span>`).join('');
@@ -717,5 +719,7 @@ function onboard(){
     const g=e.target.closest('[data-og]');if(g){st.goal=+g.dataset.og;pickOpt(g);return}
     const t=e.target.closest('[data-ot]');if(t){S.tts=t.dataset.ot==='1';st.ttsSet=true;pickOpt(t);if(S.tts)speak('Tamam, soruları sesli okuyacağım.')}});
   view();
+  /* Uygulamada açılış ekranı varken Anka konuşmaya başlamasın: ekran kalkınca baştan çiz */
+  if(bootOn()){const w=setInterval(()=>{if(bootOn())return;clearInterval(w);if(el.isConnected&&st.i===0)view()},60)}
 }
 
