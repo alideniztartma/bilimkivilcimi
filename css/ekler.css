@@ -128,3 +128,100 @@
 .otag{position:absolute;right:-6px;top:-13px;background:#2F9BE0;color:#fff;font:800 .74rem/1 var(--body);letter-spacing:.06em;padding:6px 10px;border-radius:8px;max-width:none!important}
 @media (prefers-reduced-motion:reduce){.onotif,.ogain,.onotif .obell,.onbtns .onarrow{animation:none}}
 .ostart .oopt .otag{color:#fff;font-size:.74rem;font-weight:800;text-align:center}
+
+/* ===== Anka canlı: boşta küçük davranışlar ===== */
+.anka.mi-blink .lid{animation:akBlink2 .7s ease both}
+@keyframes akBlink2{0%,100%{transform:scaleY(0)}18%,30%{transform:scaleY(1)}45%{transform:scaleY(0)}60%,70%{transform:scaleY(1)}85%{transform:scaleY(0)}}
+.anka.mi-look .ak-face{transform-box:fill-box;animation:akGlance 1.6s ease-in-out both}
+.anka.mi-look .ak-bd{animation:akGlanceB 1.6s ease-in-out both}
+@keyframes akGlance{0%,100%{transform:none}20%,42%{transform:translate(-5px,1px)}58%,80%{transform:translate(5px,-1px)}}
+@keyframes akGlanceB{0%,100%{transform:none}20%,42%{transform:rotate(-3deg)}58%,80%{transform:rotate(3deg)}}
+.anka.mi-stretch .wgl{animation:akStrL 1.4s cubic-bezier(.4,0,.3,1) both}
+.anka.mi-stretch .wgr{animation:akStrR 1.4s cubic-bezier(.4,0,.3,1) both}
+.anka.mi-stretch .ak-bd{animation:akStrB 1.4s ease-in-out both}
+@keyframes akStrL{0%,100%{transform:none}35%,60%{transform:rotate(38deg)}70%{transform:rotate(-6deg)}}
+@keyframes akStrR{0%,100%{transform:none}35%,60%{transform:rotate(-38deg)}70%{transform:rotate(6deg)}}
+@keyframes akStrB{0%,100%{transform:none}35%,60%{transform:scale(.97,1.06)}75%{transform:scale(1.03,.96)}}
+.anka.mi-preen .crest{animation:akPreen 1.3s ease-in-out both}
+.anka.mi-preen .ak-bd{animation:akPreenB 1.3s ease-in-out both}
+@keyframes akPreen{0%,100%{transform:none}15%{transform:rotate(-14deg)}30%{transform:rotate(12deg)}45%{transform:rotate(-9deg)}60%{transform:rotate(6deg)}75%{transform:rotate(-3deg)}}
+@keyframes akPreenB{0%,100%{transform:none}20%,70%{transform:rotate(-4deg) translateX(-2px)}}
+.anka.mi-hop .ak-all{animation:akHop2 .9s cubic-bezier(.3,.6,.4,1) both}
+@keyframes akHop2{0%,100%{transform:none}18%{transform:scale(1.08,.9)}42%{transform:translateY(-12%) scale(.95,1.06)}66%{transform:translateY(0) scale(1.07,.93)}82%{transform:scale(.98,1.02)}}
+/* hareketlerde tepe ve kuyruk geriden gelir (takip hareketi) */
+.anka[class*="act-"] .crest{animation:akCrestWob 1s .15s ease-out both}
+.anka[class*="act-"] .ak-tail{animation:akTailWob 1.1s .1s ease-out both}
+@keyframes akCrestWob{0%{transform:none}20%{transform:rotate(16deg) scaleY(.88)}40%{transform:rotate(-12deg) scaleY(1.08)}60%{transform:rotate(7deg)}80%{transform:rotate(-3deg)}100%{transform:none}}
+@keyframes akTailWob{0%{transform:none}25%{transform:rotate(-8deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-3deg)}100%{transform:none}}
+.anka .pup{transition:translate .25s ease-out}
+
+/* ===== Ders içi ara an (Duolingo tarzı) ===== */
+.moment{display:grid;justify-items:center;text-align:center;gap:6px;padding-top:5vh;animation:moIn .3s ease both}
+.mo-stage{position:relative;width:270px;height:250px;display:grid;place-items:center}
+.mo-sun{position:absolute;inset:-24px;border-radius:50%;background:repeating-conic-gradient(rgba(242,180,81,.32) 0 11deg,transparent 11deg 22.5deg);-webkit-mask:radial-gradient(circle,#000 22%,transparent 68%);mask:radial-gradient(circle,#000 22%,transparent 68%);animation:moGrow .6s cubic-bezier(.3,1.5,.5,1) both,moSpin 14s linear infinite}
+.mo-ank{position:relative;animation:moPop .65s cubic-bezier(.3,1.6,.5,1) both}
+.mo-spark{position:absolute;inset:0}
+.mo-spark i{position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px;background:#F2B451;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);animation:moSpark 1s calc(.15s + var(--d)) ease-out both}
+.mo-spark i:nth-child(even){background:#E58A2C;width:10px;height:10px;margin:-5px}
+.mo-fl{position:absolute;right:6px;bottom:16px;color:var(--ember);display:grid;place-items:center;filter:drop-shadow(0 4px 0 rgba(0,0,0,.15));animation:moFl .7s .4s cubic-bezier(.3,1.8,.5,1) both}
+.mo-fl b{position:absolute;top:44%;font:800 1.15rem/1 var(--mono);color:#fff;-webkit-text-stroke:1.5px var(--rust);paint-order:stroke}
+.mo-h{margin:0;font-size:clamp(1.9rem,7vw,2.6rem);color:var(--ember);animation:moText .55s .2s cubic-bezier(.3,1.6,.5,1) both}
+.mo-half .mo-h{color:var(--olive-ts,var(--olive))}
+.mo-p{margin:0;color:var(--muted);font-size:1.12rem;font-weight:600;animation:moText .5s .34s ease both}
+@keyframes moIn{from{opacity:0}to{opacity:1}}
+@keyframes moGrow{from{transform:scale(0);opacity:0}to{transform:none;opacity:1}}
+@keyframes moSpin{to{rotate:360deg}}
+@keyframes moPop{0%{transform:translateY(60px) scale(.3);opacity:0}60%{transform:translateY(-10px) scale(1.06);opacity:1}100%{transform:none}}
+@keyframes moSpark{0%{transform:rotate(var(--a)) translateY(0) scale(0)}35%{transform:rotate(var(--a)) translateY(-90px) scale(1.3)}100%{transform:rotate(var(--a)) translateY(-135px) scale(0)}}
+@keyframes moFl{0%{transform:scale(0) rotate(-30deg)}100%{transform:none}}
+@keyframes moText{0%{transform:translateY(14px) scale(.85);opacity:0}100%{transform:none;opacity:1}}
+
+/* ===== Ders sonu ===== */
+.ds-ank{position:relative;display:grid;place-items:center;width:230px;height:200px}
+.ds-ank .mo-sun{inset:-14px}
+.ds-ank .anka{position:relative}
+.ds-h{animation:moText .55s .15s cubic-bezier(.3,1.6,.5,1) both}
+.done-screen .trio>div{animation:moText .45s both}
+.done-screen .trio>div:nth-child(1){animation-delay:.3s}.done-screen .trio>div:nth-child(2){animation-delay:.42s}.done-screen .trio>div:nth-child(3){animation-delay:.54s}
+.bigflame.ignite>svg{transform-origin:50% 92%;animation:flIgnite .9s cubic-bezier(.3,1.6,.5,1) both,flFlick 1.3s .9s ease-in-out infinite}
+.bigflame.ignite b{animation:moPop .55s .55s cubic-bezier(.3,1.8,.5,1) both}
+.bigflame .emb{position:absolute;bottom:22%;left:50%;width:9px;height:9px;border-radius:50%;background:#F2B451;opacity:0;animation:flEmber 1.8s ease-out infinite}
+.bigflame .emb:nth-of-type(1){--x:-46px;animation-delay:1s}.bigflame .emb:nth-of-type(2){--x:38px;animation-delay:1.4s}
+.bigflame .emb:nth-of-type(3){--x:-18px;animation-delay:1.9s;width:6px;height:6px}.bigflame .emb:nth-of-type(4){--x:22px;animation-delay:2.3s;width:6px;height:6px}
+@keyframes flIgnite{0%{transform:scale(0,.2);opacity:0}45%{transform:scale(1.15,1.2);opacity:1}70%{transform:scale(.95,.93)}100%{transform:none}}
+@keyframes flFlick{0%,100%{transform:scale(1,1) skewX(0)}30%{transform:scale(1.03,.97) skewX(-2deg)}60%{transform:scale(.98,1.04) skewX(2deg)}}
+@keyframes flEmber{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--x),-150px) scale(.2);opacity:0}}
+@media (prefers-reduced-motion:reduce){.moment *,.ds-ank *,.bigflame *{animation:none!important}}
+
+/* ===== Anka'nın yuvası: oda ===== */
+.nwall{background:radial-gradient(ellipse at 70% 18%,#FBEFD3,#EBCB96 75%)}
+.nwall::after{background-image:repeating-linear-gradient(45deg,rgba(163,70,31,.07) 0 2px,transparent 2px 28px),repeating-linear-gradient(-45deg,rgba(163,70,31,.07) 0 2px,transparent 2px 28px);background-size:auto}
+.nwall::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(60,30,10,.18));z-index:1}
+.nwains{position:absolute;left:0;right:0;top:50%;bottom:32%;background:linear-gradient(#D9A86A,#C99357);box-shadow:inset 0 5px 0 #F4D9A8,inset 0 -3px 0 rgba(0,0,0,.08)}
+.nwains::after{content:"";position:absolute;inset:14px 0 10px;background:repeating-linear-gradient(90deg,transparent 0 18px,rgba(122,46,22,.12) 18px 20px,transparent 20px 96px)}
+.nfloor::after{background:repeating-linear-gradient(180deg,transparent 0 26px,rgba(0,0,0,.12) 26px 28px),repeating-linear-gradient(90deg,transparent 0 140px,rgba(0,0,0,.08) 140px 142px);inset:16px 0 0}
+.nfloor{background:linear-gradient(#C29462,#8F6234)}
+.nest.night .nwall{background:radial-gradient(ellipse at 70% 18%,#4E4638,#2A251C 75%)}
+.nest.night .nwains{background:linear-gradient(#5A4128,#45311E);box-shadow:inset 0 5px 0 #6E5233}
+.nest.night .nfloor{background:linear-gradient(#5C3A1E,#3A2410)}
+.nest.sleeping .nwains,.nest.sleeping .nrug,.nest.sleeping .ndeco{filter:brightness(.45) saturate(.7)}
+.nrug{position:absolute;left:50%;bottom:7%;width:min(92cqw,72cqh,640px);height:min(15cqh,110px);transform:translateX(-50%);border-radius:50%;z-index:1;
+  background:radial-gradient(ellipse at center,#C2412D 0 30%,#E9C48A 30% 32%,#A3461F 32% 58%,#F4EAD6 58% 60%,#4B5A3A 60% 66%,#F4EAD6 66% 68%,#A3461F 68%);box-shadow:0 6px 0 rgba(0,0,0,.15);opacity:.85}
+.nest.night .nrug{filter:brightness(.6)}
+/* pencereden giren ışık ve havada süzülen toz */
+.nbeam{position:absolute;right:6%;top:150px;width:min(70cqw,520px);height:min(70cqh,560px);transform-origin:100% 0;transform:rotate(28deg);z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,244,214,.55),rgba(255,244,214,0) 85%);clip-path:polygon(78% 0,100% 0,60% 100%,10% 100%);mix-blend-mode:screen;animation:nbeam 7s ease-in-out infinite alternate}
+.nest.night .nbeam{background:linear-gradient(180deg,rgba(170,190,255,.22),rgba(170,190,255,0) 85%)}
+.nest.sleeping .nbeam{opacity:0;transition:opacity .8s}
+@keyframes nbeam{from{opacity:.75}to{opacity:1}}
+.nbeam i{position:absolute;width:4px;height:4px;border-radius:50%;background:#FFF6DC;opacity:0;animation:nmote 9s linear infinite}
+.nbeam i:nth-child(1){left:62%;top:20%;animation-delay:0s}.nbeam i:nth-child(2){left:55%;top:42%;animation-delay:-2s}.nbeam i:nth-child(3){left:44%;top:60%;animation-delay:-4s;width:3px;height:3px}
+.nbeam i:nth-child(4){left:70%;top:12%;animation-delay:-6s}.nbeam i:nth-child(5){left:38%;top:75%;animation-delay:-1s;width:5px;height:5px}.nbeam i:nth-child(6){left:50%;top:30%;animation-delay:-7s;width:3px;height:3px}.nbeam i:nth-child(7){left:30%;top:88%;animation-delay:-3s}
+@keyframes nmote{0%{transform:translate(0,0);opacity:0}15%{opacity:.9}50%{transform:translate(14px,-22px)}85%{opacity:.8}100%{transform:translate(-6px,-46px);opacity:0}}
+/* duvar süsleri */
+.ndeco{position:absolute;inset:0;pointer-events:none;z-index:1}
+.ndpic{position:absolute;left:7%;top:calc(20% + 20px);width:min(24cqw,17cqh,150px);filter:drop-shadow(0 5px 0 rgba(47,46,36,.2));transform:rotate(-3deg)}
+.ndshelf{position:absolute;right:4%;top:calc(41% - min(10cqw,60px));width:min(30cqw,22cqh,190px);filter:drop-shadow(0 3px 0 rgba(47,46,36,.18))}
+.nest.night .ndpic,.nest.night .ndshelf{filter:brightness(.7) drop-shadow(0 5px 0 rgba(0,0,0,.25))}
+.nbird .anka{filter:drop-shadow(0 10px 8px rgba(60,30,10,.18))}
+@media (prefers-reduced-motion:reduce){.nbeam,.nbeam i{animation:none}}

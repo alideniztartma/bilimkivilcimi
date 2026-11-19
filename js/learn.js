@@ -310,6 +310,7 @@ async function mainBtn(){
     btn.textContent=ok?'Devam':'Anladım';btn.className='b3 '+(ok?'olive':'garnet');btn.disabled=false;L.state='fb';btn.focus();
     if(!ok&&MODES[L.mode].hearts&&S.hearts<=0)L.state='dead';
   }else if(L.state==='fb')advance(L.lastOk);
+  else if(L.state==='moment'){clearTimeout(L.momT);showEx()}
   else if(L.state==='dead')heartsOut(true);
   else if(L.state==='end')L.endStep&&L.endStep();
 }
@@ -319,8 +320,19 @@ function advance(ok){
   if(!ok&&MODES[L.mode].requeue)L.queue.push(ex);
   if(L.mode==='exam'&&!ok&&L.done<L.total){/* sınavda yanlış da ilerler */}
   if(!L.queue.length)return finish();
+  const mk=ok&&typeof momentFor==='function'?momentFor(L):null;
+  if(mk){showMoment(mk);return}
   showEx();
 }
+/* Duolingo'daki gibi ara an: büyük Anka animasyonu, kendiliğinden ya da Devam ile geçer */
+/* Sonuç ekranındaki sayılar sıfırdan yukarı sayar */
+function countUp(root){if(reduce)return;root.querySelectorAll('.trio b,.stat.gm').forEach(b=>{const n=[...b.childNodes].reverse().find(x=>x.nodeType===3&&/\d/.test(x.textContent));if(!n)return;
+  const m=n.textContent.match(/^(\D*)(\d+)(.*)$/s);if(!m)return;const to=+m[2],t0=performance.now()+350,D=700;n.textContent=m[1]+'0'+m[3];
+  const f=t=>{const p=Math.min(1,Math.max(0,(t-t0)/D)),e=1-Math.pow(1-p,3);n.textContent=m[1]+Math.round(to*e)+m[3];if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)})}
+function showMoment(k){
+  L.state='moment';$('#lbody').innerHTML=momentHtml(k,L);$('#lfoot').className='lfoot';$('#fb').innerHTML='';
+  const b=$('#lbtn');b.className='b3';b.textContent='Devam';b.disabled=false;b.focus();
+  sfx.win();haptic('heavy');clearTimeout(L.momT);L.momT=setTimeout(()=>{if(L&&L.state==='moment')showEx()},2800)}
 $('#lbtn').addEventListener('click',mainBtn);
 document.addEventListener('keydown',e=>{
   if(!$('#modal').hidden){if(e.key==='Escape'&&!$('#mbox').dataset.lockbg)closeModal();return}
@@ -387,15 +399,15 @@ function finish(){
   const btn=$('#lbtn');btn.className='b3';btn.textContent='Devam';btn.disabled=false;
   const mm=Math.floor(secs/60)+':'+String(secs%60).padStart(2,'0');
   const third=m==='speed'?`<div style="--c:var(--terra)"><small>SKOR</small><b>${ic('timer',22)}${L.score}</b></div>`:`<div style="--c:var(--olive)"><small>SÜRE</small><b>${ic('clock',22)}${mm}</b></div>`;
-  const steps=[()=>`<div class="done-screen">${anka(mood,150,undefined,mood==='sad'?'act-shake':'act-dance')}<h1>${title}</h1><p>${sub}</p>
+  const steps=[()=>`<div class="done-screen"><div class="ds-ank ${mood==='sad'?'':'sun'}">${mood==='sad'?'':'<div class="mo-sun"></div>'}${anka(mood,150,undefined,mood==='sad'?'act-shake':'act-dance')}</div><h1 class="ds-h">${title}</h1><p>${sub}</p>
     <div class="trio"><div style="--c:var(--ember)"><small>DP</small><b>${fi('bolt',22)}${xp}</b></div>
     <div style="--c:var(--terra)"><small>DOĞRULUK</small><b>${ic('target2',22)}%${acc}</b></div>${third}</div>${gems?`<div class="stat gm" style="font-size:1.4rem">${fi('gem',28)} +${gems} mozaik taşı</div>`:''}${extra}</div>`];
-  if(firstToday)steps.push(()=>`<div class="done-screen"><div class="bigflame">${fi('flame',190)}<b>${S.streak}</b></div><h1 style="color:var(--ember)">${S.streak} günlük seri!</h1><p>${S.streak===1?'Serin başladı! Yarın da gel, ateşi canlı tut.':'Bugün de geldin. Yarın görüşürüz!'}</p></div>`);
+  if(firstToday)steps.push(()=>`<div class="done-screen"><div class="bigflame ignite">${fi('flame',190)}<b>${S.streak}</b><i class="emb"></i><i class="emb"></i><i class="emb"></i><i class="emb"></i></div><h1 class="ds-h" style="color:var(--ember)">${S.streak} günlük seri!</h1><p>${S.streak===1?'Serin başladı! Yarın da gel, ateşi canlı tut.':'Bugün de geldin. Yarın görüşürüz!'}</p></div>`);
   if(goalHit)steps.push(()=>`<div class="done-screen">${anka('wow',130,undefined,'act-jump')}<h1>Günlük hedefe ulaştın!</h1><p>Bugün ${S.day.xp} DP topladın. Hedefin ${S.goal} DP idi.</p></div>`);
   qDone.forEach(q=>steps.push(()=>`<div class="done-screen"><div style="color:var(--ember)">${ic('chest',120)}</div><h1>Görev tamam!</h1><p>${esc(q.name)}</p><div class="stat gm" style="font-size:1.6rem">${fi('gem',32)} +${q.gems}</div></div>`));
   newB.forEach(id=>{const b=BADGES.find(x=>x.id===id);steps.push(()=>`<div class="done-screen"><div class="medal" style="width:120px;height:120px">${ic(b.icon,60)}</div><h1>Yeni rozet!</h1><h2>${b.name}</h2><p>${b.desc}</p></div>`)});
   let k=0;
-  const show=()=>{$('#lbody').innerHTML=steps[k]();sfx.win();if(k===0&&mood!=='sad')confetti();const c=$('#openCertNow');if(c)c.onclick=()=>openCert(L.ui)};
+  const show=()=>{$('#lbody').innerHTML=steps[k]();sfx.win();countUp($('#lbody'));if(k===0&&mood!=='sad')confetti();const c=$('#openCertNow');if(c)c.onclick=()=>openCert(L.ui)};
   L.endStep=()=>{k++;if(k<steps.length)show();else{const v=m==='lesson'&&S.pet.visit;closeLesson();if(v)location.hash='#yuva';if(typeof ankaAfterLesson==='function')ankaAfterLesson()}};
   show();
 }
