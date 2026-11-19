@@ -9,96 +9,106 @@ const ANKA_NAME='Anka';
 const ankaWorn=()=>{try{const w=(typeof S!=='undefined'&&S&&S.wear)||{};return ['neck','face','head'].map(k=>w[k]).filter(Boolean)}catch(e){return[]}};
 
 /* cls: ek sınıflar. Örn. 'act-jump' ilk gösterimde bir kez zıplatır.
-   Stil: Duolingo gibi "cel shading" — düz renk blokları, sert kenarlı açık (sol üst) ve koyu (sağ alt) şeritler, kontur yok.
-   Katmanlar (yüz, yanak, göbek, aksesuar) anka3d.css'te --lx/--ly ile kayar; yüz ve göbek gövde siluetine kırpılır,
-   böylece kafa dönerken yüz kürenin kenarından kaybolur. clipPath id'leri her çağrıda benzersizdir. */
+   2.5D: gradyanlarla hacim (ışık sol üstten), yer gölgesi (.ak-shd), parçalar katmanlı (yüz, yanak, göbek, aksesuar)
+   böylece anka3d.css --lx/--ly ile kafayı gerçekten döndürüyormuş gibi kaydırır. Gradyan id'leri her çağrıda benzersizdir. */
 let ankaSeq=0;
-/* Mutlak komutlu (M C Q L Z) yolu kaydır / yatayda aynala (x -> 140-x) */
-const akMv=(d,dx,dy)=>{let i=0;return d.replace(/-?\d*\.?\d+/g,n=>(+n+((i++)%2?dy:dx)).toString())};
-const akMir=d=>{let i=0;return d.replace(/-?\d*\.?\d+/g,n=>((i++)%2?+n:140-n).toString())};
-const AK_BODY='M70 22 C 103 22 121 40 122 70 C 123 96 126 118 118 130 C 110 140 94 142 70 142 C 46 142 30 140 22 130 C 14 118 17 96 18 70 C 19 40 37 22 70 22 Z';
-const AK_BELLY='M70 98 C 92 98 105 110 104 123 C 103 134 89 139 70 139 C 51 139 37 134 36 123 C 35 110 48 98 70 98 Z';
-const AK_MASK='M70 46 C 62 39 50 37 42 40 C 31 44 26 55 27 66 C 28 78 35 87 46 90 C 56 93 63 92 70 97 C 77 92 84 93 94 90 C 105 87 112 78 113 66 C 114 55 109 44 98 40 C 90 37 78 39 70 46 Z';
-const AK_WING='M31 80 C 16 80 4 95 4 111 C 4 123 14 127 21 120 C 28 113 32 103 34 94 C 35 87 34 81 31 80 Z';
 function anka(mood='happy',size=100,acc,cls){
   const A=new Set(acc===undefined?ankaWorn():acc==null?[]:Array.isArray(acc)?acc:[acc]);
-  /* palet: gövde + açık ton + koyu ton; yüz maskesi daha açık; göz/mürekkep koyu gri */
-  const body='#E58A2C',lite='#F4A851',shade='#C96A22',mask='#FAC57D',wing='#C2601E',dark='#A3461F',deep='#7A2E16',
-        belly='#F7DDA6',bellyD='#EBC78C',tile='#EBC27A',tile2='#E3A65A',eye='#4B4B4B',bk='#FFB020',bkD='#E8901A',mouth='#8E2B22',tongue='#FF7F98',foot='#F0A020';
+  const ink='#2F2E24',body='#E58A2C',dark='#A3461F',deep='#7A2E16',belly='#F7DDA6',tile='#EBC27A',beak='#8E2B22';
   const cheer=mood==='cheer',sad=mood==='sad',wow=mood==='wow',wave=mood==='wave',sleep=mood==='sleep',think=mood==='think',love=mood==='love',eat=mood==='eat';
   const W=140,H=150;
-  const u='ak'+(++ankaSeq).toString(36)+'_',CB=`url(#${u}b)`,CY=`url(#${u}y)`;
-  const defs=`<defs><clipPath id="${u}b"><path d="${AK_BODY}"/></clipPath><clipPath id="${u}y"><path d="${AK_BELLY}"/></clipPath></defs>`;
+  const u='ak'+(++ankaSeq).toString(36)+'_',U=k=>`url(#${u}${k})`;
+  const st=(o,c,a)=>`<stop offset="${o}" stop-color="${c}"${a!=null?` stop-opacity="${a}"`:''}/>`;
+  const lin=(k,x1,y1,x2,y2,stops)=>`<linearGradient id="${u}${k}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${stops}</linearGradient>`;
+  const rad=(k,cx,cy,r,stops,us)=>`<radialGradient id="${u}${k}" cx="${cx}" cy="${cy}" r="${r}"${us?' gradientUnits="userSpaceOnUse"':''}>${stops}</radialGradient>`;
+  const defs=`<defs>${rad('b',50,46,96,st(0,'#F7B868')+st(.3,'#EC983C')+st(.58,body)+st(.84,'#CC6C28')+st(1,'#B0522A'),1)}
+    ${rad('y',.42,.28,.85,st(0,'#FFF4DA')+st(.5,belly)+st(1,'#E5BE82'))}
+    ${lin('w',0,0,.35,1,st(0,'#C65D2A')+st(.5,dark)+st(1,'#80321A'))}
+    ${lin('l',0,0,0,1,st(0,'#F09D44')+st(1,'#CF7328'))}
+    ${rad('e',.42,.36,.7,st(0,'#FFFFFF')+st(.62,'#FFFDF8')+st(1,'#E4D9C8'))}
+    ${rad('p',.38,.32,.75,st(0,'#56523F')+st(.55,ink)+st(1,'#1A1913'))}
+    ${lin('k',0,0,0,1,st(0,'#C9493B')+st(.5,beak)+st(1,'#681C17'))}
+    ${lin('c1',0,1,0,0,st(0,'#C26826')+st(1,'#F0A848'))}
+    ${lin('c2',0,1,0,0,st(0,'#E39A3E')+st(1,'#FFD889'))}
+    ${lin('c3',0,1,0,0,st(0,'#86331A')+st(1,'#CC6230'))}
+    ${rad('c',.5,.5,.5,st(0,'#E8776A',1)+st(.55,'#E8776A',.75)+st(1,'#E8776A',0))}
+    ${rad('g',.5,.5,.5,st(0,'#FFFFFF',.75)+st(1,'#FFFFFF',0))}
+    ${rad('s',.5,.5,.5,st(0,ink,.34)+st(.6,ink,.16)+st(1,ink,0))}</defs>`;
   /* kuyruk alevleri (arkada) */
-  const tailL=`<path d="M40 116 C 26 123 13 120 7 107 C 17 112 27 110 36 103 Z" fill="${wing}"/><path d="M53 134 C 45 146 35 149 26 146 C 36 142 42 136 46 125 Z" fill="${lite}"/>`;
-  const mirD=h=>h.replace(/d="([^"]+)"/g,(m,d)=>`d="${akMir(d)}"`);
-  const tail=tailL+mirD(tailL);
-  /* tepe tüyleri: üç alev */
-  const crest=`<g class="crest"><path d="M60 31 C 49 27 43 17 46 8 C 52 15 59 18 66 25 Z" fill="${lite}"/><path d="${akMir('M60 31 C 49 27 43 17 46 8 C 52 15 59 18 66 25 Z')}" fill="#FFC24A"/><path d="M70 29 C 59 18 61 6 72 0 C 69 10 80 14 77 29 Z" fill="#D2601F"/></g>`;
-  /* gövde: düz renk + sert kenarlı açık şerit (sol üst) + koyu şerit (sağ alt) */
-  const bodyP=`<path d="${AK_BODY}" fill="${body}"/><g clip-path="${CB}"><path class="ak-gl" d="${AK_BODY} ${akMv(AK_BODY,5,6)}" fill="${lite}" fill-rule="evenodd"/><path d="${AK_BODY} ${akMv(AK_BODY,-5,-9)}" fill="${shade}" fill-rule="evenodd"/></g>`;
-  /* göğüste mozaik taşları: büyük, sade */
+  const tail=`<path d="M46 126 C 26 134 12 126 8 110 C 18 118 30 116 40 108 Z" fill="${U('c3')}"/>
+    <path d="M94 126 C 114 134 128 126 132 110 C 122 118 110 116 100 108 Z" fill="${U('c3')}"/>
+    <path d="M58 134 C 50 146 38 149 28 145 C 38 141 44 134 48 124 Z" fill="${U('c1')}"/>
+    <path d="M82 134 C 90 146 102 149 112 145 C 102 141 96 134 92 124 Z" fill="${U('c1')}"/>`;
+  /* tepe tüyleri: alev gibi */
+  const crest=`<g class="crest"><path d="M61 33 C 48 27 43 16 47 7 C 52 17 60 20 67 28 Z" fill="${U('c1')}"/>
+    <path d="M79 33 C 92 27 97 16 93 7 C 88 17 80 20 73 28 Z" fill="${U('c2')}"/>
+    <path d="M70 30 C 59 18 61 6 72 0 C 69 11 80 15 77 30 Z" fill="${U('c3')}"/><path d="M68.5 24 C 64 17 65 10 69.5 5" stroke="#F2B451" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".55"/></g>`;
+  const bodyP=`<path d="M70 24 C 108 24 124 52 124 86 C 124 120 102 140 70 140 C 38 140 16 120 16 86 C 16 52 32 24 70 24 Z" fill="${U('b')}"/>
+    <path d="M28 112 C 36 130 52 140 70 140 C 88 140 104 130 112 112 C 100 124 86 130 70 130 C 54 130 40 124 28 112 Z" fill="${dark}" opacity=".22"/>
+    <path d="M30 52 C 38 38 52 30 66 29" stroke="#FFE2B0" stroke-width="3" fill="none" stroke-linecap="round" opacity=".45"/>
+    <ellipse class="ak-gl" cx="41" cy="45" rx="15" ry="8.5" transform="rotate(-38 41 45)" fill="${U('g')}"/>`;
+  /* göğüste mozaik taşları */
   let tiles='';
-  [[56.5,106,3],[52.25,114.5,4],[52.25,123,4],[56.5,131.5,3]].forEach(([x0,y,n],r)=>{for(let i=0;i<n;i++){const k=r*4+i;tiles+=`<rect x="${x0+i*8.5}" y="${y}" width="7" height="7" rx="1.8" fill="${k%5===2?tile2:tile}"/>`}});
-  const bellyP=`<g clip-path="${CB}"><g class="ak-bly"><path d="${AK_BELLY}" fill="${belly}"/><path d="${AK_BELLY} ${akMv(AK_BELLY,0,-5)}" fill="${bellyD}" fill-rule="evenodd" clip-path="${CY}"/>${tiles}</g></g>`;
-  /* kanatlar: kalın, yuvarlak uçlu, düz koyu ton */
-  const wingL=`<path d="${AK_WING}" fill="${wing}"/><path d="M10 113 C 12 104 17 97 23 92" stroke="${dark}" stroke-width="3.2" fill="none" stroke-linecap="round" opacity=".5"/>`;
-  const wingR=mirD(wingL);
-  /* kalkık kanat: aynı kanat, omuz çevresinde yukarı döndürülmüş */
-  const upWL=`<g transform="rotate(108 31 88)">${wingL}</g>`;
-  const upWR=`<g transform="rotate(-108 109 88)">${wingR}</g>`;
+  [[60,104],[67,104],[74,104],[56,111],[63,111],[70,111],[77,111],[52,118],[59,118],[66,118],[73,118],[80,118],[56,125],[63,125],[70,125],[77,125],[62,132],[69,132]]
+    .forEach(([x,y],i)=>{tiles+=`<rect x="${x}" y="${y}" width="5.4" height="5.4" rx=".8" fill="${i%5===2?'#E58A2C':tile}" opacity="${i%5===2?.55:.9}"/>`});
+  const bellyP=`<g class="ak-bly"><path d="M70 94 C 92 94 102 108 100 123 C 98 134 86 140 70 140 C 54 140 42 134 40 123 C 38 108 48 94 70 94 Z" fill="${U('y')}"/>${tiles}<ellipse cx="60" cy="102" rx="10" ry="4.5" transform="rotate(-14 60 102)" fill="${U('g')}" opacity=".7"/><path d="M42 126 C 46 135 56 140 70 140 C 84 140 94 135 98 126 C 92 132 82 135 70 135 C 58 135 48 132 42 126 Z" fill="#C98F4E" opacity=".28"/></g>`;
+  /* kanatlar: dış g pozisyon, iç g animasyon */
+  const wingL=`<path d="M24 82 C 6 88 2 112 12 126 C 17 113 25 104 33 97 C 31 90 28 85 24 82 Z" fill="${U('w')}"/><path d="M12 126 C 10 116 13 107 18 100 M18 124 C 18 116 21 109 25 104" stroke="#F2B451" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  const wingR=`<path d="M116 82 C 134 88 138 112 128 126 C 123 113 115 104 107 97 C 109 90 112 85 116 82 Z" fill="${U('w')}"/><path d="M128 126 C 130 116 127 107 122 100 M122 124 C 122 116 119 109 115 104" stroke="#F2B451" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  const upWL=`<path d="M40 90 C 24 93 4 82 -6 56 C 4 63 13 63 20 59 C 11 51 9 42 11 33 C 22 48 33 62 44 75 Z" fill="${U('w')}"/><path d="M-6 56 C 6 70 18 76 30 79 M11 33 C 16 48 24 60 34 68" stroke="#F2B451" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  const upWR=`<path d="M100 90 C 116 93 136 82 146 56 C 136 63 127 63 120 59 C 129 51 131 42 129 33 C 118 48 107 62 96 75 Z" fill="${U('w')}"/><path d="M146 56 C 134 70 122 76 110 79 M129 33 C 124 48 116 60 106 68" stroke="#F2B451" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
   const wingsBack=`${cheer?'':`<g class="wg wgl">${wingL}</g>`}${(cheer||wave)?'':`<g class="wg wgr">${wingR}</g>`}`;
   const wingsFront=`${cheer?`<g class="wg wgl">${upWL}</g>`:''}${(cheer||wave)?`<g class="wg wgr">${upWR}</g>`:''}`;
   /* arka görünüş: yalnızca dönerken (act-spin/act-flip) görünür. CSS'siz çizimlerde gizli kalsın diye opacity="0". */
-  const back=`<g class="ak-bk" opacity="0"><path d="M70 116 C 58 126 44 134 30 146 C 46 147 60 141 70 132 C 80 141 94 147 110 146 C 96 134 82 126 70 116 Z" fill="${wing}"/><path d="M70 120 C 63 130 61 141 65 150 C 68 145 72 145 75 150 C 79 141 77 130 70 120 Z" fill="${lite}"/></g>`;
-  /* yüz maskesi + gözler */
-  let eyes=`<path d="${AK_MASK}" fill="${mask}"/>`;
+  const back=`<g class="ak-bk" opacity="0"><path d="M70 30 C 84 34 92 44 94 56 C 86 48 78 44 70 44 C 62 44 54 48 46 56 C 48 44 56 34 70 30 Z" fill="${dark}" opacity=".35"/>
+    ${cheer?'':wingL}${(cheer||wave)?'':wingR}
+    <path d="M70 116 C 58 126 44 134 30 146 C 46 147 60 141 70 132 C 80 141 94 147 110 146 C 96 134 82 126 70 116 Z" fill="${U('c3')}"/><path d="M70 120 C 63 130 61 141 65 150 C 68 145 72 145 75 150 C 79 141 77 130 70 120 Z" fill="${U('c2')}"/></g>`;
+  /* gözler */
+  let eyes;
   if(love){
-    eyes+=[52,88].map(cx=>`<path class="hrt" d="M${cx} 79 C ${cx-21} 66 ${cx-18} 47 ${cx-8} 49 C ${cx-3} 50 ${cx} 54 ${cx} 57 C ${cx} 54 ${cx+3} 50 ${cx+8} 49 C ${cx+18} 47 ${cx+21} 66 ${cx} 79 Z" fill="#FF4B4B"/><path d="M${cx} 79 C ${cx+10} 72 ${cx+17} 64 ${cx+16} 57 C ${cx+14} 66 ${cx+8} 72 ${cx} 76 Z" fill="#E03B3B"/><circle cx="${cx-8}" cy="57" r="3.4" fill="#fff"/>`).join('');
+    eyes=[54,86].map(cx=>`<path class="hrt" d="M${cx} 80 C ${cx-20} 66 ${cx-17} 48 ${cx-7} 50 C ${cx-3} 51 ${cx} 55 ${cx} 58 C ${cx} 55 ${cx+3} 51 ${cx+7} 50 C ${cx+17} 48 ${cx+20} 66 ${cx} 80 Z" fill="#C2412D" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${cx-6}" cy="58" r="3" fill="#fff" opacity=".8"/><circle cx="${cx-9}" cy="63" r="1.4" fill="#fff" opacity=".6"/>`).join('');
   }else if(cheer||sleep||eat){
-    const d=sleep?'M39 64 Q52 73 65 64 M75 64 Q88 73 101 64':'M39 69 Q52 54 65 69 M75 69 Q88 54 101 69';
-    eyes+=`<path d="${d}" stroke="${eye}" stroke-width="5.5" fill="none" stroke-linecap="round"/>`;
+    const d=sleep?'M42 68 Q54 76 66 68 M74 68 Q86 76 98 68':'M41 70 Q54 55 67 70 M73 70 Q86 55 99 70';
+    eyes=`<path d="${d}" stroke="${ink}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
   }else{
-    const pr=wow?5.6:8.2,py=sad?69:think?59:65,px=think?3:2,ey=wow?17.5:16.5;
-    eyes+=[52,88].map(cx=>`<ellipse cx="${cx}" cy="64" rx="${ey-1}" ry="${ey}" fill="#fff"/><g class="pup"><circle cx="${cx+px}" cy="${py}" r="${pr}" fill="${eye}"/><circle cx="${cx+px+(wow?2:3.2)}" cy="${py-(wow?2:3.2)}" r="${wow?2.2:3.3}" fill="#fff"/></g><ellipse class="lid" cx="${cx}" cy="64" rx="${ey}" ry="${ey+1}" fill="${mask}"/>`).join('');
-    /* göz kapağı kesiği: üzgün (dış uçlar aşağı), düşünceli (biraz kısık) */
-    if(sad){const c='M34 53 C 36 44 46 39 54 40 C 62 41 68 44 71 47 L71 52 L34 62 Z';eyes+=`<path d="${c}" fill="${mask}"/><path d="${akMir(c)}" fill="${mask}"/>`}
-    if(think)eyes+=`<path d="M35 52 C 37 44 46 39 54 40 C 62 41 68 44 70 47 L70 52 Z" fill="${mask}"/>`;
+    const pr=wow?6:8,py=sad?72:think?62:68,px=think?3:2;
+    eyes=[54,86].map(cx=>`<ellipse cx="${cx}" cy="66" rx="16" ry="17.5" fill="${U('e')}"/><g class="pup"><circle cx="${cx+px}" cy="${py}" r="${pr}" fill="${U('p')}"/><circle cx="${cx+px+3}" cy="${py-3}" r="2.6" fill="#fff"/><circle cx="${cx+px-2.6}" cy="${py+3}" r="1.2" fill="#fff" opacity=".7"/></g><ellipse class="lid" cx="${cx}" cy="66" rx="17" ry="18.5" fill="${U('l')}"/>`).join('');
+    if(sad)eyes+=`<path d="M37 56 C 44 50 56 47 66 49 L66 54 C 56 52 45 55 37 60 Z" fill="${U('b')}"/><path d="M103 56 C 96 50 84 47 74 49 L74 54 C 84 52 95 55 103 60 Z" fill="${U('b')}"/>`;
   }
   let brows='';
-  if(sad)brows=`<path d="M39 47 L60 41 M101 47 L80 41" stroke="${deep}" stroke-width="4.5" stroke-linecap="round"/>`;
-  if(wow)brows=`<path d="M38 39 Q50 31 62 37 M78 37 Q90 31 102 39" stroke="${deep}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`;
-  if(think)brows=`<path d="M40 45 L62 43 M78 39 Q90 33 100 39" stroke="${deep}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`;
-  /* gaga: üst açık sarı-turuncu, alt koyu; neşeliyken ağız açık, pembe dil */
-  const upper=y=>`<path d="M59 ${y} C 63 ${y-4} 77 ${y-4} 81 ${y} C 79 ${y+5} 74 ${y+8} 70 ${y+8} C 66 ${y+8} 61 ${y+5} 59 ${y} Z" fill="${bk}"/><ellipse cx="65.5" cy="${y-1}" rx="3.6" ry="1.4" fill="#FFD36B"/>`;
+  if(sad)brows=`<path d="M40 50 L62 43 M100 50 L78 43" stroke="${deep}" stroke-width="4" stroke-linecap="round"/>`;
+  if(wow)brows=`<path d="M40 42 Q52 34 64 40 M76 40 Q88 34 100 42" stroke="${deep}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  if(think)brows=`<path d="M42 46 L62 44 M78 42 Q90 36 100 42" stroke="${deep}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  /* gaga (hacim: üstten ışık, altta gölge) */
+  const bk=U('k'),shine=`<path d="M64.5 84.6 L71 84.6" stroke="#fff" stroke-opacity=".45" stroke-width="1.5" stroke-linecap="round"/>`;
   let beakP;
-  if(cheer)beakP=`<path d="M60 86 C 61 103 79 103 80 86 Z" fill="${bkD}"/><path d="M62.5 87 C 64 99 76 99 77.5 87 Z" fill="${mouth}"/><path d="M64.5 95 Q70 90 75.5 95 Q70 99.5 64.5 95 Z" fill="${tongue}"/>${upper(81)}`;
-  else if(wow)beakP=`<ellipse cx="70" cy="93" rx="7.5" ry="6.8" fill="${bkD}"/><ellipse cx="70" cy="93" rx="5.2" ry="4.8" fill="${mouth}"/><ellipse cx="70" cy="95.6" rx="3" ry="1.8" fill="${tongue}"/>${upper(81)}`;
-  else if(eat)beakP=`<g class="chew"><path d="M61 86 C 62 97 78 97 79 86 Z" fill="${bkD}"/><path d="M64 87 C 65 93 75 93 76 87 Z" fill="${mouth}"/></g>${upper(81)}`;
-  else beakP=`<path d="M59 82 C 63 78 77 78 81 82 C 80 89 75 95 70 97 C 65 95 60 89 59 82 Z" fill="${bk}"/><path d="M61 88 C 64 93 67 96 70 97 C 73 96 76 93 79 88 C 75 90.5 65 90.5 61 88 Z" fill="${bkD}"/><ellipse cx="65.5" cy="81.6" rx="3.6" ry="1.4" fill="#FFD36B"/>`;
-  const cr=love||eat?7.5:6,cy2=love||eat?5:4;
-  const cheeks=`<g class="ak-chk"><ellipse cx="39" cy="83" rx="${cr}" ry="${cy2}" fill="#F7826A" opacity="${love||eat?.85:.6}"/><ellipse cx="101" cy="83" rx="${cr}" ry="${cy2}" fill="#F7826A" opacity="${love||eat?.85:.6}"/></g>`;
-  /* ayaklar: yuvarlak parmaklı turuncu */
-  const ft=x=>`<ellipse cx="${x}" cy="142.6" rx="7" ry="3.6" fill="${bkD}"/><circle cx="${x-5.6}" cy="145.2" r="3.4" fill="${foot}"/><circle cx="${x}" cy="146.2" r="3.6" fill="${foot}"/><circle cx="${x+5.6}" cy="145.2" r="3.4" fill="${foot}"/>`;
-  const feet=ft(54)+ft(86);
+  if(cheer)beakP=`<path d="M60 82 L80 82 L70 90 Z" fill="${bk}"/><path d="M62 90 Q70 106 78 90 Z" fill="#5C1A14"/><path d="M65 96 Q70 100 75 96 Q70 103 65 96 Z" fill="#E8776A"/><path d="M63.5 83.4 L70 83.4" stroke="#fff" stroke-opacity=".45" stroke-width="1.4" stroke-linecap="round"/>`;
+  else if(wow)beakP=`<path d="M61 82 L79 82 L70 89 Z" fill="${bk}"/><ellipse cx="70" cy="92" rx="6" ry="4" fill="#5C1A14"/><path d="M64 94 L76 94 L70 101 Z" fill="${bk}"/><path d="M64.5 83.4 L70 83.4" stroke="#fff" stroke-opacity=".45" stroke-width="1.4" stroke-linecap="round"/>`;
+  else if(eat)beakP=`<path d="M60 80 L80 80 L70 88 Z" fill="${bk}"/><g class="chew"><path d="M62 88 L78 88 L70 99 Z" fill="#5C1A14"/><path d="M63 88 L77 88 L70 92 Z" fill="${beak}"/></g>`;
+  else beakP=`<path d="M61 83 L79 83 L70 96 Z" fill="${bk}"/><path d="M61 83 L79 83 L70 87 Z" fill="#B23A2A"/>${shine}<path d="M70 96 L73.5 91" stroke="#5C1A14" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>`;
+  const cr=love||eat?11:9,cy2=love||eat?7.5:6;
+  const cheeks=`<g class="ak-chk"><ellipse cx="34" cy="88" rx="${cr}" ry="${cy2}" fill="${U('c')}" opacity="${love||eat?.95:.75}"/><ellipse cx="106" cy="88" rx="${cr}" ry="${cy2}" fill="${U('c')}" opacity="${love||eat?.95:.75}"/></g>`;
+  const feet=`<path d="M57 139 l-6 7 M57 139 v8 M57 139 l6 7 M83 139 l-6 7 M83 139 v8 M83 139 l6 7" stroke="${deep}" stroke-width="3.6" stroke-linecap="round"/>`;
   let extra='';
-  if(sad)extra=`<path class="tear" d="M37 76 C 34 82 33 86 37 88 C 41 86 40 82 37 76 Z" fill="#7CC8F0"/>`;
+  if(sad)extra=`<path class="tear" d="M38 80 C 35 86 34 90 38 92 C 42 90 41 86 38 80 Z" fill="#8FC1D9"/>`;
   if(sleep)extra=`<g class="zz"><text x="104" y="30" font-family="JetBrains Mono,monospace" font-weight="700" font-size="16" fill="${deep}">z</text><text x="116" y="18" font-family="JetBrains Mono,monospace" font-weight="700" font-size="12" fill="${deep}">z</text></g>`;
   if(think)extra=`<circle class="thd" cx="112" cy="30" r="4" fill="${dark}" opacity=".5"/><circle class="thd thd2" cx="122" cy="18" r="6" fill="${dark}" opacity=".5"/>`;
-  /* aksesuarlar (mağaza): düz renk, konturusuz; boyun / yüz / baş ayrı katman */
+  /* aksesuarlar (mağaza): boyun / yüz / baş ayrı katman (kafa dönerken farklı kayarlar) */
   let an='',af='',ah='';
-  if(A.has('atki'))an+=`<path d="M21 100 Q70 122 119 100 L121 114 Q70 137 19 114 Z" fill="#C2412D"/><path d="M20 108 Q70 130 120 108 L121 114 Q70 137 19 114 Z" fill="#9E3222"/><path d="M38 108 Q70 123 102 108" stroke="#4B5A3A" stroke-width="4" fill="none"/><path d="M90 113 L101 141 L87 144 L80 116 Z" fill="#C2412D"/><path d="M95 127 L101 141 L94 143 Z" fill="#9E3222"/><path d="M86 125 L96 123 M88 132 L98 130" stroke="#4B5A3A" stroke-width="3"/>`;
-  if(A.has('papyon'))an+=`<path d="M70 106 L51 95 L51 117 Z M70 106 L89 95 L89 117 Z" fill="#E0412F"/><path d="M70 106 L51 111 L51 117 Z M70 106 L89 111 L89 117 Z" fill="#B23224"/><rect x="64.5" y="99.5" width="11" height="13" rx="4" fill="#B23224"/><circle cx="57" cy="103" r="2" fill="#FFE7C2"/><circle cx="83" cy="103" r="2" fill="#FFE7C2"/>`;
-  if(A.has('gozluk'))af+=`<g fill="rgba(255,255,255,.2)" stroke="${eye}" stroke-width="3.6"><circle cx="52" cy="64" r="18.5"/><circle cx="88" cy="64" r="18.5"/></g><path d="M68 61 Q70 58 72 61" stroke="${eye}" stroke-width="3.6" fill="none"/><path d="M40 55 Q44 50 50 49 M76 55 Q80 50 86 49" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".7"/>`;
-  if(A.has('gunes'))af+=`<rect x="32" y="52" width="36" height="25" rx="11" fill="${eye}"/><rect x="72" y="52" width="36" height="25" rx="11" fill="${eye}"/><path d="M32 66 Q50 80 68 66 L68 66 Q66 77 57 77 L43 77 Q34 77 32 66 Z M72 66 Q90 80 108 66 Q106 77 97 77 L83 77 Q74 77 72 66 Z" fill="#333"/><path d="M67 58 Q70 54 73 58" stroke="${eye}" stroke-width="3.6" fill="none"/><path d="M38 59 L47 57 M78 59 L87 57" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".75"/><path d="M33 58 L21 54 M107 58 L119 54" stroke="${eye}" stroke-width="3.6" stroke-linecap="round"/>`;
-  if(A.has('baret'))ah+=`<path d="M31 40 Q70 -8 109 40 Z" fill="#FFB020"/><path d="M70 9 Q95 14 109 40 L86 40 Q84 20 70 9 Z" fill="#E8901A"/><path d="M42 33 Q48 20 58 14" stroke="#FFE08A" stroke-width="3.4" fill="none" stroke-linecap="round"/><rect x="66.5" y="9" width="7" height="31" rx="3" fill="#E8901A"/><rect x="25" y="36" width="90" height="11" rx="5.5" fill="#E8901A"/><rect x="25" y="42" width="90" height="5" rx="2.5" fill="#C8711A"/>`;
-  if(A.has('tac'))ah+=`<path d="M43 35 L49 9 L60 23 L70 3 L80 23 L91 9 L97 35 Z" fill="#FFC83D"/><path d="M43 35 L97 35 L95 28 L45 28 Z" fill="#E8A82A"/><circle cx="49" cy="9" r="3.4" fill="#FFC83D"/><circle cx="70" cy="3" r="3.6" fill="#FFC83D"/><circle cx="91" cy="9" r="3.4" fill="#FFC83D"/><rect x="66" y="16" width="8" height="8" rx="1.6" transform="rotate(45 70 20)" fill="#FF4B4B"/><path d="M50 26 L53 15" stroke="#FFE9A6" stroke-width="2.4" stroke-linecap="round"/>`;
-  if(A.has('zeytin'))ah+=`<g fill="#6A8A3A"><ellipse cx="34" cy="44" rx="12" ry="5.4" transform="rotate(-40 34 44)"/><ellipse cx="46" cy="32" rx="12" ry="5.4" transform="rotate(-20 46 32)"/><ellipse cx="94" cy="32" rx="12" ry="5.4" transform="rotate(20 94 32)"/><ellipse cx="106" cy="44" rx="12" ry="5.4" transform="rotate(40 106 44)"/></g><g fill="#4B5A3A"><ellipse cx="36" cy="46" rx="9" ry="2.4" transform="rotate(-40 36 46)"/><ellipse cx="104" cy="46" rx="9" ry="2.4" transform="rotate(40 104 46)"/></g><circle cx="40" cy="38" r="3.4" fill="#3A4A28"/><circle cx="100" cy="38" r="3.4" fill="#3A4A28"/>`;
-  if(A.has('kep'))ah+=`<path d="M48 30 V42 Q70 52 92 42 V30 Z" fill="#3A3A3A"/><path d="M26 26 L70 10 L114 26 L70 42 Z" fill="${eye}"/><path d="M26 26 L70 42 L114 26 L114 29 L70 45 L26 29 Z" fill="#333"/><path d="M70 26 L104 32 L106 54" stroke="#FFB020" stroke-width="3.6" fill="none" stroke-linecap="round"/><path d="M101 52 L106 65 L111 52 Z" fill="#FFB020"/><circle cx="70" cy="26" r="3.8" fill="#FFB020"/>`;
-  /* yüz aksesuarı gövde siluetine kırpılır (kafa dönerken yüzle birlikte kenardan kaybolur) */
-  const a=(an?`<g class="ak-acn">${an}</g>`:'')+(ah?`<g class="ak-ach">${ah}</g>`:''),acf=af?`<g class="ak-acf">${af}</g>`:'';
+  /* boyun */
+  if(A.has('atki'))an+=`<path d="M24 100 Q70 120 116 100 L118 113 Q70 134 22 113 Z" fill="#A3461F" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"/><path d="M40 108 Q70 122 100 108" stroke="#4B5A3A" stroke-width="4" fill="none"/><path d="M90 112 L100 140 L86 143 L80 115 Z" fill="#A3461F" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"/><path d="M86 125 L96 123 M88 132 L98 130" stroke="#4B5A3A" stroke-width="3"/>`;
+  if(A.has('papyon'))an+=`<path d="M70 104 L52 94 L52 114 Z M70 104 L88 94 L88 114 Z" fill="#8E2B22" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"/><rect x="65" y="98" width="10" height="12" rx="3" fill="#B23A2A" stroke="${ink}" stroke-width="2.5"/><circle cx="58" cy="104" r="1.8" fill="#F7DDA6"/><circle cx="82" cy="104" r="1.8" fill="#F7DDA6"/>`;
+  /* yüz */
+  if(A.has('gozluk'))af+=`<g fill="rgba(255,255,255,.18)" stroke="${ink}" stroke-width="3.5"><circle cx="54" cy="66" r="19"/><circle cx="86" cy="66" r="19"/></g><path d="M66 64 Q70 60 74 64" stroke="${ink}" stroke-width="3.5" fill="none"/><path d="M42 56 Q46 51 52 50 M74 56 Q78 51 84 50" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".55"/>`;
+  if(A.has('gunes'))af+=`<rect x="34" y="54" width="34" height="24" rx="10" fill="#2F2E24" stroke="${ink}" stroke-width="3"/><rect x="72" y="54" width="34" height="24" rx="10" fill="#2F2E24" stroke="${ink}" stroke-width="3"/><path d="M68 60 Q70 56 72 60" stroke="${ink}" stroke-width="3.5" fill="none"/><path d="M40 60 L48 58 M78 60 L86 58" stroke="#F7DDA6" stroke-width="3" stroke-linecap="round" opacity=".8"/><path d="M34 60 L22 56 M106 60 L118 56" stroke="${ink}" stroke-width="3.5" stroke-linecap="round"/>`;
+  /* baş */
+  if(A.has('baret'))ah+=`<path d="M32 40 Q70 -8 108 40 Z" fill="#D9822B" stroke="${ink}" stroke-width="3"/><path d="M70 9 V40" stroke="#A3461F" stroke-width="5"/><rect x="26" y="36" width="88" height="10" rx="3" fill="#A3461F" stroke="${ink}" stroke-width="3"/><path d="M42 33 Q48 20 58 14" stroke="#FFE2B0" stroke-width="3" fill="none" stroke-linecap="round" opacity=".6"/>`;
+  if(A.has('tac'))ah+=`<path d="M44 34 L50 10 L60 24 L70 4 L80 24 L90 10 L96 34 Z" fill="#E8C35A" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/><path d="M48 31 L52 16" stroke="#FFF1B8" stroke-width="2.2" stroke-linecap="round" opacity=".8"/><rect x="66" y="21" width="8" height="8" transform="rotate(45 70 25)" fill="#8E2B22"/>`;
+  if(A.has('zeytin'))ah+=`<g fill="#4B5A3A" stroke="${ink}" stroke-width="1.4"><ellipse cx="34" cy="44" rx="12" ry="5" transform="rotate(-40 34 44)"/><ellipse cx="46" cy="32" rx="12" ry="5" transform="rotate(-20 46 32)"/><ellipse cx="94" cy="32" rx="12" ry="5" transform="rotate(20 94 32)"/><ellipse cx="106" cy="44" rx="12" ry="5" transform="rotate(40 106 44)"/></g><circle cx="40" cy="38" r="3" fill="#2F3A28"/><circle cx="100" cy="38" r="3" fill="#2F3A28"/>`;
+  if(A.has('kep'))ah+=`<path d="M48 30 V42 Q70 52 92 42 V30 Z" fill="#3A382C" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/><path d="M26 26 L70 10 L114 26 L70 42 Z" fill="#2F2E24" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/><path d="M70 26 L104 32 L106 54" stroke="#D9822B" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M101 52 L106 64 L111 52 Z" fill="#D9822B"/><circle cx="70" cy="26" r="3.5" fill="#D9822B"/>`;
+  const a=(an?`<g class="ak-acn">${an}</g>`:'')+(af?`<g class="ak-acf">${af}</g>`:'')+(ah?`<g class="ak-ach">${ah}</g>`:'');
   const d=-(Math.random()*7).toFixed(2);
-  return `<svg class="anka ${mood}${cls?' '+cls:''}" style="--ad:${d}s" width="${size}" height="${Math.round(size*(H+10)/(W+20))}" viewBox="-10 -6 ${W+20} ${H+10}" aria-hidden="true">${defs}<ellipse class="ak-shd" cx="70" cy="148" rx="42" ry="5.6" fill="#2F2E24" fill-opacity=".22"/><g class="ak-all"><g class="ak-tail">${tail}</g><g class="ak-bd">${crest}${bodyP}${bellyP}${back}${wingsBack}${wingsFront}<g clip-path="${CB}"><g class="ak-face">${eyes}${brows}${beakP}</g>${cheeks}${acf}</g>${a}</g>${feet}${extra}</g></svg>`;
+  return `<svg class="anka ${mood}${cls?' '+cls:''}" style="--ad:${d}s" width="${size}" height="${Math.round(size*(H+10)/(W+20))}" viewBox="-10 -6 ${W+20} ${H+10}" aria-hidden="true">${defs}<ellipse class="ak-shd" cx="70" cy="147.6" rx="40" ry="5.4" fill="${U('s')}"/><g class="ak-all"><g class="ak-tail">${tail}</g><g class="ak-bd">${wingsBack}${crest}${bodyP}${bellyP}${back}${wingsFront}${cheeks}<g class="ak-face">${eyes}${brows}${beakP}</g>${a}</g>${feet}${extra}</g></svg>`;
 }
 
 /* Anka'nın sözleri */
