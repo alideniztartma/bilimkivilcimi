@@ -58,7 +58,7 @@ setInterval(()=>{const h=S.hearts;dayCheck();if(S.hearts!==h)renderStats()},3000
   requestAnimationFrame(()=>requestAnimationFrame(hide));setTimeout(hide,3000);
   const b=document.getElementById('boot');if(!b)return;
   const go=()=>{b.classList.add('out');document.documentElement.style.background='';setTimeout(()=>{b.remove();if(typeof appBars==='function')appBars()},220)};
-  requestAnimationFrame(()=>requestAnimationFrame(go))})();
+  setTimeout(go,Math.max(0,500-(Date.now()-(window.__bootT||Date.now()))))})();
 
 /* Otomatik güncelleme (yalnızca Android uygulamasında):
    Açılışta ve uygulama her öne geldiğinde (en fazla dakikada bir) GitHub'daki son sürüme bakar.
