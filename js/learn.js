@@ -161,10 +161,11 @@ function buildEx0(ex,ch){
   if(ex.t==='mc'){
     const order=shuffle(ex.opts.map((t,i)=>i));let sel=-1;
     el.innerHTML=qHead(ex,top)+`<div class="opts">${order.map((i,k)=>`<button class="opt" type="button" data-i="${i}" aria-pressed="false"><kbd>${k+1}</kbd>${ex.mono?`<pre>${hl(ex.opts[i])}</pre>`:`<span>${esc(ex.opts[i])}</span>`}</button>`).join('')}</div>`;
-    const pickI=i=>{sel=i;$$('.opt',el).forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i));sfx.tap();ch()};
+    const pickI=i=>{if(o.done)return;sfx.tap();sel=i;$$('.opt',el).forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i));ch();autoCheck(o)};
     el.addEventListener('click',e=>{const b=e.target.closest('.opt');if(b)pickI(+b.dataset.i)});
     o.key=k=>{const n=+k;if(n>=1&&n<=order.length)pickI(order[n-1])};
-    o.ready=()=>sel>=0;o.check=()=>({ok:sel===ex.a,ans:ex.opts[ex.a],mono:ex.mono,tip:ex.tip});return o}
+    o.ready=()=>sel>=0;o.check=()=>{o.done=true;$$('.opt',el).forEach(b=>{const i=+b.dataset.i;b.classList.toggle('ok',i===ex.a);b.classList.toggle('bad',i===sel&&i!==ex.a)});
+      return{ok:sel===ex.a,ans:ex.opts[ex.a],mono:ex.mono,tip:ex.tip}};return o}
   if(ex.t==='order'){
     const pool=shuffle(ex.items.concat(ex.extra||[]).map((t,i)=>({t,i})));const ans=[];
     const lines=!!ex.lines,mono=ex.mono||(lines&&!ex.plain);
@@ -182,9 +183,9 @@ function buildEx0(ex,ch){
     let sel=-1;const order=shuffle(ex.opts.map((t,i)=>i));
     const codeH=()=>hl(ex.code).replace('___',`<span class="slot ${sel>=0?'filled':''}">${sel>=0?esc(ex.opts[sel]):'&nbsp;'}</span>`);
     el.innerHTML=`${top}<div class="qh">${mini()}<h2>${esc(ex.q)}</h2>${spkBtn(ex.q)}</div><pre class="code">${codeH()}</pre><div class="chips">${order.map(i=>`<button class="chip mono" type="button" data-i="${i}">${esc(ex.opts[i])}</button>`).join('')}</div>`;
-    el.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;sel=+b.dataset.i;$('.code',el).innerHTML=codeH();$$('.chip',el).forEach(c=>c.classList.toggle('ghost-spot',+c.dataset.i===sel));sfx.tap();ch()});
+    el.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b||o.done)return;sel=+b.dataset.i;$('.code',el).innerHTML=codeH();$$('.chip',el).forEach(c=>c.classList.toggle('ghost-spot',+c.dataset.i===sel));sfx.tap();ch();autoCheck(o)});
     o.key=k=>{const n=+k;if(n>=1&&n<=order.length)$$('.chip',el)[n-1].click()};
-    o.ready=()=>sel>=0;o.check=()=>({ok:sel===ex.a,ans:ex.code.replace('___',ex.opts[ex.a]),mono:true,tip:ex.tip});return o}
+    o.ready=()=>sel>=0;o.check=()=>{o.done=true;const sl=$('.slot',el);if(sl)sl.classList.add(sel===ex.a?'ok':'bad');return{ok:sel===ex.a,ans:ex.code.replace('___',ex.opts[ex.a]),mono:true,tip:ex.tip}};return o}
   if(ex.t==='match'){
     const Lc=shuffle(ex.pairs.map((p,i)=>i)),Rc=shuffle(ex.pairs.map((p,i)=>i));let sl=null,sr=null,left=ex.pairs.length;o.miss=0;
     el.innerHTML=`${top}<div class="qh">${mini('wow')}<h2>${esc(ex.q)}</h2></div><div class="match"><div class="col">${Lc.map(i=>`<button class="mb ${ex.mono||ex.monoL?'mono':''}" type="button" data-s="l" data-i="${i}">${esc(ex.pairs[i][0])}</button>`).join('')}</div><div class="col">${Rc.map(i=>`<button class="mb" type="button" data-s="r" data-i="${i}">${esc(ex.pairs[i][1])}</button>`).join('')}</div></div>`;
@@ -329,6 +330,8 @@ function advance(ok){
 function countUp(root){if(reduce)return;root.querySelectorAll('.trio b,.stat.gm').forEach(b=>{const n=[...b.childNodes].reverse().find(x=>x.nodeType===3&&/\d/.test(x.textContent));if(!n)return;
   const m=n.textContent.match(/^(\D*)(\d+)(.*)$/s);if(!m)return;const to=+m[2],t0=performance.now()+350,D=700;n.textContent=m[1]+'0'+m[3];
   const f=t=>{const p=Math.min(1,Math.max(0,(t-t0)/D)),e=1-Math.pow(1-p,3);n.textContent=m[1]+Math.round(to*e)+m[3];if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)})}
+/* Çoktan seçmeli ve boşluk doldurmada "Kontrol et"e gerek yok: seçince hemen değerlendirilir */
+function autoCheck(o){setTimeout(()=>{if(L&&L.state==='q'&&L.cur===o&&!$('#lbtn').disabled)mainBtn()},140)}
 function showMoment(k){
   L.state='moment';$('#lbody').innerHTML=momentHtml(k,L);$('#lfoot').className='lfoot';$('#fb').innerHTML='';
   const b=$('#lbtn');b.className='b3';b.textContent='Devam';b.disabled=false;b.focus();

@@ -201,3 +201,12 @@
 .nest.night .ndpic,.nest.night .ndshelf{filter:brightness(.7) drop-shadow(0 5px 0 rgba(0,0,0,.25))}
 .nbird .anka{filter:drop-shadow(0 10px 8px rgba(60,30,10,.18))}
 @media (prefers-reduced-motion:reduce){.nbeam,.nbeam i{animation:none}}
+
+/* Seçince hemen doğru/yanlış göster */
+.opt.ok{border-color:var(--olive)!important;background:color-mix(in srgb,var(--olive) 22%,var(--raised))!important;color:var(--ink)}
+.opt.ok kbd{border-color:var(--olive);color:var(--olive)}
+.opt.bad{border-color:var(--garnet)!important;background:color-mix(in srgb,var(--garnet) 20%,var(--raised))!important;animation:optBad .4s ease}
+.opt.bad kbd{border-color:var(--garnet);color:var(--garnet)}
+.slot.ok{background:color-mix(in srgb,var(--olive) 35%,transparent);outline:2px solid var(--olive)}
+.slot.bad{background:color-mix(in srgb,var(--garnet) 30%,transparent);outline:2px solid var(--garnet)}
+@keyframes optBad{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
