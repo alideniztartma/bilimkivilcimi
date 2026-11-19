@@ -24,13 +24,13 @@ function anka(mood='happy',size=100,acc,cls){
   /* Duolingo tarzı "cel shading": yumuşak geçiş yok; her parça sert kenarlı ışık / ana renk / gölge bantlarından oluşur.
      Şekiller aynı; yalnızca boyama düz renk bloklarına dönüştü. hb: sert bant (aynı noktada iki durak). */
   const hb=(...p)=>p.map(([c,a,b2],i)=>st(a,c)+st(b2,c)).join('');
-  const defs=`<defs>${rad('b',46,44,100,hb(['#F5A957',0,.36],[body,.36,.78],['#C9672A',.78,1]),1)}
-    ${rad('y',.4,.26,.9,hb(['#FFF0CF',0,.4],[belly,.4,.8],['#EAC48A',.8,1]))}
-    ${lin('w',0,0,.35,1,hb(['#BE5428',0,.42],[dark,.42,.8],['#86361B',.8,1]))}
+  const defs=`<defs>${rad('b',46,44,100,hb([body,0,.78],['#C9672A',.78,1]),1)}
+    ${rad('y',.4,.26,.9,hb([belly,0,.8],['#EAC48A',.8,1]))}
+    ${lin('w',0,0,.35,1,hb([dark,0,.8],['#86361B',.8,1]))}
     ${lin('l',0,0,0,1,hb(['#F09D44',0,.5],['#D67A2B',.5,1]))}
     ${rad('e',.42,.34,.72,hb(['#FFFFFF',0,.8],['#E8DFD0',.8,1]))}
     ${rad('p',.38,.32,.75,hb(['#4A4637',0,.32],[ink,.32,1]))}
-    ${lin('k',0,0,0,1,hb(['#C94A36',0,.38],[beak,.38,.8],['#6E1E18',.8,1]))}
+    ${lin('k',0,0,0,1,hb([beak,0,.8],['#6E1E18',.8,1]))}
     ${lin('c1',0,1,0,0,hb(['#C9702A',0,.45],['#EFA445',.45,1]))}
     ${lin('c2',0,1,0,0,hb(['#E9A43F',0,.45],['#FFD27A',.45,1]))}
     ${lin('c3',0,1,0,0,hb(['#8A3519',0,.5],['#C35A2B',.5,1]))}
@@ -48,13 +48,12 @@ function anka(mood='happy',size=100,acc,cls){
     <path d="M70 30 C 59 18 61 6 72 0 C 69 11 80 15 77 30 Z" fill="${U('c3')}"/><path d="M68.5 24 C 64 17 65 10 69.5 5" stroke="#F2B451" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".55"/></g>`;
   const bodyP=`<path d="M70 24 C 108 24 124 52 124 86 C 124 120 102 140 70 140 C 38 140 16 120 16 86 C 16 52 32 24 70 24 Z" fill="${U('b')}"/>
     <path d="M28 112 C 36 130 52 140 70 140 C 88 140 104 130 112 112 C 100 124 86 130 70 130 C 54 130 40 124 28 112 Z" fill="${dark}" opacity=".22"/>
-    <path d="M30 52 C 38 38 52 30 66 29" stroke="#FFE2B0" stroke-width="3" fill="none" stroke-linecap="round" opacity=".45"/>
-    <ellipse class="ak-gl" cx="41" cy="45" rx="15" ry="8.5" transform="rotate(-38 41 45)" fill="${U('g')}"/>`;
+`;
   /* göğüste mozaik taşları */
   let tiles='';
   [[60,104],[67,104],[74,104],[56,111],[63,111],[70,111],[77,111],[52,118],[59,118],[66,118],[73,118],[80,118],[56,125],[63,125],[70,125],[77,125],[62,132],[69,132]]
     .forEach(([x,y],i)=>{tiles+=`<rect x="${x}" y="${y}" width="5.4" height="5.4" rx=".8" fill="${i%5===2?'#E58A2C':tile}" opacity="${i%5===2?.55:.9}"/>`});
-  const bellyP=`<g class="ak-bly"><path d="M70 94 C 92 94 102 108 100 123 C 98 134 86 140 70 140 C 54 140 42 134 40 123 C 38 108 48 94 70 94 Z" fill="${U('y')}"/>${tiles}<ellipse cx="60" cy="102" rx="10" ry="4.5" transform="rotate(-14 60 102)" fill="${U('g')}" opacity=".7"/><path d="M42 126 C 46 135 56 140 70 140 C 84 140 94 135 98 126 C 92 132 82 135 70 135 C 58 135 48 132 42 126 Z" fill="#C98F4E" opacity=".28"/></g>`;
+  const bellyP=`<g class="ak-bly"><path d="M70 94 C 92 94 102 108 100 123 C 98 134 86 140 70 140 C 54 140 42 134 40 123 C 38 108 48 94 70 94 Z" fill="${U('y')}"/>${tiles}<path d="M42 126 C 46 135 56 140 70 140 C 84 140 94 135 98 126 C 92 132 82 135 70 135 C 58 135 48 132 42 126 Z" fill="#C98F4E" opacity=".28"/></g>`;
   /* kanatlar: dış g pozisyon, iç g animasyon */
   const wingL=`<path d="M24 82 C 6 88 2 112 12 126 C 17 113 25 104 33 97 C 31 90 28 85 24 82 Z" fill="${U('w')}"/><path d="M12 126 C 10 116 13 107 18 100 M18 124 C 18 116 21 109 25 104" stroke="#F2B451" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
   const wingR=`<path d="M116 82 C 134 88 138 112 128 126 C 123 113 115 104 107 97 C 109 90 112 85 116 82 Z" fill="${U('w')}"/><path d="M128 126 C 130 116 127 107 122 100 M122 124 C 122 116 119 109 115 104" stroke="#F2B451" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
