@@ -339,7 +339,7 @@ function showMoment(k){
   const b=$('#lbtn');b.disabled=true;b.style.visibility='hidden';
   const go=()=>{clearTimeout(L.momT);if(L&&L.state==='moment'){b.style.visibility='';showEx()}};
   const mo=$('#lbody .moment');if(mo)mo.addEventListener('click',go,{once:true});
-  sfx.win();haptic('heavy');clearTimeout(L.momT);L.momT=setTimeout(go,reduce?1200:1900)}
+  sfx.win();haptic('heavy');clearTimeout(L.momT);L.momT=setTimeout(go,reduce?900:1300)}
 $('#lbtn').addEventListener('click',mainBtn);
 document.addEventListener('keydown',e=>{
   if(!$('#modal').hidden){if(e.key==='Escape'&&!$('#mbox').dataset.lockbg)closeModal();return}
