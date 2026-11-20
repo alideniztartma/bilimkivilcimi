@@ -312,7 +312,7 @@ async function mainBtn(){
     btn.textContent=ok?'Devam':'Anladım';btn.className='b3 '+(ok?'olive':'garnet');btn.disabled=false;L.state='fb';btn.focus();
     if(!ok&&MODES[L.mode].hearts&&S.hearts<=0)L.state='dead';
   }else if(L.state==='fb')advance(L.lastOk);
-  else if(L.state==='moment'){clearTimeout(L.momT);showEx()}
+  else if(L.state==='moment'){clearTimeout(L.momT);$('#lbtn').style.visibility='';showEx()}
   else if(L.state==='dead')heartsOut(true);
   else if(L.state==='end')L.endStep&&L.endStep();
 }
@@ -335,8 +335,11 @@ function countUp(root){if(reduce)return;root.querySelectorAll('.trio b,.stat.gm'
 function autoCheck(o){if(L&&L.state==='q'&&L.cur===o&&!$('#lbtn').disabled)mainBtn()}
 function showMoment(k){
   L.state='moment';$('#lbody').innerHTML=momentHtml(k,L);$('#lfoot').className='lfoot';$('#fb').innerHTML='';
-  const b=$('#lbtn');b.className='b3';b.textContent='Devam';b.disabled=false;b.focus();
-  sfx.win();haptic('heavy');clearTimeout(L.momT);L.momT=setTimeout(()=>{if(L&&L.state==='moment')showEx()},2800)}
+  /* Duolingo'daki gibi: buton yok, kısa kutlama kendiliğinden geçer; ekrana dokununca hemen geçer */
+  const b=$('#lbtn');b.disabled=true;b.style.visibility='hidden';
+  const go=()=>{clearTimeout(L.momT);if(L&&L.state==='moment'){b.style.visibility='';showEx()}};
+  const mo=$('#lbody .moment');if(mo)mo.addEventListener('click',go,{once:true});
+  sfx.win();haptic('heavy');clearTimeout(L.momT);L.momT=setTimeout(go,reduce?1200:1900)}
 $('#lbtn').addEventListener('click',mainBtn);
 document.addEventListener('keydown',e=>{
   if(!$('#modal').hidden){if(e.key==='Escape'&&!$('#mbox').dataset.lockbg)closeModal();return}
@@ -350,7 +353,7 @@ function askQuit(){
   if(!L||L.state==='end'||L.mode==='preview'){closeLesson();return}
   openModal(`${anka('sad',100,undefined,'act-shake')}<h2>${ANKA.quit}</h2><p>Şimdi çıkarsan bu turdaki ilerlemen kaybolur.</p><button class="b3" type="button" id="mstay">Devam et</button><button class="b3 ghost" type="button" id="mquit" style="--oc:var(--garnet)">Çık</button>`);
   $('#mstay').onclick=closeModal;$('#mquit').onclick=()=>{closeModal();closeLesson()}}
-function closeLesson(){clearInterval(timerI);if(canSpeak)stopSpeak();$('#lesson').hidden=true;document.body.style.overflow='';L=null;renderAll();scrollCur()}
+function closeLesson(){clearInterval(timerI);clearTimeout(L&&L.momT);$('#lbtn').style.visibility='';if(canSpeak)stopSpeak();$('#lesson').hidden=true;document.body.style.overflow='';L=null;renderAll();scrollCur()}
 function heartsOut(inLesson){
   const can=ALL_LESSONS.some(l=>S.done[l.id]),mins=S.heartAt?Math.max(1,Math.ceil((S.heartAt+HEART_MS-Date.now())/60000)):5;
   openModal(`${anka('sad',100)}<h2>Kalbin kalmadı</h2><p>Üzülme! Kalp kazanmanın ücretsiz yolu var. Ya da ${mins} dakika sonra yeni bir kalp gelir.</p>
