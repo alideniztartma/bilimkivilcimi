@@ -113,7 +113,7 @@ function renderAbout(){
   <div class="sumtiles" style="margin-top:0">
     <div><b>${ALL_LESSONS.length}</b><span>Kodlama dersi, ${U.length} ünite</span></div><div><b>${EXPS.length}</b><span>Deney oyunu</span></div><div><b>${labTotal()}</b><span>Deney bölümü</span></div>
     <div><b>${CHAL.length+1}</b><span>Çizim görevi</span></div><div><b>${DAILY.length}</b><span>Günlük robot bulmacası</span></div><div><b>${PLANS.length}</b><span>Öğretmen ders planı</span></div></div>
-  <div class="sec-h">Engineering Inspiration</div>
+  <div class="sec-h">Bu Proje:</div>
   <div class="card"><ul class="crit">
     <li><span>${fi('bolt',22)}</span><div><b>Mühendisliği sevdirir</b><small>Öğrenciler oyun oynayarak, tahmin edip deney yaparak öğrenir.</small></div></li>
     <li><span>${ic('school',22)}</span><div><b>Hatay'ın okullarına ulaşır</b><small>Siteyi okullara öğretmenlerle birlikte götürüyoruz. Hazır ders planları ve etkinlik kâğıtları var.</small></div></li>
