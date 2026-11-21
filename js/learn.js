@@ -694,9 +694,7 @@ function renderStats(){
       <h3 style="display:flex;justify-content:space-between">Günlük görevler <a href="#gorevler" class="lbl" style="text-decoration:none;align-self:center">TÜMÜ</a></h3>
       <div class="minique">${questRows(true,true)}</div>
     </div>`;
-  const dd=!!S.dailyDone[dkey()];
-  $('#rcDaily').innerHTML=`<h3>Günün bulmacası</h3><p style="color:var(--muted);font-size:.9rem;margin-bottom:12px">${dd?'Bugünkü bulmacayı çözdün. Yarın yeni bir bulmaca gelecek!':esc(dailyPuzzle().q)}</p><button class="b3 sm ${dd?'ghost':'ember'}" type="button" id="rDaily" style="width:100%">${dd?'Tekrar oyna':'Çöz · +15 mozaik taşı'}</button>`;
-  $('#rDaily').onclick=()=>startMode('daily');
+
 }
 
 /* ================= TANIŞMA ================= */
