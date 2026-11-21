@@ -215,3 +215,9 @@
 
 /* Doğru/yanlış rengi geçişsiz, anında görünür */
 .opt.ok,.opt.bad,.lr.ok,.lr.bad,.slot.ok,.slot.bad{transition:none!important}
+
+/* Tanışma: "Tavsiye" etiketi küçük ve kartın içinde */
+.ostart .oopt .otag,.otag{right:10px;top:-9px;font-size:.6rem;letter-spacing:.08em;padding:3px 7px;border-radius:6px;text-transform:uppercase}
+/* Seri ekranı: yuvarlak, kalın, okunaklı rakam ve başlık (Manrope) */
+.bigflame.seri b{font:800 4.2rem/1 var(--body);letter-spacing:-.04em;color:#fff;-webkit-text-stroke:0;text-shadow:0 3px 0 rgba(163,70,31,.45),0 0 18px rgba(255,214,150,.55)}
+.done-screen .ds-seri{font:800 2.1rem/1.15 var(--body);letter-spacing:-.02em}
