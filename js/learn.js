@@ -686,11 +686,17 @@ function renderStats(){
     <p style="color:var(--muted);font-size:.9rem;margin-top:8px">${today?'Bugünkü dersini yaptın. Harika!':'Serini sürdürmek için bugün bir ders yap.'}</p>
     <div class="week">${days.map((d,i)=>{const dt=new Date(now);dt.setDate(now.getDate()-wd+i);const k=dkey(dt),on=S.days.includes(k);return `<div><i class="${on?'on':''} ${k===t?'today':''}">${on?`<span>${fi('flame',14)}</span>`:''}</i>${d}</div>`}).join('')}</div>`;
   const p=Math.min(1,S.day.xp/S.goal);
-  $('#rcGoal').innerHTML=`<h3>Günlük hedef</h3><div style="display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center"><span style="color:var(--ember)">${fi('bolt',32)}</span><div class="bar" data-dp role="button" tabindex="0" aria-label="DP: açıklama"><i style="width:${p*100}%"></i><span>${Math.min(S.day.xp,S.goal)} / ${S.goal} DP</span></div></div>`;
+  $('#rcGoalQuests').innerHTML=`<div class="daily-goal">
+      <h3>Günlük hedef</h3>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center"><span style="color:var(--ember)">${fi('bolt',32)}</span><div class="bar" data-dp role="button" tabindex="0" aria-label="DP: açıklama"><i style="width:${p*100}%"></i><span>${Math.min(S.day.xp,S.goal)} / ${S.goal} DP</span></div></div>
+    </div>
+    <div class="daily-quests">
+      <h3 style="display:flex;justify-content:space-between">Günlük görevler <a href="#gorevler" class="lbl" style="text-decoration:none;align-self:center">TÜMÜ</a></h3>
+      <div class="minique">${questRows(true,true)}</div>
+    </div>`;
   const dd=!!S.dailyDone[dkey()];
   $('#rcDaily').innerHTML=`<h3>Günün bulmacası</h3><p style="color:var(--muted);font-size:.9rem;margin-bottom:12px">${dd?'Bugünkü bulmacayı çözdün. Yarın yeni bir bulmaca gelecek!':esc(dailyPuzzle().q)}</p><button class="b3 sm ${dd?'ghost':'ember'}" type="button" id="rDaily" style="width:100%">${dd?'Tekrar oyna':'Çöz · +15 mozaik taşı'}</button>`;
   $('#rDaily').onclick=()=>startMode('daily');
-  $('#rcQuests').innerHTML=`<h3 style="display:flex;justify-content:space-between">Günlük görevler <a href="#gorevler" class="lbl" style="text-decoration:none;align-self:center">TÜMÜ</a></h3><div class="minique">${questRows(true,true)}</div>`;
 }
 
 /* ================= TANIŞMA ================= */
