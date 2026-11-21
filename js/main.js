@@ -118,9 +118,17 @@ function ankaSync(){if(!ANKA_N)return;try{const h=remHour();
   ANKA_N.sync({streak:S.streak|0,last:S.lastDay||'',freeze:S.freeze|0,name:S.name||'',on:h>=0,hour:h>=0?h:19,min:0}).catch(()=>{})}catch(e){}}
 var ankaT;function ankaSoon(){clearTimeout(ankaT);ankaT=setTimeout(ankaSync,800)}
 if(ANKA_N){setTimeout(ankaSync,600);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')ankaSync();else{dayCheck();ankaSync()}})}
+/* Widget'ı ana ekrana ekle; telefon desteklemiyorsa nasıl ekleneceğini anlat */
+function ankaPin(size){if(!ANKA_N)return;ANKA_N.pinWidget({size}).then(r=>{if(!r||!r.ok)openModal(`${anka('think',100)}<h2>Kendin ekleyebilirsin</h2><p>Ana ekranda boş bir yere parmağını basılı tut, <b>Widget'lar</b>'a dokun ve listeden <b>Anka #BilimKıvılcımı</b>'nı bul.</p><button class="b3" type="button" onclick="closeModal()">Tamam</button>`)}).catch(()=>{})}
+/* İkinci dersten sonra bir kez: Anka'yı ana ekrana koymayı hatırlat (bildirim sorusuyla aynı gün çıkmaz) */
+function ankaWidgetAsk(){if(!ANKA_N||S.widgetAsked||!S.notifAsked||(S.lessons|0)<2||S.notifDay===dkey())return;
+  setTimeout(()=>{if(!$('#modal').hidden||$('#lesson').hidden===false)return;S.widgetAsked=true;save();
+    openModal(`<div class="wask">${wMock('l')}</div><h2>Beni ana ekranına koy!</h2><p>Serini ve beni her an görürsün. Ders zamanı gelince sana yüzümle haber veririm.</p><button class="b3" type="button" id="wYes">Ana ekrana ekle</button><button class="b3 ghost" type="button" id="wNo">Şimdi değil</button>`);
+    $('#wYes').onclick=()=>{closeModal();ankaPin(0)};
+    $('#wNo').onclick=()=>{closeModal();toast('Tamam. İstersen Profil > Ayarlar\'dan ekleyebilirsin.')}},700)}
 /* İlk ders bitince bir kez sor: Anka hatırlatsın mı? */
-function ankaAfterLesson(){if(!ANKA_N||S.notifAsked||!S.lastDay)return;
-  {setTimeout(()=>{if(!$('#modal').hidden||$('#lesson').hidden===false)return;S.notifAsked=true;save();
+function ankaAfterLesson(){if(!ANKA_N)return;if(S.notifAsked){ankaWidgetAsk();return}if(!S.lastDay)return;
+  {setTimeout(()=>{if(!$('#modal').hidden||$('#lesson').hidden===false)return;S.notifAsked=true;S.notifDay=dkey();save();
       openModal(`${anka('happy',110,undefined,'act-jump')}<h2>Seni her gün hatırlatayım mı?</h2><p>Serin bozulmasın diye her akşam ${remHour()}:00'da kısa bir hatırlatma gönderirim. Saatini Profil'den değiştirebilirsin.</p><button class="b3" type="button" id="nYes">Evet, hatırlat</button><button class="b3 ghost" type="button" id="nNo">Şimdi değil</button>`);
       $('#nYes').onclick=()=>{closeModal();ANKA_N.askNotif().then(r=>{if(r&&r.granted){if(S.remH==null||S.remH<0)S.remH=19;save();ankaSync();toast('Tamam! Her gün hatırlatacağım.')}else toast('Bildirim izni verilmedi. İstersen telefon ayarlarından açabilirsin.')}).catch(()=>{})};
       $('#nNo').onclick=()=>{closeModal();S.remH=-1;save();toast('Tamam. İstersen Profil > Ayarlar\'dan açabilirsin.')}},700)}}

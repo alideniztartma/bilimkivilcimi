@@ -25,13 +25,15 @@ const NEST_SVG=(()=>{SEED=23;
 
 const YV={sel:null,prevT:0,tray:null,slot:'head',sleep:false,busy:false,pet:0,music:false,drag:null};
 function petTick(){const p=S.pet,now=Date.now(),h=(now-(p.t||now))/3.6e6;if(h>.02){p.food=Math.max(0,p.food-h*4);p.joy=Math.max(0,p.joy-h*3);p.t=now}else if(!p.t)p.t=now}
-function petMood(){const p=S.pet;if(YV.sleep)return'sleep';if(p.food<25||p.joy<20)return'sad';if(p.food>=75&&p.joy>=75)return'love';return'happy'}
+function petMood(){const p=S.pet;if(YV.sleep)return'sleep';if(p.food<25||p.joy<20)return'sad';return'happy'}
 function petLine(){const p=S.pet;if(YV.sleep)return'Zzz… Uyandırmak için pencereye dokun.';
   if(p.food<25)return'Karnım guruldadı… Sepetten bir şey getirir misin?';if(p.joy<20)return'Biraz oynayalım mı? Beni okşar mısın?';
   if(p.food>=75&&p.joy>=75)return pickL(['Yuvam sıcacık, karnım tok. Çok mutluyum!','Kanatlarım mutluluktan titriyor!','Bugün harika bir gün!']);
   return pickL(['Yuvama hoş geldin!','Sepete dokun, birlikte yiyelim.','Dolaba bak, bana bir şey giydir!','Radyoyu açarsan dans ederim!'])}
 const friendLv=()=>1+Math.floor(((S.pet.fed||0)+(S.pet.pets||0)/12)/6);
-function nestBird(mood,act){const b=$('#nBird');if(!b)return;b.innerHTML=anka(mood||petMood(),260,undefined,act||'')}
+function nestBird(mood,act){const b=$('#nBird');if(!b)return;clearTimeout(YV.moodT);b.innerHTML=anka(mood||petMood(),260,undefined,act||'');
+  /* Geçici duygular (kalp göz, sevinç, yemek) birkaç saniye sonra normal yüze döner */
+  if(mood&&mood!==petMood())YV.moodT=setTimeout(()=>{if(!YV.busy&&!YV.sleep&&!YV.drag&&$('#nBird'))nestBird()},2400)}
 function nestSay(t){const e=$('#nSay');if(!e)return;e.textContent=t;e.classList.remove('spop');void e.offsetWidth;e.classList.add('spop')}
 function nestBars(){const p=S.pet,f=$('#nFood'),j=$('#nJoy');if(f)f.style.width=p.food+'%';if(j)j.style.width=p.joy+'%';
   const l=$('#nLv');if(l)l.textContent=friendLv();const g=$('#nGem');if(g)g.textContent=S.gems;
@@ -177,7 +179,7 @@ function previewWear(id){const it=SHOP.find(i=>i.id===id);if(!it)return;const b=
   b.innerHTML=anka('wow',260,acc,'act-spin');clearTimeout(YV.prevT);YV.prevT=setTimeout(()=>{YV.prevT=0;if(!YV.busy&&$('#nBird'))nestBird(petMood())},2800)}
 /* yiyecek sürükleme */
 document.addEventListener('pointerdown',e=>{const f=e.target.closest('#pgNest [data-food]');if(!f||YV.busy)return;YV.drag={id:f.dataset.food,x0:e.clientX,y0:e.clientY,moved:false,el:null}});
-document.addEventListener('pointermove',e=>{const d=YV.drag;if(!d)return;if(!d.moved&&Math.hypot(e.clientX-d.x0,e.clientY-d.y0)>8){d.moved=true;d.el=document.createElement('div');d.el.className='ndrag';d.el.innerHTML=foodIcon(d.id,64);document.body.appendChild(d.el);const b=$('#nBird');if(b)b.classList.add('want')}
+document.addEventListener('pointermove',e=>{const d=YV.drag;if(!d)return;const dx=e.clientX-d.x0,dy=e.clientY-d.y0;if(!d.moved&&Math.hypot(dx,dy)>8){if(Math.abs(dx)>Math.abs(dy)){YV.drag=null;return}d.moved=true;d.el=document.createElement('div');d.el.className='ndrag';d.el.innerHTML=foodIcon(d.id,64);document.body.appendChild(d.el);const b=$('#nBird');if(b)b.classList.add('want')}
   if(d.el){d.el.style.left=e.clientX+'px';d.el.style.top=e.clientY+'px';const b=$('#nBird');if(b){const r=b.getBoundingClientRect();b.classList.toggle('over',e.clientX>r.left&&e.clientX<r.right&&e.clientY>r.top&&e.clientY<r.bottom)}}});
 document.addEventListener('pointerup',e=>{const d=YV.drag;if(!d)return;YV.drag=null;const b=$('#nBird');if(b)b.classList.remove('want','over');if(d.el)d.el.remove();
   if(!d.moved){feed(d.id);return}const r=b&&b.getBoundingClientRect();if(r&&e.clientX>r.left-20&&e.clientX<r.right+20&&e.clientY>r.top-20&&e.clientY<r.bottom+20)feed(d.id,[e.clientX,e.clientY]);else nestSay('Ağzıma kadar getir!')});

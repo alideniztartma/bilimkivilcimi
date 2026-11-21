@@ -795,7 +795,7 @@ textarea.codes{width:100%;font:500 .9rem/1.4 var(--mono);padding:12px;border:1px
 .nslots{display:flex;gap:4px}.nslots button{border:1px solid #D8C7A4;background:#F4EAD6;color:#2F2E24;border-radius:999px;padding:6px 10px;font:800 .78rem/1 var(--body);cursor:pointer}
 .nslots button[aria-pressed="true"]{background:#2F2E24;color:#FBF6EA;border-color:#2F2E24}
 .ntrow{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 4px;scroll-snap-type:x mandatory}
-.nti{position:relative;flex:0 0 84px;scroll-snap-align:start;display:grid;justify-items:center;gap:4px;padding:10px 6px 8px;border-radius:16px;border:2px solid #D8C7A4;border-bottom-width:5px;background:#F4EAD6;color:#2F2E24;cursor:grab;touch-action:none;font-family:inherit}
+.nti{position:relative;flex:0 0 84px;scroll-snap-align:start;display:grid;justify-items:center;gap:4px;padding:10px 6px 8px;border-radius:16px;border:2px solid #D8C7A4;border-bottom-width:5px;background:#F4EAD6;color:#2F2E24;cursor:grab;touch-action:pan-x;font-family:inherit}
 .nti small{font-size:.72rem;font-weight:700;line-height:1.15;text-align:center}
 .nti.on{border-color:#4B5A3A;background:#DCE3CC}
 .nti.empty{cursor:pointer;touch-action:manipulation}.nti.empty svg{filter:grayscale(.75) opacity(.55)}
@@ -1081,3 +1081,6 @@ section.pg-in>*:nth-child(2){animation-delay:.03s}section.pg-in>*:nth-child(3){a
 
 /* Alan sorusu: balon sabit yükseklikte, butonlar kaymaz */
 .obub.ofix{box-sizing:border-box}
+
+/* Widget hatırlatması: büyük widget önizlemesi */
+.wask{display:flex;justify-content:center;margin:4px 0 6px}.wask .wm{transform:scale(1.15);transform-origin:center top;margin-bottom:22px}
