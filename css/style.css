@@ -2,7 +2,7 @@
    60·30·10: tessera zemin, kiremit/zeytin marka, alev vurgu. Kare taş (tessera) ızgarası 8px.
    Yerleşim: masaüstünde sol menü + orta içerik + sağ durum kartları; telefonda üst durum çubuğu + alt sekmeler. */
 :root{
-  --tessera:#F4EAD6; --raised:#FBF6EA; --sand:#DCC190; --line:#D8C7A4; --ink:#2F2E24; --muted:#6B604A;
+  --tessera:#FBFAF7; --raised:#FFFFFF; --sand:#DCC190; --line:#D8C7A4; --ink:#2F2E24; --muted:#6B604A;
   --terra:#A3461F; --on-terra:#FBF6EA; --terra-soft:#F1DCCB; --terra-ts:#93401C;
   --ember:#D9822B; --rust:#6F3420; --olive:#4B5A3A; --on-olive:#FBF6EA; --olive-soft:#E2E6D2; --olive-ts:#3F4D30; --olive-deep:#2F3A28;
   --garnet:#8E2B22; --garnet-soft:#F3DAD6; --focus:#D9822B;
@@ -291,6 +291,7 @@ a{color:var(--terra)}
 .spk:hover{background:var(--terra-soft)}
 
 /* Sağ kartlar */
+.daily-quests{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
 .rc h3{font-size:1.2rem;margin-bottom:10px}
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;margin-top:12px}
 .week div{display:grid;justify-items:center;gap:4px;font-size:.75rem;color:var(--muted)}
