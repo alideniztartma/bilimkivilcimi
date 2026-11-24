@@ -23,6 +23,7 @@ if(S.equip){const it=SHOP.find(i=>i.id===S.equip);if(it&&it.slot&&!S.wear[it.slo
 S.wear=Object.assign({head:null,face:null,neck:null},S.wear);S.pet=Object.assign({food:70,joy:70,t:Date.now(),inv:{},fed:0,pets:0},S.pet);
 /* v3: FRC müfredatı. Eski elektronik kupası 7. sıradan 9. sıraya taşınır. */
 if(!S.frc){if(S.trophies&&S.trophies[7]&&!S.trophies[9]){S.trophies[9]=S.trophies[7];delete S.trophies[7]}S.frc=1}
+if(!S.mek15){U.forEach((u,ui)=>{if(u.field==='mekanik'&&S.trophies)delete S.trophies[ui]});S.mek15=1;save()}
 (function migrate(){if(S.lab.migrated)return;try{const o=JSON.parse(localStorage.getItem(OLDLAB));if(o&&o.done){
   const map={sarkac:'sarkac-1',kaldirac:'kaldirac-0',devre:'devre-0',kesir:'kesir-0'};Object.keys(map).forEach(k=>{if(o.done[k])S.lab.tasks[map[k]]=dkey()})}}catch(e){}
   S.lab.migrated=1;save()})();

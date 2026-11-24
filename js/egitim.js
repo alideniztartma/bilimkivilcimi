@@ -6,7 +6,7 @@
 
 const FIELDS=[
  {id:'yazilim',title:'Yazılım',icon:'code',desc:'Algoritmadan Python\'a, robot yazılımına kadar.',soon:['Değişkenler ve veri tipleri','Robotu otonom sürmek']},
- {id:'mekanik',title:'Mekanik',icon:'gear',desc:'FRC robotunun iskeleti, hareketi ve mekanizmaları.',soon:['CAD ile robot tasarımı','Atölyede şasi yapımı']},
+ {id:'mekanik',title:'Mekanik',icon:'gear',desc:'Kuvvetten dişlilere, basit makinelerden kendi tasarımına.',soon:['CAD ile robot tasarımı','Atölyede şasi yapımı']},
  {id:'elektronik',title:'Elektronik',icon:'chip',desc:'FRC robotunun güç sistemi, beyni, motorları ve sensörleri.',soon:['Lehim ve konnektörler','Elektrik panosunu düzenleme']}
 ];
 U.forEach(u=>{if(!u.field)u.field='yazilim'});
@@ -39,74 +39,7 @@ U.push(
   {t:'type',q:'Robotun döngüsü saniyede 50 kez çalışıyor. 2 saniyede kaç kez çalışır?',a:['100','yüz'],tip:'Her saniye 50 tur var. 2 saniye × 50 tur = 100 tur.'}
  ]}]},
 /* ===== MEKANİK (FRC) ===== */
-{id:'m1',field:'mekanik',icon:'box',title:'Robotun iskeleti',desc:'Robotun gövdesi neyden yapılır? Birlikte bakalım.',badge:'Şasi Ustası',
- guide:[{h:'Şasi',p:'Robotun iskeletine şasi denir. Tekerlekler ve motorlar şasiye bağlanır. FRC, liseli öğrencilerin robot yaptığı bir yarışmadır.'},
-        {h:'Hafif ve sağlam',p:'Şasi çoğunlukla içi boş alüminyum borulardan yapılır. Hem hafif hem sağlamdır. Robotun ağırlık sınırı vardır, bu yüzden her gram önemlidir.'},
-        {h:'Önce güvenlik',p:'Atölyede koruyucu gözlük takarız. Ölç, iki kez kontrol et, sonra kes.'}],
- lessons:[
- {id:'fm1',title:'FRC robotu neyden yapılır?',ex:[
-  {t:'info',fig:'sasi',h:'Robotun iskeleti: şasi',p:'Robotun iskeletine <b>şasi</b> denir. Tekerlekler ve motorlar şasiye takılır. Şasi, içi boş <b>alüminyum borulardan</b> yapılır. Bu borulara kutu profil denir. Alüminyum hafif bir metaldir.'},
-  {t:'mc',q:'Şasiye içi boş alüminyum boru neden takılır?',opts:['Hem hafif hem sağlam olduğu için','Çok ağır olduğu için','Tadı güzel olduğu için'],a:0,tip:'Robot ağır olmamalı. Alüminyum hafiftir, boru şekli de onu sağlam yapar.'},
-  {t:'match',q:'Malzemeleri işleriyle eşleştir.',pairs:[['Alüminyum boru','Şasi ve kollar'],['Şeffaf plastik','Kırılmaz koruyucu'],['Civata ve somun','Sonra sökülebilen bağ'],['Perçin','Sökülmeyen kalıcı bağ']]},
-  {t:'info',fig:'tampon',h:'Tampon (bumper)',p:'Robotun çevresinde yumuşak <b>tamponlar</b> vardır. Çarpışmada robotu korurlar. Maçta 3 takım bir araya gelir. Bu gruba <b>ittifak</b> denir. Tamponun rengi ittifakı gösterir: <b>kırmızı</b> ya da <b>mavi</b>.'},
-  {t:'mc',q:'Tamponun rengi neyi gösterir?',opts:['Robotun hangi ittifakta olduğunu','Robotun ne kadar hızlı olduğunu','Robotun yaşını'],a:0},
-  {t:'mc',q:'Yarışmada robotun ağırlığı neden önemlidir?',opts:['Kurallarda bir ağırlık sınırı var','Ağır robot hep kaybeder','Hakemler robotu taşır'],a:0,tip:'Kurallarda robotun en fazla ne kadar ağır olabileceği yazar. Sınırı aşan robot yarışamaz.'},
-  {t:'type',q:'1 kilogram 1000 gramdır. Bir parça 2000 gram. Kaç kilogramdır? (sadece sayıyı yaz)',a:['2','iki']}
- ]},
- {id:'fm2',title:'Bağlantı ve montaj',ex:[
-  {t:'info',fig:'montaj',h:'Parçaları birleştirmek',p:'Parçalar <b>civata ve somunla</b> birleşir. İstersen sonra sökersin. <b>Perçin</b> ise kalıcıdır, sökülmez. Robot maçta çok sarsılır. Somun gevşemesin diye özel somun kullanılır.'},
-  {t:'mc',q:'Robot sarsılırken somun gevşemesin. Ne kullanırız?',opts:['Kilitli somun (içinde plastik halka var)','Daha uzun civata','Bant'],a:0,tip:'Somunun içindeki plastik halka civatayı sıkıca tutar.'},
-  {t:'order',q:'Bir boruyu delip bağlamanın adımlarını sırala.',lines:true,plain:true,items:['Koruyucu gözlüğü tak','Delik yerini ölç ve işaretle','Matkapla del','Delikteki keskin kırıntıları temizle','Civatayı tak ve sık']},
-  {t:'mc',q:'Atölyede hangisi her zaman gereklidir?',opts:['Koruyucu gözlük takmak','Eldivenle matkap kullanmak','Şapka takmak'],a:0,tip:'Gözlük gözlerini korur. Matkapla eldiven takılmaz, çünkü eldiven dönen matkaba sarılabilir.'},
-  {t:'match',q:'Aletleri işleriyle eşleştir.',pairs:[['Alyan anahtarı','Civatayı sıkar'],['Matkap','Delik açar'],['Perçin tabancası','Perçin çakar'],['Kumpas','Küçük şeyleri ölçer']]},
-  {t:'line',q:'Montaj adımlarında hangisi yanlış?',lines:['Ölçüleri iki kez kontrol et','Parçayı mengeneye sabitle','Eldiven takıp matkabı çalıştır','Deliği aç ve çapağını al'],a:[2],plain:true,tip:'Dönen aletlerle çalışırken eldiven takılmaz.'}
- ]}
-]},
-{id:'m2',field:'mekanik',icon:'gear',title:'Hareket ve güç aktarımı',desc:'Motor tekerleği nasıl çevirir? Dişliler, zincirler ve sürüş.',badge:'Güç Aktarıcı',
- guide:[{h:'Hız mı, güç mü?',p:'Motor hızlı döner ama güçsüzdür. Dişlilerle hızdan vazgeçip güç kazanırız. Bu döndürme gücüne tork denir.'},
-        {h:'Dişli oranı',p:'Oran, büyük dişlinin kaç kat büyük olduğunu söyler. Oran 4 ise büyük dişli 4 kat yavaş döner. Hesap: büyük dişlinin diş sayısını küçüğe böl.'},
-        {h:'Sürüş sistemleri',p:'Tank sürüş basit ve güçlüdür. Mecanum tekerlekle robot yana kayar. Swerve sistemde her tekerlek kendi yönüne döner.'}],
- lessons:[
- {id:'fm3',title:'Motorlar, dişliler ve tork',ex:[
-  {t:'info',h:'Tork nedir?',p:'<b>Tork</b>, bir şeyi döndürme gücüdür. Motor çok hızlı döner ama gücü azdır. Bu yüzden motorla tekerleğin arasına bir <b>dişli kutusu</b> konur. Hızı azaltır, gücü artırır.'},
-  {t:'mc',fig:'disli',q:'Küçük bir dişli büyük bir dişliyi çevirirse büyük dişli nasıl döner?',opts:['Daha yavaş ama daha güçlü','Daha hızlı ama daha güçsüz','Aynı hızda'],a:0},
-  {t:'info',fig:'disli',h:'Dişli oranı',p:'Küçük dişlide 12 diş, büyük dişlide 48 diş var. Büyük dişlide 4 kat fazla diş var. Buna <b>oran 4</b> denir. Hesap: 48 ÷ 12 = 4. Büyük dişli, küçüğün 4 kat yavaşında döner.'},
-  {t:'fill',q:'Küçük dişlide 10 diş, büyük dişlide 50 diş var. Oran kaçtır?',code:'50 ÷ 10 = ___',opts:['5','40','60'],a:0},
-  {t:'type',q:'Motor dakikada 100 tur dönüyor. Oran 5 ise tekerlek dakikada kaç tur döner? (sadece sayıyı yaz)',a:['20','yirmi'],tip:'Oran 5 demek 5 kat yavaş demek. 100 ÷ 5 = 20.'},
-  {t:'mc',q:'Robot ağır bir kolu kaldıracak. Hangisi iyi olur?',opts:['Büyük oran: yavaş ama güçlü','Küçük oran: hızlı ama güçsüz','Dişli kullanmamak'],a:0,tip:'Ağır şey kaldırmak için güç gerekir. Büyük oran gücü artırır.'},
-  {t:'match',q:'Parçaları görevleriyle eşleştir.',pairs:[['Dişli kutusu','Hızı azaltır, gücü artırır'],['Mil','Dönmeyi taşıyan çubuk'],['Rulman','Milin kolay dönmesini sağlar'],['Motor','Elektrikle döner']]}
- ]},
- {id:'fm4',title:'Zincir, kayış ve sürüş sistemleri',ex:[
-  {t:'info',fig:'zincir',h:'Uzağa güç taşımak',p:'Motor her zaman tekerleğin yanında olmaz. Dönmeyi uzağa <b>zincir</b> ya da <b>kayışla</b> taşırız. Bisikletin zinciri de aynı işi yapar.'},
-  {t:'mc',q:'Pedaldaki dişlide 40 diş, arkadaki dişlide 20 diş var. Pedal 1 tur dönünce arka dişli kaç tur döner?',opts:['2','1','20'],a:0,tip:'Arka dişli yarı büyüklükte. Bu yüzden 2 kat hızlı döner.'},
-  {t:'info',fig:'surus',h:'Sürüş sistemleri',p:'<b>Tank sürüş</b>: iki yanda tekerlekler. Basit ve sağlam. <b>Mecanum</b>: eğik makaralı tekerlekler. Robot yana kayabilir. <b>Swerve</b>: her tekerlek kendi yönüne döner. Robot her yöne gider.'},
-  {t:'match',q:'Sürüş sistemlerini özellikleriyle eşleştir.',pairs:[['Tank sürüş','Basit ve itmede güçlü'],['Mecanum','Çapraz makaralarla yana kayar'],['Swerve','Her tekerlek kendi yönüne döner']]},
-  {t:'mc',fig:'surus',q:'Robot dönmeden yana kaymak istiyor. Hangi sistem bunu yapamaz?',opts:['Tank sürüş','Mecanum','Swerve'],a:0},
-  {t:'mc',q:'Zincir neden gevşek bırakılmamalıdır?',opts:['Dişliden atlayıp çıkabilir','Daha hızlı döner','Robot hafifler'],a:0,tip:'Gevşek zincir dişliden atlar. Bu yüzden zincir gergin tutulur.'},
-  {t:'type',q:'Tekerleğin çevresi 50 cm. Tekerlek 10 tur dönerse robot kaç cm ilerler? (sadece sayıyı yaz)',a:['500','beş yüz'],tip:'Her turda 50 cm gider. 50 × 10 = 500.'}
- ]}
-]},
-{id:'m3',field:'mekanik',icon:'tools',title:'Mekanizmalar',desc:'Robot topu nasıl alır, atar, kaldırır? Havayla çalışan pistonlar.',badge:'Mekanizma Tasarımcısı',
- guide:[{h:'Robot ne yapar?',p:'Her yıl yeni bir oyun olur. Robot oyun parçasını yerden alır (toplayıcı), fırlatır (fırlatıcı) ya da yukarı koyar (asansör, kol). Bu parçalara mekanizma denir.'},
-        {h:'Pnömatik',p:'Pnömatik, sıkıştırılmış havayla çalışan sistemdir. Hava bir pistonu hızla iter. Basıncın birimi psi. Kuralda en fazla 120 psi hava saklanır, pistonlarda en fazla 60 psi kullanılır.'}],
- lessons:[
- {id:'fm5',title:'Topla, taşı, fırlat',ex:[
-  {t:'info',fig:'mekanizma',h:'Mekanizmalar',p:'<b>Toplayıcı</b> oyun parçasını yerden alır. <b>Fırlatıcı</b> parçayı hızla dönen tekerleklerle atar. <b>Asansör</b> yukarı aşağı gider. <b>Kol</b> bir noktada dönerek kalkar. <b>Tırmanıcı</b> robotu yukarı çeker.'},
-  {t:'match',q:'Mekanizmaları görevleriyle eşleştir.',pairs:[['Toplayıcı','Parçayı yerden alır'],['Fırlatıcı','Parçayı uzağa atar'],['Asansör','Yukarı aşağı gider'],['Tırmanıcı','Robotu yukarı çeker']]},
-  {t:'mc',q:'Fırlatıcının tekerlekleri daha hızlı dönerse top ne olur?',opts:['Daha uzağa gider','Daha kısa gider','Hiç değişmez'],a:0,tip:'Tekerlek topa daha çok hız verir. Top daha uzağa gider.'},
-  {t:'mc',q:'Toplayıcının silindirleri neden kauçuktur?',opts:['Parçayı kavrayıp içeri çekmek için','Süs olması için','Ses çıkarması için'],a:0,tip:'Kauçuk kaymaz. Topu tutup içeri çeker.'},
-  {t:'order',q:'Bir mekanizma yapmanın adımlarını sırala.',lines:true,plain:true,items:['Oyunun kurallarını oku','Fikirleri çiz ve tartış','Kartondan deneme modeli (prototip) yap','Dene, ölç ve geliştir','Son parçayı üret']},
-  {t:'mc',q:'Prototip (deneme modeli) neden yapılır?',opts:['Fikri ucuza ve çabuk denemek için','Robotu ağırlaştırmak için','Hakemlere göstermek için'],a:0,tip:'Karton ucuzdur. Pahalı metali kesmeden önce fikrin çalışıp çalışmadığını görürsün.'}
- ]},
- {id:'fm6',title:'Pnömatik: havayla güç',ex:[
-  {t:'info',fig:'pnomatik',h:'Havayla çalışan güç',p:'<b>Kompresör</b> havayı sıkıştırıp <b>hava tankına</b> doldurur. <b>Valf</b> bir kapı gibidir. Elektrikle açılır ve havayı <b>pistona</b> gönderir. Piston bir anda ileri ya da geri gider. Bisiklet pompası gibi düşün!'},
-  {t:'order',q:'Havanın yolunu sırala.',lines:true,plain:true,items:['Kompresör havayı sıkıştırır','Hava tankta birikir','Basınç düşürücü basıncı azaltır','Valf açılır','Piston ileri gider']},
-  {t:'match',q:'Pnömatik parçaları görevleriyle eşleştir.',pairs:[['Kompresör','Havayı sıkıştırır'],['Hava tankı','Sıkışmış havayı saklar'],['Valf','Havayı pistona gönderir'],['Piston','İleri geri gider']]},
-  {t:'mc',q:'Kurallara göre pistonlarda en fazla kaç psi kullanılır?',opts:['60 psi','120 psi','500 psi'],a:0,tip:'Tankta en fazla 120 psi saklanır. Basınç düşürücü bunu pistonlar için 60 psi\'ye indirir.'},
-  {t:'mc',q:'Pnömatik sisteme dokunmadan önce ne yapılmalı?',opts:['Havayı boşaltıp basıncın sıfır olduğunu görmek','Kompresörü açık bırakmak','Pistonu elle tutmak'],a:0,tip:'Basınçlı hava tehlikelidir. Önce tahliye vanasıyla basınç boşaltılır.'},
-  {t:'mc',q:'Piston hangi iş için uygundur?',opts:['Bir kapağı hızla açıp kapamak','Tekerleği sürekli döndürmek','Kolu yavaşça istenen açıya getirmek'],a:0,tip:'Piston ileri geri hızlı gider. Sürekli dönmek için motor gerekir.'}
- ]}
-]},
+MEK[2],MEK[3],MEK[4],
 /* ===== ELEKTRONİK (FRC) ===== */
 {id:'e1',field:'elektronik',icon:'bolt',title:'Robotun güç sistemi',desc:'Robotun pili, şalteri ve elektriği dağıtan panosu.',badge:'Güç Ustası',
  guide:[{h:'Elektriğin yolu',p:'Pil (akü) → ana şalter → dağıtım panosu → sigortalar → motor ve diğer parçalar. Su borusu gibi düşün.'},
@@ -177,12 +110,12 @@ U.push(
 ]}
 );
 
+/* Mekanik 1. ve 2. üniteler: eski temel ünitelerin (tm1, tm2) yerinde. Kupa kayıtları ünite sırasına bağlı. */
+U.push(MEK[0],MEK[1]);
+
 /* Ders listeleri, sözlük ve kimlikler js/dersler.js içinde kurulur (temel ünite dosyalarından sonra). */
 /* FRC sözlüğü: ünite kimliğiyle eklenir */
-[['m1',[['Şasi','Robotun iskeleti. Tekerlekler ve mekanizmalar şasiye bağlanır.'],['Kutu profil','İçi boş, kare kesitli alüminyum çubuk. Hafif ve sağlamdır.'],['Tampon (bumper)','Robotun çevresindeki köpüklü koruma. Rengi ittifakı gösterir.'],['Kilitli somun','İçindeki naylon halka sayesinde titreşimde gevşemeyen somun.']]],
- ['m2',[['Tork','Döndürme gücü. Dişli oranı büyüdükçe tork artar.'],['Dişli oranı','Çevrilen dişlinin diş sayısı ÷ çeviren dişlinin diş sayısı.','48 ÷ 12 = 4'],['Swerve','Her tekerleğin kendi yönüne döndüğü sürüş sistemi.'],['Mecanum','Çapraz makaralı tekerlek. Robotun yana kaymasını sağlar.']]],
- ['m3',[['Toplayıcı (intake)','Oyun parçasını yerden alan mekanizma.'],['Fırlatıcı (shooter)','Hızla dönen tekerleklerle parçayı fırlatan mekanizma.'],['Prototip','Fikri denemek için yapılan hızlı ve ucuz ilk örnek.'],['Selenoid valf','Elektrikle açılıp kapanan, havayı pistona yönlendiren valf.']]],
- ['e1',[['Ana şalter','Robotun büyük açma-kapama düğmesi. Tehlikede elektriği keser.','Evdeki ana elektrik düğmesi gibi'],['Güç dağıtım panosu','Aküden gelen elektriği bütün parçalara paylaştıran kutu.'],['Sigorta','Çok fazla elektrik geçince atıp yolu kesen koruyucu.','Evde sigorta atması'],['Volt','Elektriğin ne kadar güçlü itildiğini gösteren sayı.','Su borusundaki basınç gibi'],['Amper','Akan elektriğin miktarı.','Borudan akan su miktarı gibi'],['Watt','Cihazın gücü. Volt ile amperi çarparsın.','12 × 40 = 480 watt']]],
+[['e1',[['Ana şalter','Robotun büyük açma-kapama düğmesi. Tehlikede elektriği keser.','Evdeki ana elektrik düğmesi gibi'],['Güç dağıtım panosu','Aküden gelen elektriği bütün parçalara paylaştıran kutu.'],['Sigorta','Çok fazla elektrik geçince atıp yolu kesen koruyucu.','Evde sigorta atması'],['Volt','Elektriğin ne kadar güçlü itildiğini gösteren sayı.','Su borusundaki basınç gibi'],['Amper','Akan elektriğin miktarı.','Borudan akan su miktarı gibi'],['Watt','Cihazın gücü. Volt ile amperi çarparsın.','12 × 40 = 480 watt']]],
  ['e2',[['roboRIO','Robotun beyni olan küçük bilgisayar. Takımın kodu onda çalışır.'],['Motor sürücü','Motorun gaz pedalı gibi. Beynin emrine göre motora elektrik verir.'],['CAN hattı','Robot parçalarının birbirleriyle konuştuğu telefon hattı. Sarı ve yeşil kablolarla yapılır.'],['Enkoder','Tur sayan sensör.','Bisikletin kilometre sayacı gibi'],['Jiroskop','Robotun yönünü bilen sensör.','Telefonu çevirince ekranın dönmesi']]],
  ['e3',[['AWG','Kablonun kalınlık numarası. Sayı küçüldükçe kablo kalınlaşır.'],['Arıza bulma','Robot bozulunca elektriğin yolunu baştan sona kontrol edip sorunu bulmak.'],['RSL','Robotun turuncu ışığı. Yanıp sönüyorsa robot uyanıktır.']]]
 ].forEach(([uid,items])=>{const ui=U.findIndex(u=>u.id===uid);if(ui>=0)items.forEach(([t,d,c])=>GLOSS.push(c?{u:ui,t,d,c}:{u:ui,t,d}))});
